@@ -11,7 +11,7 @@ This document explains how to integrate Google Maps & Firebase APIs for:
 - Quota & alert setup
 
 :::tip Google Maps or OpenStreetMap
-**Map Provider** in Store Settings decides which map the customer and partner apps show. With **OpenStreetMap**, the apps' maps need no Google key, but the **Place API Key** below is still used for address search and address lookup. See [Map and Location Services](../flutter-app/map-location-services.md#google-maps-or-openstreetmap).
+**Map Provider** in **Settings → Address Setting** decides which map the customer and partner apps show. With **OpenStreetMap (Free)**, the apps' maps need no Google key, but the **Place Api Key** below is still used for address search and address lookup. See [Map and Location Services](../flutter-app/map-location-services.md#google-maps-or-openstreetmap).
 :::
 
 ---
@@ -100,7 +100,22 @@ Required APIs:
 
 ![Penal API Key Restriction Screenshot](/img/admin-panel/map-key-penal-map-render.webp)
 
-![Penal API Key Restriction Screenshot](/img/admin-panel/map-key-penal-setting.webp)
+### 2.3 Enter the keys in the admin panel
+
+The map keys are no longer under Third Party API Credentials: they are in the **Map Provider** card of the **Address Setting** section of Store Settings.
+
+1. Open **Settings → Address Setting** (card in the **Store** group of the Settings hub, route `/store_settings?section=address_setting`).
+2. In the **Map Provider** card, set **Map Provider** to **Google Maps (Paid)**. The key fields are shown only for Google Maps.
+3. Paste the key from 2.1 into **Place Api Key** and the key from 2.2 into **Map Api Key**.
+4. Click **Update** in the Map Provider card. It saves only the map provider and the two keys; the keys are stored encrypted.
+
+![Map Provider card in Address Setting](/img/admin-panel/map-key-penal-setting.webp)
+
+:::note
+- To use **OpenStreetMap (Free)**, enter and save the Google keys first, then switch **Map Provider** to OpenStreetMap and click **Update** again. The key fields are hidden while OpenStreetMap is selected, but the saved keys are kept and the Place Api Key is still used for address search.
+- In demo mode the key fields stay empty and read-only.
+- See [Store Settings](../detailed-documentation/settings.mdx#2-store-settings-store_settings) for the other Address Setting fields.
+:::
 
 ### Testing Configuration
 
@@ -233,7 +248,7 @@ const autocomplete = new google.maps.places.Autocomplete(
   - **90% usage**
 - Email alerts to the dev & admin team.
 
-- **�� Set up Budget and Quota Notifications**
+- **Set up Budget and Quota Notifications**
     - [Budget & Alert Setup Guide](https://drive.google.com/file/d/1bbDnAUpHPuF5xhkGuAe6FBrO8nwoKRNb/view?usp=sharing)
     - [Quota Setup Guide](https://drive.google.com/file/d/1_1zJSNMRnBfrXXYoCm9S4AMqmyTECV6E/view?usp=sharing)
 
@@ -246,4 +261,4 @@ const autocomplete = new google.maps.places.Autocomplete(
 
 ---
 
-**�� NOTE:** Always restrict your API keys to avoid unauthorized usage and unexpected billing.
+**NOTE:** Always restrict your API keys to avoid unauthorized usage and unexpected billing.

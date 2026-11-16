@@ -11,48 +11,81 @@ import DocBanner from '../promotion-banner/DocBanner.jsx';
 
 # Introduction to eMarket Admin Panel
 
-Welcome to the eMarket Admin Panel documentation! This guide will help you understand and use the powerful admin panel to manage your multi-vendor, multi-module commerce platform — covering Grocery, Pharmacy, eCommerce, and Food Delivery modules.
+Welcome to the eMarket Admin Panel documentation. The admin panel is the web dashboard from which you run your
+multi-vendor, multi-module store: **Grocery**, **Pharmacy**, **Ecommerce** and **Food Delivery**.
 
-## Overview
+This section is the **setup guide**: what your server needs, how to install the panel with the web installer, and how
+to configure each part of the store (store details, payments, login, Firebase, SMS, maps and more). For a
+screen-by-screen reference of every menu, see the [Detailed Documentation](../detailed-documentation/intro.mdx).
 
-The eMarket Admin Panel is a comprehensive dashboard that allows you to manage all aspects of your multi-module store, including:
+![Dashboard](/img/detailed-documentation/dashboard.webp)
 
-- Products and categories
-- Orders and inventory
-- Customers and vendors
-- Payments and delivery
-- Reports and analytics
-- System configurations
-- Marketing and promotions
+## What you manage from the panel
 
-## Getting Started
+- Products, categories, attributes and stock, per module
+- Orders, self pickup orders, return requests and abandoned carts
+- Sellers, delivery boys, customers and their wallets
+- Delivery cities and areas, delivery charges and time slots
+- Payment methods, taxes and additional charges
+- Home pages (Home Builder), promo codes, notifications and blogs
+- Reports, languages, roles and system users
+- Every configuration screen, from one **Settings** hub
 
-To get started with the eMarket Admin Panel, you'll need to:
+## Installation in short
 
-1. Set up the server requirements
-2. Install the admin panel
-3. Configure your store settings
-4. Customize as needed
+1. Check the [Server Requirements](./server-requirements.md) and apply the [PHP INI Settings](./php-ini-settings.md).
+2. Optionally run the panel on its own [subdomain](./create-subdomain.md), for example `admin.yourdomain.com`.
+3. Upload the files and open the **web installer** at `https://yourdomain.com/install` (see [Server Setup](./server-setup.md)),
+   or install on your own computer (see [Localhost Setup](./localhost-setup.md)). The installer has five steps:
+   **Welcome**, **Server requirements** (PHP version, PHP extensions and folder permissions), **Purchase code**,
+   **Database & admin** (database connection plus the Super Admin email and password) and **All done**. It runs only
+   once: after a successful install the install link is removed.
+4. Log in at `/login` with the Super Admin account and follow [Configure eMarket](./configure-egroccer.md).
 
-Follow the documentation sections to learn how to properly set up and use each feature of the admin panel.
+## The Settings hub
 
-## Key Features
+All configuration lives under **Settings** in the sidebar (**GENERAL** group, route `/system_settings`). The hub shows
+every settings page as a card, grouped as **Store**, **Selling**, **Delivery**, **Apps & Website**,
+**Content & Policies**, **Communication**, **Integrations** and **System**, with a **Search settings…** box at the top.
+Cards such as **Store Setting**, **Login Setting** or **SMTP Mail Setting** open the matching section of **Store
+Settings** (`/store_settings?section=...`). A role only sees the cards it has permission for.
 
-The eMarket Admin Panel includes:
+![Settings hub](/img/detailed-documentation/settings-hub.webp)
 
-- **User-friendly Dashboard**: Easy-to-use interface with key metrics and insights
-- **Comprehensive Product Management**: Add, edit, and organize products and categories
-- **Order Management**: Track, process, and manage customer orders
-- **Customer Management**: View and manage customer information
-- **Payment Integration**: Configure multiple payment gateways
-- **Delivery Settings**: Set up delivery zones and options
-- **Reports and Analytics**: Track sales, inventory, and customer behavior
-- **System Settings**: Configure all aspects of your store
+Details: [Settings Hub](../detailed-documentation/settings.mdx#1-settings-hub-system_settings).
 
-## Documentation Structure
+## Pages in this section
 
-This documentation is organized into sections based on the different features and settings of the admin panel. Use the sidebar navigation to find the specific information you need.
+**Installation**
 
-## Support
+- [Server Requirements](./server-requirements.md): PHP, database, web server, PHP extensions and the cron job.
+- [Create Subdomain](./create-subdomain.md): run the admin panel on a subdomain.
+- [PHP INI Settings](./php-ini-settings.md): recommended `php.ini` values.
+- [Localhost Setup](./localhost-setup.md): install on your own computer.
+- [Server Setup](./server-setup.md): install on a live server with the web installer.
 
-If you need additional help, please refer to the [Support](https://teams.live.com/l/invite/FEAeLee40NMWJyoigE) section for contact information and resources.
+**Configuration**
+
+- [Configure eMarket](./configure-egroccer.md): first login and the recommended setup order.
+- [Modules](./modules.md): switch the Grocery, Pharmacy, Ecommerce and Food Delivery modules on or off.
+- [Store Settings](./store-settings.md): store details, address, currency, date and time, and the other Store Settings sections.
+- [Theme Settings](./theme-settings.md): brand colours.
+- [Self Pickup Setting](./selfpickup-setting.md): let customers collect orders themselves.
+- [Time Slots](./time-slots.md): delivery time slots per module.
+- [Email Settings](./email-settings.md): SMTP mail.
+- [Login Settings](./login-settings.md): customer sign-in methods and OTP.
+- [Firebase Settings](./firebase-settings.md): push notifications and phone OTP.
+- [Twilio Settings](./twilio-settings.md): SMS.
+- [Payment Gateway](./payment-gateway.md): payment methods and gateway credentials.
+- [Cart Reminder](./cart-reminder.md): abandoned-cart reminders.
+- [App Settings](./app-settings.md): app versions and app options.
+- [Deeplink Settings](./deeplink-settings.md): app links.
+- [Map API Key Settings](./map-api-key-settings.md): Google Maps and Firebase API keys.
+- [Gemini Config](./gemini-config.md): the Gemini key used for AI text generation.
+- [Addons](./addons.md): product add-ons (Food Delivery).
+- [Subscription](./subscription.md): subscription plans.
+
+**Help**
+
+- [Support](./support.md): how to reach the WRTeam support team.
+- [Feedback](./feedback.md): rate eMarket and send suggestions.

@@ -4,225 +4,65 @@ sidebar_position: 14
 
 # App Settings
 
-Set here app settings like version and URL.
+Put the customer, seller and delivery boy apps into maintenance, set the store links and control which app versions must update. Click **Settings** in the sidebar, then the **App Setting** card (group **Apps & Website**). It opens Store Settings on the **App Setting** pill (`/store_settings?section=app_setting`).
 
-![App Settings](/img/admin-panel/app_settings.webp)
+![App Setting](/img/admin-panel/app_settings.webp)
 
-## Mobile App Configuration
+## App Availability (maintenance mode)
 
-Configure settings for the eMarket mobile application.
+"In this mode you can set your app in Maintenance and that Application will not work till not disabled from here."
 
-### Basic Settings
+| Switch | Extra field when on | Effect |
+| :--- | :--- | :--- |
+| **Customer App** | **Customer App Remark** | Puts the customer app into maintenance. |
+| **Seller App** | **Seller App Remark** | Puts the seller app into maintenance. |
+| **Delivery Boy App** | **Delivery Boy App Remark** | Puts the delivery boy app into maintenance. |
 
-1. **App Information**
+The remark is the message users see while the app is in maintenance. It can be entered per language (with **Translate Empty Fields** / **Translate & Overwrite**). Turn the switch off again to bring the app back.
 
-   - App Name
-   - Version Number
-   - Build Number
-   - Package Name
+## Store Links
 
-2. **Appearance**
-   - Theme Colors
-   - App Logo
-   - Splash Screen
-   - App Icons
+- **Play Store Url**: link to your app on Google Play.
+- **App Store Url**: link to your app on the Apple App Store.
 
-### Feature Configuration
+## Android Version Control
 
-1. **Authentication**
+- **Android Version System Status**: turns version checking on for the Android app. The fields below appear when it is on.
+- **Android Required Force Update**: when on, users on an older version must update before they can continue.
+- **Android Current Version Of App**: the latest version number you published, for example `1.0.5`.
 
-   ```env
-   ENABLE_SOCIAL_LOGIN=true
-   ENABLE_PHONE_LOGIN=true
-   ENABLE_BIOMETRIC=true
-   ```
+## iOS Version Control
 
-2. **Payment Options**
+- **IOS Version System Status**
+- **IOS Required Force Update**
+- **IOS Current Version Of App**
 
-   ```env
-   ENABLE_STRIPE=true
-   ENABLE_PAYPAL=true
-   ENABLE_COD=true
-   ```
+These work the same way as the Android fields.
 
-3. **Notifications**
-   ```env
-   ENABLE_PUSH_NOTIFICATIONS=true
-   NOTIFICATION_SOUND=true
-   NOTIFICATION_VIBRATION=true
-   ```
+## Configuration Steps
 
-## Integration Settings
-
-### Firebase Configuration
-
-```json
-{
-  "project_id": "your-project-id",
-  "app_id": "your-app-id",
-  "api_key": "your-api-key",
-  "messaging_sender_id": "your-sender-id"
-}
-```
-
-### Maps Integration
-
-```env
-GOOGLE_MAPS_API_KEY=your_api_key
-ENABLE_LOCATION_TRACKING=true
-DEFAULT_MAP_ZOOM=15
-```
-
-### Analytics Setup
-
-```env
-ANALYTICS_TRACKING_ID=your_tracking_id
-ENABLE_CRASH_REPORTING=true
-ENABLE_PERFORMANCE_MONITORING=true
-```
-
-## Feature Controls
-
-### Shopping Features
-
-1. **Cart Settings**
-
-   - Maximum Items
-   - Minimum Order Value
-   - Cart Expiry Time
-
-2. **Order Settings**
-
-   - Order Tracking
-   - Delivery Options
-   - Return Policy
-
-3. **Product Display**
-   - Image Quality
-   - Cache Duration
-   - List View Options
-
-### User Features
-
-1. **Profile Settings**
-
-   - Address Book
-   - Payment Methods
-   - Order History
-
-2. **Preferences**
-
-   - Language Selection
-   - Currency Format
-   - Time Zone
-
-3. **Security**
-   - Session Timeout
-   - PIN Protection
-   - Data Encryption
-
-## Performance Settings
-
-### Cache Configuration
-
-```env
-ENABLE_IMAGE_CACHE=true
-CACHE_DURATION=86400
-OFFLINE_MODE_ENABLED=true
-```
-
-### Network Settings
-
-```env
-API_TIMEOUT=30
-RETRY_ATTEMPTS=3
-ENABLE_COMPRESSION=true
-```
-
-### Storage Settings
-
-```env
-MAX_OFFLINE_DATA=100MB
-CLEAR_CACHE_INTERVAL=7
-AUTO_UPDATE_ENABLED=true
-```
-
-## Testing Configuration
-
-1. **Test Mode**
-
-   ```env
-   APP_ENV=testing
-   ENABLE_MOCK_LOCATION=true
-   TEST_PAYMENT_GATEWAY=true
-   ```
-
-2. **Debug Options**
-
-   - Console Logging
-   - Network Monitor
-   - Performance Stats
-
-3. **Test Accounts**
-   - Test Users
-   - Test Products
-   - Test Orders
-
-## Best Practices
-
-1. **Performance**
-
-   - Optimize Images
-   - Minimize API Calls
-   - Efficient Caching
-
-2. **Security**
-
-   - Secure Storage
-   - API Security
-   - Data Privacy
-
-3. **User Experience**
-   - Fast Loading
-   - Offline Support
-   - Error Handling
-
-## Troubleshooting
-
-### Common Issues
-
-1. **App Crashes**
-
-   - Check Logs
-   - Memory Usage
-   - API Responses
-
-2. **Performance Issues**
-
-   - Cache Status
-   - Network Speed
-   - Resource Usage
-
-3. **Integration Problems**
-   - API Keys
-   - Service Status
-   - Version Compatibility
+1. Click **Settings** in the sidebar, then the **App Setting** card.
+2. Enter the **Play Store Url** and **App Store Url**.
+3. After you publish a new app version, turn on **Android Version System Status** / **IOS Version System Status**, enter the new version in **Current Version Of App**, and turn on **Required Force Update** if old versions must not be used.
+4. To put an app into maintenance, turn on its switch under **App availability** and write the remark users should see.
+5. Click **Update**.
 
 ## Important Notes
 
-1. **Updates**
+- Maintenance mode stops the app for all its users until you turn the switch off. Use it only during real maintenance.
+- Enter the version exactly as it is set in the app build, or every user may be asked to update.
+- App-side setup (package name, Firebase files, API URL) is done in the app source code, not here. See the app documentation.
+- Other app-related settings are elsewhere: sign-in methods in [Login Settings](./login-settings.md), map keys in **Address Setting** ([Store Settings](./store-settings.md)), push notifications in [Firebase Settings](./firebase-settings.md), deep links in [Deeplink Settings](./deeplink-settings.md), and app colours in [Theme Settings](./theme-settings.md).
 
-   - Version Control
-   - Change Log
-   - Update Policy
+## Troubleshooting
 
-2. **Monitoring**
+1. **App shows the maintenance message**: check that the matching switch under **App availability** is off and click **Update**.
+2. **Users keep being asked to update**: check that **Current Version Of App** matches the version in the store, or turn **Required Force Update** off.
 
-   - Usage Analytics
-   - Error Tracking
-   - User Feedback
+## Support
 
-3. **Support**
-   - Documentation
-   - Help Center
-   - Contact Info
+For assistance with app settings, contact our support team:
+
+- **Email:** support@wrteam.in
+- **Website:** [https://wrteam.in](https://wrteam.in)
+- **Support Hours:** Monday to Friday, 9:00 AM to 6:00 PM IST (GMT +5:30)

@@ -48,4 +48,4 @@ When a customer shares a product, the app sends your website link, built from `w
 static String websiteUrl = "https://shop.example.com/";
 ```
 
-If you do not have a website, leave `websiteUrl` empty or set it to your admin panel URL. The app then shares your Play Store or App Store link instead, taken from **Play Store Url** and **App Store Url** in the admin panel's [Store Settings](../admin-panel/store-settings.md#app-setting-tab).
+If you do not have a website, leave `websiteUrl` empty or set it to your admin panel URL. The app then shares your Play Store or App Store link instead, taken from **Play Store Url** and **App Store Url** in the admin panel's [Store Settings](../admin-panel/store-settings.md#app-setting).

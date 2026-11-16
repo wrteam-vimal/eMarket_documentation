@@ -4,196 +4,61 @@ sidebar_position: 11
 
 # Twilio Setting
 
-Set here SMS setting. If you want Twilio SMS enable than first enable custom SMS gateway in Login Setting.
+eMarket sends SMS messages (OTP codes and order updates) through **Twilio**. The Twilio credentials are entered on the **SMS Gateways & Methods Settings** page: **Settings → SMS Settings** (card in the **Communication** group of the Settings hub, route `/sms-settings`, permission `sms_settings`). The text of each SMS is edited on **Settings → SMS Templates**.
 
-Open yout Twilio dashboard and get these information.
+## 1. Get your Twilio credentials
+
+1. Create an account at [Twilio](https://www.twilio.com) (or sign in) and open the [Twilio Console](https://console.twilio.com/).
+2. On the console dashboard, under **Account Info**, copy the **Account SID** and the **Auth Token**.
+3. Buy or choose a Twilio phone number that can send SMS, and copy it with its country code (e.g. `+14155550123`).
 
 ![Twilio Dashboard](/img/admin-panel/twilio_dashboard.webp)
 
-Go to System->SMS Settings and fill those values
+## 2. Enter them in the admin panel
 
-![Twilio Setting](/img/admin-panel/twilio_setting.webp)
+1. Open **Settings → SMS Settings**. The page title is **SMS Gateways & Methods Settings**.
+2. Turn on **Twilio [ Enable / Disable ]**. The three fields appear.
+3. Fill in:
 
-If tou want change any SMS template, than Go to System->SMS Templates and edit message.
+| Field | What to enter |
+| :--- | :--- |
+| **Twilio SID** | Account SID from the Twilio console (starts with `AC`). |
+| **Twilio Auth Token** | Auth Token from the Twilio console. |
+| **Twilio Phone Number** | The Twilio number SMS are sent from, with country code. |
 
-![SMS Templates](/img/admin-panel/sms_templates.webp)
+4. Click **Update**.
 
-## Twilio Integration
+![SMS Gateways & Methods Settings](/img/detailed-documentation/sms-settings.webp)
 
-Configure Twilio SMS service for your eMarket store to enable SMS notifications and OTP verification.
+## 3. Send OTP codes through Twilio
 
-### Prerequisites
+Twilio sends order SMS as soon as it is enabled. To also send **login OTP codes** through Twilio instead of Firebase:
 
-1. **Twilio Account**
+1. Open **Settings → Login Setting** (`/store_settings?section=login_setting`).
+2. Under *Phone authentication*, turn on **Phone Auth OTP** or **Phone Auth Password**, then turn on **Custom SMS Gateway OTP based** (it appears only while one of those two is on).
+3. Click **Update**.
 
-   - Create account at [Twilio](https://www.twilio.com)
-   - Get Account SID
-   - Get Auth Token
-   - Get Phone Number
+See [Login Setting](../detailed-documentation/settings.mdx#login-setting-and-the-demo-mode-toggle) for every switch on that section.
 
-2. **Required Information**
-   - Account SID
-   - Auth Token
-   - From Number
-   - Service SID (for Verify)
+## 4. SMS Templates
 
-### Configuration Steps
+Open **Settings → SMS Templates** (page **Manage SMS Templates**, route `/sms-templates`) to change the text of the SMS sent on order events.
 
-1. **Access Twilio Settings**
+![SMS Templates](/img/detailed-documentation/sms-templates.webp)
 
-   - Login to admin panel
-   - Navigate to Settings > Twilio
-   - Enter credentials
+- The list shows **ID**, **Type**, **Message**, **Last Updated** and **Actions** (edit and **Send test to me**).
+- There are 11 types, from `customer_place_order` to `customer_order_reject_return_request` (placed, payment pending, received, processed, shipped, out for delivery, delivered, cancelled, and the return request steps).
+- Click edit to change the **Title** and **Message**. Placeholders are written in square brackets, e.g. `[Customer Name]`, `[Order ID]`, `[Store Name]`. Keep them spelled exactly as in the original text.
+- Click **Send test to me**, enter your number with country code (e.g. `+919876543210`) and send. The saved message arrives with sample values and **[TEST]** in front.
 
-2. **Basic Settings**
-   ```env
-   TWILIO_SID=your_account_sid
-   TWILIO_AUTH_TOKEN=your_auth_token
-   TWILIO_FROM=your_twilio_number
-   TWILIO_SERVICE_SID=your_verify_service_sid
-   ```
-
-### SMS Templates
-
-1. **Order Status**
-
-   ```
-   Your order #{{order_id}} has been {{status}}.
-   Track at: {{tracking_url}}
-   ```
-
-2. **OTP Verification**
-
-   ```
-   Your eMarket verification code is: {{otp}}
-   Valid for {{minutes}} minutes.
-   ```
-
-3. **Delivery Updates**
-   ```
-   Your order #{{order_id}} is {{status}}.
-   Estimated delivery: {{eta}}
-   ```
-
-## Features Configuration
-
-### SMS Notifications
-
-1. **Order Updates**
-
-   - New order
-   - Order status change
-   - Delivery updates
-
-2. **Account Security**
-
-   - Registration OTP
-   - Login verification
-   - Password reset
-
-3. **Marketing Messages**
-   - Promotions
-   - Offers
-   - Updates
-
-### Verify Service
-
-1. **Setup Verify**
-
-   - Enable service
-   - Configure templates
-   - Set timeout
-
-2. **Implementation**
-   ```php
-   // Example verification code
-   Twilio::verify()->v2->services($serviceSid)
-       ->verifications
-       ->create($phoneNumber, "sms");
-   ```
-
-## Testing
-
-### Test SMS Delivery
-
-```php
-// Example test message
-$message = $twilio->messages->create(
-    $to,
-    [
-        "from" => $from,
-        "body" => "Test message from eMarket"
-    ]
-);
-```
-
-### Test OTP Verification
-
-```php
-// Example OTP verification
-$verification = $twilio->verify->v2->services($serviceSid)
-    ->verificationChecks
-    ->create([
-        "to" => $phoneNumber,
-        "code" => $code
-    ]);
-```
-
-## Best Practices
-
-1. **Security**
-
-   - Secure credentials
-   - Monitor usage
-   - Rate limiting
-
-2. **Cost Management**
-
-   - Monitor usage
-   - Set alerts
-   - Optimize sending
-
-3. **Message Content**
-   - Clear messages
-   - Include opt-out
-   - Follow regulations
+Which order statuses actually send an SMS is chosen in **Account Settings** (`/settings`, Order Mail Settings). More details: [SMS Templates](../detailed-documentation/communications.mdx#6-sms-templates-sms-templates).
 
 ## Troubleshooting
 
-### Common Issues
+- **"Twilio SID is required when Twilio is enabled."** – with Twilio on, all three fields are required.
+- **Twilio cannot be switched off** while phone login sends OTP through the SMS gateway and Firebase OTP is off. Turn on **Firebase Authentication** in Login Setting first.
+- **"SMS is not set up yet"** on a test – the Twilio SID, Auth Token or Phone Number is missing.
+- **"Twilio did not accept the message"** – usually a wrong number format, or a Twilio **trial** account sending to a number that is not verified in Twilio.
+- Check your Twilio balance and the Twilio console **Monitor → Logs → Messaging** for delivery errors.
 
-1. **SMS Not Sending**
-
-   - Check credentials
-   - Verify phone format
-   - Check balance
-
-2. **OTP Issues**
-
-   - Check service SID
-   - Verify phone numbers
-   - Check logs
-
-3. **Cost Issues**
-   - Monitor usage
-   - Check pricing
-   - Set limits
-
-## Important Notes
-
-1. **Compliance**
-
-   - Follow SMS regulations
-   - Get user consent
-   - Honor opt-outs
-
-2. **Monitoring**
-
-   - Track delivery rates
-   - Monitor costs
-   - Check errors
-
-3. **Support**
-   - Twilio support
-   - Documentation
-   - API reference
+More details: [SMS Settings](../detailed-documentation/settings.mdx#7-sms-settings-sms-settings) in the detailed documentation.

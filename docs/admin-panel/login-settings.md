@@ -4,90 +4,66 @@ sidebar_position: 9
 
 # Login Settings
 
-Set here Login settings. If you want enable phone setting than you should enable either firebase or custom SMS gateway.
+Choose how customers sign in to the customer app and website, which tabs the panel login page shows, and whether demo mode is on. Click **Settings** in the sidebar, then the **Login Setting** card (group **Selling**). It opens Store Settings on the **Login Setting** pill (`/store_settings?section=login_setting`).
 
-![Login Settings](/img/admin-panel/login.webp)
+![Login Setting](/img/detailed-documentation/store-settings-login.webp)
 
-## Authentication Methods
+## Sign-in Methods
 
-1. **Email/Password**
+Switches for the sign-in options the customer app and website offer:
 
-   - Enable/disable email login
-   - Set password requirements
-   - Configure password reset
+- **Phone Login**
+- **Google Login**
+- **Apple Login**
+- **Email Login**
 
-2. **Social Login**
+At least one of **Phone Login** or **Google Login** must stay enabled.
 
-   - Google Login
-   - Facebook Login
-   - Configure API keys
-   - Set callback URLs
+## Phone Authentication
 
-3. **Phone Number (OTP)**
-   - Enable/disable OTP login
-   - Configure SMS gateway
-   - Set OTP validity period
+- **Phone Auth OTP**: customers sign in with their phone number and a one-time password.
+- **Phone Auth Password**: customers sign in with their phone number and a password.
+- **Firebase Authentication**: OTPs are sent and checked by Firebase. Set up Firebase first (see [Firebase Settings](./firebase-settings.md)).
+- **Custom SMS Gateway OTP based**: shown only while **Phone Auth OTP** or **Phone Auth Password** is on. OTPs are sent through your own SMS gateway (Twilio, see [Twilio Settings](./twilio-settings.md)) and the SMS text comes from the SMS templates.
 
-## Security Settings
+When **Phone Login** is enabled, **Firebase Authentication** or **Custom SMS Gateway OTP based** must also be enabled, otherwise the section is not saved.
 
-1. **Password Policy**
+## Panel Login Page
 
-   - Minimum length
-   - Character requirements
-   - Password expiration
-   - History tracking
+![Panel login page and Demo Mode](/img/admin-panel/login-settings-panel-demo.webp)
 
-2. **Login Security**
+- **Seller tab**: shows the Seller tab on the panel login page. The seller login page itself stays available.
+- **Delivery Boy tab**: shows the Delivery tab on the panel login page. With both tabs off, the tab bar is hidden.
 
-   - Maximum login attempts
-   - Lockout duration
-   - IP restrictions
-   - Session timeout
+## Demo Mode
 
-3. **Two-Factor Authentication**
-   - Enable/disable 2FA
-   - Configure 2FA methods
-   - Set backup options
+- **Demo Mode**: when on, the apps pre-fill the default login credentials and the panels become read-only for every role except the Super Admin. Keep it off on a live store.
+- Only the Super Admin account (user ID 1) can change this switch; for everyone else it is greyed out.
+- Demo mode is stored in the `.env` file as `DEMO_MODE`. If the `.env` file is not writable, the other login settings are saved but Demo Mode is not changed. You can also switch it off by setting `DEMO_MODE=0` in `.env`.
+
+More details: [Login Setting and the Demo Mode Toggle](../detailed-documentation/settings.mdx#login-setting-and-the-demo-mode-toggle).
 
 ## Configuration Steps
 
-1. **Access Login Settings**
-
-   - Log in to admin panel
-   - Navigate to Settings → Login Settings
-
-2. **Configure Authentication**
-
-   - Enable desired login methods
-   - Set up social login APIs
-   - Configure OTP settings
-
-3. **Set Security Options**
-   - Define password policy
-   - Configure login security
-   - Set up 2FA if needed
+1. Click **Settings** in the sidebar, then the **Login Setting** card.
+2. Under **Sign-in methods**, enable the methods you want to offer.
+3. If you enable **Phone Login**, also enable **Phone Auth OTP** or **Phone Auth Password**, and choose **Firebase Authentication** or **Custom SMS Gateway OTP based** for sending OTPs.
+4. Under **Panel login page**, choose whether the **Seller tab** and **Delivery Boy tab** are shown.
+5. As the Super Admin, check that **Demo Mode** is off on a live store.
+6. Click **Update**.
 
 ## Important Notes
 
-- Keep API keys secure
-- Regularly update security settings
-- Monitor login attempts
-- Maintain backup authentication methods
+- **Google Login** and **Apple Login** also need the Firebase project and the app-side setup to be completed (see [Firebase Settings](./firebase-settings.md)).
+- **Custom SMS Gateway OTP based** only works when SMS Settings are filled in (see [Twilio Settings](./twilio-settings.md)).
+- Changes apply to the customer app and website at the next sign-in.
 
 ## Troubleshooting
 
-### Common Issues
-
-1. **Login Failures**
-
-   - Check API configurations
-   - Verify server settings
-   - Test authentication methods
-
-2. **Security Issues**
-   - Review login attempts
-   - Check IP restrictions
-   - Verify 2FA setup
+1. **"At least one of phone login or google login must be enabled."**: turn on **Phone Login** or **Google Login**.
+2. **"When phone login is enabled, either Firebase Authentication or Custom SMS Gateway OTP Based must be enabled."**: turn on one of the two.
+3. **"Only the main admin can change Demo Mode."**: log in as the Super Admin (user ID 1) to change Demo Mode.
+4. **Customers do not receive an OTP**: check Firebase Settings (Firebase Authentication) or SMS Settings (Custom SMS Gateway).
 
 ## Support
 

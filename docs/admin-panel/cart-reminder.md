@@ -4,197 +4,71 @@ sidebar_position: 13
 
 # Cart Reminder
 
-Set here cart reminder notification time.
+Send push notifications to customers who add products to their cart but do not place an order. Click **Settings** in the sidebar, then the **Cart Setting** card (group **Selling**). It opens Store Settings on the **Cart Setting** pill (`/store_settings?section=cart_setting`); the reminders are in the **Cart reminders** group.
 
-![Cart Reminder](/img/admin-panel/cart_setting.webp)
+![Cart Setting](/img/admin-panel/cart_setting.webp)
 
-## Cart Reminder Configuration
+## Cart Reminder Fields
 
-Configure automated cart reminder notifications to recover abandoned carts.
+| Field | Unit | What it does |
+| :--- | :--- | :--- |
+| **Cart Notification** | on/off | Turns cart reminders on. The three fields below appear only while it is on. |
+| **Notification Delay After Cart Addition** | Minutes | How long after a product is added to the cart the first reminder is sent. |
+| **Notification Interval** | Minutes | Time between the following reminders. |
+| **Notification Stop Time** | Minutes | After this time (counted from when the product was added) no more reminders are sent for it if the order is still not placed. |
 
-### Basic Setup
+The same card also holds **Maximum Items Allowed In Cart**, **Minimum Order Amount** and **Is Delivery Charge Refundable?** (see [Store Settings](./store-settings.md#cart-setting)). Click **Update** to save the whole Cart Setting section.
 
-1. **Enable Cart Reminders**
+## How Reminders Are Sent
 
-   - Login to admin panel
-   - Go to Settings > Cart Reminders
-   - Toggle Enable/Disable
+- The scheduled command `cart:notification` runs every minute and checks every cart item that is not saved for later.
+- First reminder: when **Notification Delay After Cart Addition** has passed since the product was added.
+- Next reminders: every **Notification Interval** minutes, until **Notification Stop Time** is reached.
+- Products a customer added within 10 minutes of each other get one reminder, not one each.
+- Reminders are push notifications to the customer's registered devices. Customers without a registered device get nothing.
 
-2. **Reminder Schedule**
-   ```env
-   CART_REMINDER_INITIAL_DELAY=1 # hours
-   CART_REMINDER_FREQUENCY=24 # hours
-   CART_REMINDER_MAX_ATTEMPTS=3
-   ```
+Example: with a delay of `30`, an interval of `120` and a stop time of `1440`, a customer gets the first reminder 30 minutes after adding a product, then one every 2 hours, and the reminders stop 24 hours after the product was added.
 
-### Notification Settings
+## Reminder Text
 
-1. **Email Templates**
+The title and message come from two push templates in **Settings → Notification Templates**:
 
-   ```html
-   Subject: Don't forget your items at eMarket! Hi {{customer_name}}, You have
-   {{item_count}} items waiting in your cart: {{item_list}} Complete your
-   purchase now: {{cart_url}}
-   ```
+- `cart_reminder_first`: the first reminder (placeholder `{{product_name}}`).
+- `cart_reminder_interval`: the following reminders (placeholders `{{product_name}}` and `{{measurement}}`).
 
-2. **SMS Templates**
+Edit them per language there. See [Notification Templates](../detailed-documentation/communications.mdx#2-notification-templates-notification-templates).
 
-   ```
-   eMarket: You have items in your cart!
-   Complete your order now: {{cart_url}}
-   Reply STOP to unsubscribe
-   ```
+## See Abandoned Carts
 
-3. **Push Notifications**
-   ```json
-   {
-     "title": "Complete your purchase",
-     "body": "Items in your cart are waiting!",
-     "action_url": "{{cart_url}}"
-   }
-   ```
+The **Abandoned Carts** page in the sidebar (below Self Pickup Orders) lists every customer's cart for the selected module, with the items, cart value and last activity. Use it to follow up on large carts yourself. See [Abandoned Carts](../detailed-documentation/customer-finance.mdx#5-abandoned-carts-abandoned_carts).
 
-## Features Configuration
+![Abandoned Carts](/img/detailed-documentation/abandoned-carts.webp)
 
-### Reminder Rules
+## Configuration Steps
 
-1. **Timing Rules**
-
-   - First reminder: 1 hour
-   - Second reminder: 24 hours
-   - Final reminder: 72 hours
-
-2. **Conditions**
-
-   - Minimum cart value
-   - User logged in
-   - Items in stock
-
-3. **Exclusions**
-   - Opted out users
-   - Recent purchasers
-   - Guest carts
-
-### Notification Channels
-
-1. **Email Settings**
-
-   - Template customization
-   - Scheduling options
-   - Tracking enabled
-
-2. **SMS Configuration**
-
-   - Message templates
-   - Delivery timing
-   - Opt-out handling
-
-3. **Push Notifications**
-   - Browser notifications
-   - Mobile app alerts
-   - Click tracking
-
-## Implementation
-
-### Queue Configuration
-
-```php
-// Example queue setup
-return [
-    'cart_reminders' => [
-        'driver' => 'redis',
-        'connection' => 'default',
-        'queue' => 'reminders',
-        'retry_after' => 90,
-    ],
-];
-```
-
-### Scheduler Setup
-
-```php
-// Example scheduler
-$schedule->command('cart:remind')
-         ->hourly()
-         ->withoutOverlapping();
-```
-
-## Analytics
-
-### Tracking Metrics
-
-1. **Cart Statistics**
-
-   - Abandoned rate
-   - Recovery rate
-   - Average value
-
-2. **Reminder Performance**
-
-   - Open rates
-   - Click rates
-   - Conversion rate
-
-3. **Channel Effectiveness**
-   - Email success
-   - SMS delivery
-   - Push engagement
-
-## Best Practices
-
-1. **Timing Strategy**
-
-   - Optimal intervals
-   - Time zone respect
-   - Frequency limits
-
-2. **Content Optimization**
-
-   - Personalization
-   - Clear CTAs
-   - Mobile friendly
-
-3. **Testing**
-   - A/B testing
-   - Template variants
-   - Timing tests
-
-## Troubleshooting
-
-### Common Issues
-
-1. **Delivery Problems**
-
-   - Check email setup
-   - Verify SMS gateway
-   - Test notifications
-
-2. **Tracking Issues**
-
-   - Check analytics
-   - Verify links
-   - Monitor logs
-
-3. **Performance Issues**
-   - Queue status
-   - Server load
-   - Database queries
+1. Set up Firebase so push notifications can be sent (see [Firebase Settings](./firebase-settings.md)).
+2. Make sure the server cron runs the Laravel scheduler every minute: `* * * * * php artisan schedule:run`.
+3. Click **Settings** in the sidebar, then the **Cart Setting** card.
+4. Turn on **Cart Notification**.
+5. Enter **Notification Delay After Cart Addition**, **Notification Interval** and **Notification Stop Time** in minutes.
+6. Click **Update**.
+7. Optionally adjust the texts of `cart_reminder_first` and `cart_reminder_interval` in **Notification Templates**.
 
 ## Important Notes
 
-1. **Compliance**
+- Without the scheduler cron, no reminders are sent. The **System Status** card on the Settings hub shows whether the scheduler is running.
+- Keep the interval reasonable (for example 2 hours or more) so customers are not flooded.
+- Reminders stop for a product once it is ordered or removed from the cart.
 
-   - Privacy laws
-   - Opt-out handling
-   - Data retention
+## Troubleshooting
 
-2. **Monitoring**
+1. **No reminders arrive**: check that **Cart Notification** is on, the scheduler cron is running, Firebase Settings are filled in and the customer allowed notifications in the app.
+2. **Reminders never stop**: check that **Notification Stop Time** is larger than **Notification Delay After Cart Addition**.
 
-   - Success rates
-   - Error logs
-   - Performance
+## Support
 
-3. **Optimization**
-   - Regular testing
-   - Content updates
-   - Strategy review
+For assistance with cart reminders, contact our support team:
+
+- **Email:** support@wrteam.in
+- **Website:** [https://wrteam.in](https://wrteam.in)
+- **Support Hours:** Monday to Friday, 9:00 AM to 6:00 PM IST (GMT +5:30)

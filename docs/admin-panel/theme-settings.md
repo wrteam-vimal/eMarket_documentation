@@ -4,62 +4,66 @@ sidebar_position: 10
 
 # Theme Settings
 
-Customize the platform's color scheme from here. Navigate to **Modules → Theme Settings**.
+Set the brand colours of the website, the customer app and the admin panel. Open **Theme Settings** in the sidebar (module section, below Withdrawal Requests), route `/theme-settings`, permission `theme_settings`.
 
-These colors apply to the **website** and the **customer app** — both download the palette from the server, so changing your brand color here does not require rebuilding or resubmitting the app.
+The website and the customer app download the palette from the server, so changing a colour here does not require rebuilding or resubmitting the app.
 
-The admin panel's own interface and the partner app are not affected by these settings.
+![Theme Settings](/img/detailed-documentation/theme-settings.webp)
 
-![Theme Settings](/img/admin-panel/theme-settings.webp)
+Each colour is generated from one seed colour: every card has a colour swatch (picker), a hex field and the generated shade row (50 to 950), and the panel previews the change while you pick.
 
-## Primary & Neutral Color (per module)
+## Admin Panel Colours
 
-Primary and Neutral colors are stored **per module**. Use the module switcher in the header to pick the module you want to theme (Grocery, Pharmacy, Ecommerce, Food Delivery, etc.) before editing — each module keeps its own brand palette.
+"Use each module's theme colours in the admin panel? Applies to every module."
 
-### Primary Color
+- **Yes, module colours**: the admin panel follows the colours of the module selected in the header.
+- **No, own colours**: the admin panel keeps its own colours in every module. Two cards appear: **Admin primary colour** and **Admin neutral colour**.
 
-- Used for main brand elements and actions (buttons, links, highlights)
-- Enter hex code or pick from color swatch
-- A live preview generates an 11-shade palette (50 → 950) used for buttons, links, and brand accents
+Click **Save** in this card.
 
-### Neutral Color
+![Theme Settings with own admin colours](/img/detailed-documentation/theme-settings-own-colours.webp)
 
-- Used for text, backgrounds, borders, and neutral elements
-- Enter hex code or pick from color swatch
-- A very light pick (e.g. white) is blocked with a warning — it would make borders and dividers invisible against the UI
+With own colours, a note explains that the module colours below still apply to the website and the apps.
 
-Click **Save** to persist both colors and their generated palettes for the currently selected module. Changes apply immediately, no reload needed.
+## Module Colours (per module)
+
+Primary and Neutral colours are stored **per module**. Select the module in the panel header (Grocery, Pharmacy, Ecommerce, Food Delivery, and so on) before editing.
+
+- **Primary Color**: "Used for main brand elements and actions" (buttons, links, active menu items).
+- **Neutral Color**: "Used for text, backgrounds, borders, and neutral elements". A colour that is too light is refused, because borders and dividers would become invisible.
+
+A module that has no colours of its own shows the default module's colours, with the note "This module uses the default module's colours. Change them and save to give it its own."
+
+Click **Save** in this card.
 
 ## Status Colors (default module only)
 
-The Success/Error/Warning/Info section only appears when the currently selected module is the system's **default module** (set in **Settings → Modules**). Status colors are global/shared across all modules, so they're editable only from the default module to avoid conflicting values.
+The **Status Colors** section ("Used to represent different states and alerts in the system") is shown only while the **default module** is selected (set in [Modules](./modules.md)). These colours are shared by all modules.
 
-1. **Success Color** — success messages and valid states
-2. **Error Color** — error messages and critical states
-3. **Warning Color** — warning messages and alerts
-4. **Info Color** — information messages and highlights
+- **Success Color**: success messages and valid states.
+- **Error Color**: error messages and critical states.
+- **Warning Color**: warning messages and alerts.
+- **Info Color**: information messages and highlights.
 
-Each status color has its own hex input, shade preview, **Reset to Default**, and **Save** button — configure independently.
+Each has its own **Reset to Default** (asks for confirmation) and **Save** button.
 
 ## Configuration Steps
 
-1. Log in to admin panel
-2. Navigate to **Theme Settings**
-3. Select the module to theme from the header module switcher
-4. Set Primary/Neutral Color hex codes, click **Save**
-5. Switch to the default module to set Status Colors (Success, Error, Warning, Info) as needed, click **Save** per section
-6. Use **Reset to Default** to revert any status color to its original value
+1. Select the module in the panel header.
+2. Open **Theme Settings**.
+3. Enter the **Primary Color** and **Neutral Color** hex values (or use the swatch) and click **Save** in the module colours card.
+4. Repeat for every module that needs its own brand colour.
+5. Select the default module to set the **Status Colors**, and click **Save** per colour.
+6. In **Admin panel colours**, choose **Yes, module colours** or **No, own colours** (then set the two admin colours) and click **Save**.
+
+More details and examples: [Theme Settings in the detailed documentation](../detailed-documentation/settings.mdx#11-theme-settings-theme-settings).
 
 ## Important Notes
 
-- Changes apply to the website and customer app after save
-- The admin panel interface and the partner app keep their own colors and are not changed here
-- The customer app picks up the new palette on next launch; it caches the last palette so it still renders correctly offline
-- Primary and Neutral colors are per-module; Status colors are global and shown/edited only on the default module, but apply across all modules
-- You enter one Primary and one Neutral color per module; the system generates the full shade range from each
-- Light and dark mode share the same palette and are not configured separately
-- Use accessible color contrast for readability
-- Reset to Default restores original color for that section only
+- Changes apply to the website and customer app after save. The customer app picks up the new palette on its next launch and keeps the last palette for offline use.
+- Light and dark mode share the same palette; they are not set separately.
+- You enter one seed colour per card; the system generates the whole shade range from it.
+- Use colours with enough contrast for readable text.
 
 ## Support
 

@@ -4,78 +4,166 @@ sidebar_position: 3
 
 # Localhost Setup
 
-You can set up eMarket on your localhost environment for development and testing purposes. Follow these steps:
+You can install eMarket on your own computer for development and testing. The admin panel installs through the same
+web installer as on a live server: once the tools below are installed and the project is prepared, open
+**`http://localhost/install`** (or `http://127.0.0.1:8000/install`) and follow the same wizard steps as the
+[Server Setup](./server-setup.md).
 
-1. Install XAMPP or similar local server environment
-2. Create a database for eMarket
-3. Extract the eMarket files to your web server directory
-4. Access the installation wizard through your browser
-5. Follow the installation steps as described in the Server Setup section
+:::info In short
+1. Install **PHP 8.3+**, **Composer**, **Node.js + npm**, **MySQL** and **phpMyAdmin** (plus a web server, or use `php artisan serve`).
+2. Create an empty database in phpMyAdmin.
+3. Prepare the project: `.env`, `composer install`, `php artisan key:generate`, `npm install`, `npm run build`.
+4. Open `/install` in your browser and complete the wizard (Requirements → Purchase Code → Database → Finish).
+:::
 
-6. Install XAMPP and Composer.
-7. Copy emarket code in (EX. C:/Xampp/htdocs/emarket) your folder (make sure all files move). If you going to setup it on server give root path to public folder (public_html/emarket/public).
-8. Add Your Domain Name As `APP_URL=yourdomain` (Ex: wrteam.in or emarket.wrteam.in) in `.env` File. (Note:Only for Live Server)
+## 1. Install the required software
 
-**Note:** Be advised that if you do not find the `.env` file in the root folder, it is necessary to activate the "Unhide hidden files and folders" option in your settings.  
-Check the .env file and ensure that INSTALL_MODE=server is set for installation on a live server hosting.
+Install these before you open the `/install` route. The installer runs inside the eMarket app itself, so it cannot
+load until PHP, the Composer packages and the built front end are in place.
 
-4. Create Database name 'emarket' and change `DB_DATABASE=emarket` `DB_USERNAME=database_user_name` `DB_PASSWORD=database_user_password` `INSTALL_MODE=localhost` in `.env` File.
-5. Now, in root directory, run this command `composer install`
-6. After Composer installed successfully, run this command `npm install`
-7. After npm installed successfully, run this command `php artisan migrate` to add all required tables in database. (Note: Make Sure Database configure in `.env`)
-8. After Migration run this command to add required database entries `php artisan db:seed`
-9. For API's Authentication run command `php artisan passport:install`
-10. For Images run command `php artisan storage:link`, If it is show link is already generated Please delete folder `public/storage` and run command again.
-11. Now, in root directory, run this command `php artisan serve` (Note: This is only for localhost not for server)
+| Software | Version | Why it is needed |
+| --- | --- | --- |
+| **PHP** | 8.3 or newer | Runs the eMarket admin panel (Laravel 13). |
+| **Composer** | 2.x | Installs the PHP packages into the `vendor` folder. |
+| **Node.js + npm** | Node 20.19+ or 22.12+ (npm comes with Node) | Builds the admin panel front end into `public/build`. |
+| **MySQL** (or MariaDB) | MySQL 5.7+ / 8.x, or MariaDB 10.3+ | Stores all eMarket data. |
+| **phpMyAdmin** | any recent version | Web tool to create the database and look at the data. |
+| **Web server** | Apache (XAMPP/MAMP/Laragon) or `php artisan serve` | Serves the site at `http://localhost`. |
+
+**Required PHP extensions:** `bcmath`, `ctype`, `curl`, `dom`, `fileinfo`, `gd`, `json`, `mbstring`, `openssl`,
+`pdo_mysql`, `tokenizer`, `xml`, `zip`. Check them with `php -m`. On XAMPP for Windows, enable a missing one by
+removing the `;` in front of its `extension=` line in `php.ini` and restarting Apache. Also apply the
+[PHP INI settings](./php-ini-settings.md).
+
+### Quick install per operating system
+
+- **Windows**: install [XAMPP](https://www.apachefriends.org/download.html) with PHP 8.3 or newer. It includes Apache,
+  PHP, MySQL (MariaDB) and phpMyAdmin (`http://localhost/phpmyadmin`). Then install
+  [Composer](https://getcomposer.org/download/) (point it to `C:\xampp\php\php.exe`) and
+  [Node.js LTS](https://nodejs.org/). Laragon is a good alternative that bundles the same tools.
+- **macOS**: install [Homebrew](https://brew.sh), then run
+  `brew install php composer node mysql phpmyadmin` and start MySQL with `brew services start mysql`.
+  MAMP or Laravel Herd are alternatives that include PHP and MySQL.
+- **Linux (Ubuntu/Debian)**: install PHP 8.3 with the extensions above
+  (for example `php8.3 php8.3-{bcmath,curl,gd,mbstring,mysql,xml,zip}`), `mysql-server`, `phpmyadmin`,
+  [Composer](https://getcomposer.org/download/) and Node.js 22 (for example from NodeSource or `nvm`).
+
+Check everything from a terminal:
+
+```bash
+php -v          # PHP 8.3.x or newer
+composer -V     # Composer 2.x
+node -v         # v20.19+ or v22.12+
+npm -v
+mysql --version
+```
+
+:::tip Internet connection
+Keep the computer online during installation: the **Purchase Code** step validates your code with the eMarket
+licence server.
+:::
+
+## 2. Create the database
+
+1. Start MySQL (and Apache, if you use XAMPP/MAMP).
+2. Open phpMyAdmin (for example `http://localhost/phpmyadmin`).
+3. Click **New**, enter a database name such as `emarket`, choose the collation **utf8mb4_unicode_ci** and click
+   **Create**. Leave the database empty; the installer creates all tables.
+4. Note the MySQL **host** (`127.0.0.1`), **port** (`3306`), **username** and **password**. XAMPP's default user is
+   `root` with an empty password.
+
+:::caution MySQL port vs. web server port
+The database port is MySQL's port (usually **3306**), not the port in the phpMyAdmin address (for example 80 or
+8080, which is the web server).
+:::
+
+## 3. Prepare the project
+
+1. Copy the eMarket admin panel code to a folder, for example `C:\xampp\htdocs\emarket` (Windows) or
+   `~/Sites/emarket` (macOS/Linux). Make sure hidden files such as `.env.example` and `.htaccess` are copied too.
+2. In that folder create the environment file from the template:
+
+   ```bash
+   cp .env.example .env        # Windows: copy .env.example .env
+   ```
+
+3. Open `.env` and set:
+
+   ```env
+   APP_URL=http://localhost          # or http://127.0.0.1:8000 if you use php artisan serve
+   INSTALL_MODE=server
+   ```
+
+   `INSTALL_MODE=server` lets the installer create the tables, seed the default data, set up API authentication
+   (Passport) and the storage link for you. Without it the Database step stops with
+   *"Installation failed: table "admins" was not created"*. You don't need to enter the database details in
+   `.env`; the installer writes them.
+
+4. Install the packages and build the front end:
+
+   ```bash
+   composer install
+   php artisan key:generate
+   npm install
+   npm run build
+   ```
+
+## 4. Start the site and open /install
+
+Use **one** of these:
+
+- **XAMPP / MAMP / Laragon (Apache)**: point the site's document root to the project's **`public`** folder
+  (for example `C:/xampp/htdocs/emarket/public` in Apache's `httpd.conf` / a virtual host), restart Apache and open
+  **`http://localhost/install`**.
+- **PHP's own server**: in the project folder run
+
+  ```bash
+  php artisan serve
+  ```
+
+  and open **`http://127.0.0.1:8000/install`**.
+
+## 5. Complete the installation wizard
+
+The wizard is the same as on a live server (see [Server Setup](./server-setup.md) for screenshots):
+
+1. **Welcome**: click **Next**.
+2. **Requirements**: the PHP version, extensions and folder permissions must all be green. Fix anything red (enable
+   the extension or make `storage`, `bootstrap/cache` and `.env` writable) and try again.
+3. **Purchase Code**: enter your purchase code. This registers the address you opened the installer from
+   (for example `http://localhost`).
+4. **Database**: enter **Database Host** `127.0.0.1`, **Database Port** `3306`, **Database Name** `emarket`, your
+   MySQL **Username** and **Password**, and the **Admin Email** and **Admin Password** (at least 6 characters) for
+   the Super Admin account. Click **Next** and wait while the tables and default data are created.
+5. **Finish**: "Congratulations!" means the panel is installed. Open `/login` (for example
+   `http://localhost/login`) and sign in with the admin email and password you just entered.
+
+After installation, continue with [Configure eMarket](./configure-egroccer.md) or the
+[Getting Started tutorial](../detailed-documentation/getting-started.mdx).
+
+:::note Scheduled tasks
+Seller earnings, scheduled home pages, auto-assign time-outs and log clean-up run on Laravel's scheduler. On a
+local machine keep it running in a separate terminal with `php artisan schedule:work` while you test those features.
+:::
 
 ## Troubleshooting
 
-### Common Issues and Solutions
+| Problem | Fix |
+| --- | --- |
+| **"Vite manifest not found"** or a blank page at `/install` | The front end is not built. Run `npm install` and `npm run build`. |
+| **"No application encryption key has been specified"** | Run `php artisan key:generate`. |
+| **`composer install` fails with "requires ext-gd / ext-zip"** | Enable the missing PHP extension in `php.ini`, restart, and run `composer install` again. |
+| **"Could not connect to the database"** or a port error | Check that MySQL is running and use port `3306` (not the phpMyAdmin/web port). Check the username and password in phpMyAdmin. |
+| **"Installation failed: table "admins" was not created"** | Add `INSTALL_MODE=server` to `.env`, run `php artisan config:clear`, and run the Database step again. |
+| **"Could not reach the purchase code validator"** | Connect to the internet and retry the Purchase Code step. |
+| **"Application is already installed"** | The installer only runs once (the file `storage/installed` marks it). Use the existing login, or reinstall with a fresh empty database. |
+| **Images do not show** | Run `php artisan storage:link`. If it says the link exists, delete `public/storage` and run it again. |
+| **Composer runs out of memory** | `COMPOSER_MEMORY_LIMIT=-1 composer install` |
+| **Permission errors (macOS/Linux)** | `chmod -R 775 storage bootstrap/cache` |
 
-1. **Composer Memory Limit**
+## Development tips
 
-   ```bash
-   COMPOSER_MEMORY_LIMIT=-1 composer install
-   ```
-
-2. **Permission Issues**
-
-   ```bash
-   chmod -R 775 storage bootstrap/cache
-   ```
-
-3. **Node.js Version**
-
-   - Use Node.js version 14.x or higher
-   - Use `nvm` to manage Node.js versions
-
-4. **Database Connection**
-   - Verify MySQL service is running
-   - Check database credentials in `.env`
-   - Ensure database exists
-
-## Development Tips
-
-1. Enable Debug Mode in `.env`:
-
-   ```env
-   APP_DEBUG=true
-   ```
-
-2. Clear Cache:
-
-   ```bash
-   php artisan config:clear
-   php artisan cache:clear
-   php artisan view:clear
-   ```
-
-3. Watch for Changes:
-
-   ```bash
-   npm run watch
-   ```
-
-4. Access Logs:
-   - Check `storage/logs/laravel.log`
-   - Enable debug bar for development
+- Show detailed errors while developing: set `APP_DEBUG=true` in `.env` (never on a live server).
+- Clear cached settings after changing `.env`: `php artisan config:clear` and `php artisan cache:clear`.
+- Rebuild the front end automatically while you edit Vue files: `npm run watch`.
+- Application logs are in `storage/logs/` and on the panel's **Logs** page.

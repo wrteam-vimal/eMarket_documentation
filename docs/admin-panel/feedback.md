@@ -4,220 +4,34 @@ sidebar_position: 17
 
 # Feedback
 
-Here you can see customer feedback.
+Dear valued customer,  
+thank you very much for choosing eMarket. Your honest feedback helps us make the product stronger and more reliable.
 
-## Your Feedback
+## Rate eMarket
 
-Dear valuable customer,  
-Thank you very much for choosing our product.  
-It's our pleasure to serve top-notch service to you.  
-Please give us your honest feedback that will help us to make a more strong and reliable product by click here [Rate Us](https://codecanyon.net/downloads).  
-Thank you very much.
+If you are happy with eMarket, please leave a rating and a short review:
 
-## Share Your Experience
+1. Sign in to your Envato account and open [codecanyon.net/downloads](https://codecanyon.net/downloads).
+2. Find eMarket in your list of purchases and click the stars to rate it.
+3. Add a few words about what you liked and submit the rating.
 
-We value your feedback to improve eMarket and make it better for everyone.
+The installer's last step (**All done**) also shows a **leave a 5-star rating** link.
 
-### Ways to Provide Feedback
+## Send suggestions and bug reports
 
-1. **Online Form**
+Send feature requests, ideas and bug reports to the support team, by email to
+[support@wrteam.in](mailto:support@wrteam.in) or through the contacts on the [Support](./support.md) page.
 
-   - Visit: [feedback.wrteam.in](https://feedback.wrteam.in)
-   - Fill out the feedback form
-   - Rate your experience
-   - Submit suggestions
+**For a feature request**, tell us:
 
-2. **Email**
+- what you want to do and why (your use case),
+- which part it is for: admin panel, seller or delivery boy panel, website, or an app,
+- an example or screenshot from another product, if you have one.
 
-   - Send to: feedback@wrteam.in
-   - Subject: eMarket Feedback
-   - Include version number
-   - Describe your experience
+**For a bug report**, tell us:
 
-3. **Community Forum**
-   - Post in Feedback section
-   - Share your thoughts
-   - Discuss with others
-   - Vote on suggestions
+- the steps to reproduce it, what you expected and what happened instead,
+- screenshots or a screen recording and any error message,
+- your eMarket version (shown on **Settings → System Updater**) and the matching lines from **Settings → Logs**.
 
-## Feedback Categories
-
-### Feature Requests
-
-1. **New Features**
-
-   - Describe functionality
-   - Explain use case
-   - Suggest implementation
-   - Provide examples
-
-2. **Improvements**
-
-   - Identify current feature
-   - Suggest enhancement
-   - Explain benefits
-   - Share examples
-
-3. **Integration Ideas**
-   - New integrations
-   - API suggestions
-   - Third-party services
-   - Custom modules
-
-### Bug Reports
-
-1. **Issue Details**
-
-   - Describe problem
-   - Steps to reproduce
-   - Expected behavior
-   - Actual behavior
-
-2. **System Information**
-
-   - eMarket version
-   - Server details
-   - Browser/device
-   - Screenshots
-
-3. **Impact Level**
-   - Critical issues
-   - Major problems
-   - Minor bugs
-   - Visual glitches
-
-### User Experience
-
-1. **Interface Feedback**
-
-   - Navigation flow
-   - Layout design
-   - Color scheme
-   - Responsiveness
-
-2. **Performance**
-
-   - Loading times
-   - Response speed
-   - Resource usage
-   - Optimization needs
-
-3. **Usability**
-   - Ease of use
-   - Learning curve
-   - Accessibility
-   - Mobile experience
-
-## Feedback Process
-
-### Submission Guidelines
-
-1. **Be Specific**
-
-   - Clear description
-   - Detailed examples
-   - Actual scenarios
-   - Real use cases
-
-2. **Be Constructive**
-
-   - Positive tone
-   - Helpful suggestions
-   - Practical solutions
-   - Respectful feedback
-
-3. **Include Context**
-   - Your role
-   - Use frequency
-   - Business type
-   - Key requirements
-
-### Review Process
-
-1. **Initial Review**
-
-   - Receipt confirmation
-   - Basic validation
-   - Category assignment
-   - Priority setting
-
-2. **Evaluation**
-
-   - Technical review
-   - Feasibility check
-   - Impact assessment
-   - Resource estimation
-
-3. **Implementation**
-   - Development planning
-   - Feature roadmap
-   - Release schedule
-   - Update notification
-
-## Recognition Program
-
-### Contributor Levels
-
-1. **Active Contributor**
-
-   - Regular feedback
-   - Quality suggestions
-   - Bug reports
-   - Community help
-
-2. **Expert Contributor**
-
-   - Detailed analysis
-   - Solution proposals
-   - Technical insights
-   - Implementation ideas
-
-3. **Champion**
-   - Consistent participation
-   - Valuable insights
-   - Community leadership
-   - Feature influence
-
-### Rewards
-
-1. **Recognition**
-
-   - Public acknowledgment
-   - Community badges
-   - Feature credits
-   - Testimonials
-
-2. **Benefits**
-
-   - Priority support
-   - Beta access
-   - Special features
-   - Direct contact
-
-3. **Opportunities**
-   - Advisory role
-   - Beta testing
-   - Feature preview
-   - Development input
-
-## Important Notes
-
-1. **Privacy**
-
-   - Data protection
-   - Confidentiality
-   - Information use
-   - Sharing policy
-
-2. **Response Time**
-
-   - Acknowledgment: 24h
-   - Initial review: 72h
-   - Detailed response: 1 week
-   - Implementation: Varies
-
-3. **Follow-up**
-   - Status updates
-   - Implementation news
-   - Feature releases
-   - Continued dialogue
+Thank you for helping us improve eMarket.
