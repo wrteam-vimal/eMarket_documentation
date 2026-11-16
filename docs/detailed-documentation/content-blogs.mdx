@@ -1,12 +1,23 @@
 ---
 sidebar_position: 10
-title: Web Presence, Blogs & Subscriptions
-description: Complete guide for managing public website branding, footer elements, social media links, content marketing blogs, and vendor subscription plans.
+title: Web Content, Blogs & Subscriptions
+description: Website settings, social media links, Page Builder landing pages, About Us / Contact Us / customer policy pages, the blog, and customer subscription plans in eMarket.
 ---
 
-# Web Presence, Blogs & Subscriptions
+# Web Content, Blogs & Subscriptions
 
-A strong web presence and engaging content strategy drives organic user acquisition and brand credibility. This guide covers website appearance settings, content publishing via the built-in blogging engine, and marketplace vendor subscription plans.
+This guide covers the content your customers read: website settings and social links, custom landing pages built with the **Page Builder**, the **About Us**, **Contact Us** and customer policy pages, the **blog**, and the customer **subscription plans**.
+
+Most of these screens are opened from the **Settings** hub (`/system_settings`): General Web Settings and Social Media are under **Apps & Website**; Contact Us, About Us and Customer Policies under **Content & Policies**. Page Builder is under **Home Builder** in the sidebar, Blogs and Subscriptions have their own sidebar entries.
+
+:::tip Multi-language content
+Every content form here has one tab per language. In the default-language tab, **Translate Empty Fields** fills only the empty fields of the other languages, and **Translate & Overwrite** re-translates all of them (and replaces what you typed by hand). Fields marked required are required in the default language only.
+:::
+
+| Screen | Shared or per module |
+| :--- | :--- |
+| General Web Settings, Social Media, About Us, Contact Us, Customer Policies, Subscriptions | Shared by every module |
+| Page Builder pages, Blog Categories (and their blogs) | Per module — they follow the module selected in the header |
 
 ---
 
@@ -14,78 +25,444 @@ A strong web presence and engaging content strategy drives organic user acquisit
 
 ![General Web Settings](/img/detailed-documentation/general-web-settings.webp)
 
-Controls the customer-facing eMarket website header, hero banners, footer navigation, and brand messaging.
+### Overview
 
-### Key Sections Configured
-- **Header & Navigation**: Primary logo, navigation links, and customer login buttons.
-- **Hero & Promotional Sections**: Tagline, call-to-action app download buttons (Google Play & Apple App Store).
-- **Footer Blocks**: About snippet, legal links, customer care links, and copyright text.
-- **Color Theme**: Synchronize web storefront accents with brand colors.
+Settings for the customer **website**: its title, default SEO texts, logos, favicon, maintenance mode and the "download our app" block. Needs the `general_settings` permission. Reached from **Settings → Apps & Website → General Web Settings**. The mobile apps are not affected, except that the app-store links shown on the website come from here.
+
+### Key Components
+
+- **Header Settings** card ("Website title, SEO meta, maintenance mode, logos and favicon") with one tab per language.
+- **App download Section** card.
+- **Update** button at the bottom saves the whole page.
+
+### Field Reference
+
+| Field | Required | What it does | Example |
+| :--- | :--- | :--- | :--- |
+| **Site Title** | Yes | Website name in the browser tab and header. | eMarket Fresh |
+| **Website Url** | Yes | Public address of the website. | `https://shop.example.com` |
+| **Meta Title** | Yes | Default SEO title for search engines. | eMarket — Groceries delivered in 30 minutes |
+| **Meta Description** | Yes | Default SEO description. | Order fruits, vegetables and daily essentials online. |
+| **Website Maitenance Mode** | No | Enable / Disable switch. While on, the website shows the remark instead of the store. | Off |
+| **Website Remark** | When maintenance is on | Message shown to visitors during maintenance. | We are upgrading our store and will be back at 6 PM. |
+| **Light Theme Web Logo**, **Dark Theme Web Logo**, **Favicon Icon**, **Placeholder Image** | Yes (marked *) | Drop, paste (hover, then <kbd>Ctrl</kbd>/<kbd>⌘</kbd> + <kbd>V</kbd>) or click to upload an image. The placeholder is shown where a product or banner image is missing. | logo.png |
+| **App Title**, **Short Description** | No | Heading and text of the app download block. | Get the eMarket app |
+| **Android App** + **Android Application's URL** + **Android play store logo** | No | Shows the Google Play badge and link. | `https://play.google.com/store/apps/details?id=…` |
+| **IOS App** + **IOS Application's URL** + **IOS store logo** | No | Shows the App Store badge and link. | `https://apps.apple.com/app/…` |
+
+### Tutorial: Put the Website in Maintenance During a Server Move
+
+1. Open **Settings → General Web Settings**.
+2. Turn on **Website Maitenance Mode** and type the **Website Remark**, e.g. "We are upgrading our store and will be back at 6 PM".
+3. Click **Update**.
+4. When the work is done, turn the switch off and click **Update** again.
+
+**Result:** website visitors see the remark instead of the shop until you switch it off. The admin panel keeps working.
+
+:::caution Tips & common mistakes
+- **Update** refuses to save while **Site Title**, **Website Url**, **Meta Title** or **Meta Description** is empty in the default language.
+- Upload a dark-theme logo with light text, otherwise the logo disappears on a dark background.
+- Maintenance mode applies to the website only — the mobile apps keep taking orders.
+:::
 
 ---
 
-## 2. Social Media Channels (`/social_media`)
+## 2. Social Media (`/social_media`)
 
 ![Social Media](/img/detailed-documentation/social-media.webp)
 
-Direct customers to your verified corporate social channels to build community and trust.
+### Overview
 
-### Setup Instructions
-- Add official profile URLs for **Facebook**, **Instagram**, **Twitter / X**, **YouTube**, **LinkedIn**, and **WhatsApp Support**.
-- Icons appear dynamically in website footers and app sidebar drawers.
+The social media links shown in the website footer. Needs `manage_social_media_list`; Add / Edit / Delete need the matching social media permissions. Reached from **Settings → Apps & Website → Social Media**.
+
+### Key Components
+
+- **Search**, **Add** and **Refresh** buttons; **Per page** and pagination.
+
+| Column | Meaning |
+| :--- | :--- |
+| **ID** | Link number. |
+| **Icon** | The uploaded icon (e.g. the round "in" icon for LinkedIn). |
+| **Name** | Network name (e.g. LinkedIn, YouTube, X, Instagram, Facebook). |
+| **Link** | Full profile URL (e.g. `https://instagram.com/`). |
+| **Actions** | **Edit**, **Delete**. |
+
+### Field Reference: Add / Edit Social Media
+
+| Field | Required | What it does | Example |
+| :--- | :--- | :--- | :--- |
+| **Name** | Yes | Network name (used as the icon's label). | Instagram |
+| **Link** | Yes | Full URL including `https://`. | `https://instagram.com/emarketfresh` |
+| **Icon** | Yes when adding | JPG, PNG, GIF, WEBP or SVG, max 2 MB. A small square or round icon works best. | instagram.svg |
+
+### Tutorial: Add Your Instagram Page
+
+1. Open **Settings → Social Media** and click **Add**.
+2. Enter **Name** `Instagram` and paste the profile **Link** (`https://instagram.com/…`).
+3. Upload the **Icon** and click **Save**.
+
+**Result:** the icon appears in the list and in the website footer, opening your profile.
+
+:::tip
+The **Link** field only accepts a complete URL — `instagram.com/emarket` without `https://` is rejected.
+:::
 
 ---
 
-## 3. Blog Engine & Content Marketing
+## 3. Page Builder (`/page_builder`)
 
-Content marketing is one of the highest-ROI channels for attracting organic search traffic to your marketplace.
+![Page Builder](/img/detailed-documentation/page-builder.webp)
 
-### 3.1 Blog Categories (`/blog_categories`)
+### Overview
+
+**Custom Pages** are "landing pages that banners and links can open (sales, campaigns, collections)". Each module has its own pages. The page is under **Home Builder → Page Builder** in the sidebar. Needs `page_builder_list`; creating, editing, deleting and publishing need `page_builder_create`, `page_builder_update`, `page_builder_delete` and `page_builder_publish`. A published, active page can be opened from Home Builder banners in the customer app and website (redirect type **Page Builder**).
+
+### Key Components (page list)
+
+- **Search**, **Refresh** and **Create Page**.
+
+| Column | Meaning |
+| :--- | :--- |
+| **Name** | Page name; click it to open the editor (e.g. Weekend Fresh Deals). |
+| **Slug** | Web address part, e.g. `weekend-fresh-deals`. |
+| **Status** | **Published** or **Draft**. |
+| **Published at** | When the live version was last published (e.g. 11/3/2026, 11:39:35 AM). |
+| **Active** | Switch. Only a published page can be activated. |
+| **Actions** | **Edit**, **Clone**, **Delete**. |
+
+- **Create Page** modal: only a **Name** *(required)*, e.g. "Summer Sale". The editor opens after creating.
+- **Delete** warns when the page is still used as a redirect ("Page is in use… those redirects will stop working. Delete anyway?") and deletes images uploaded for it in the builder (images still used elsewhere are kept).
+
+### The Page Editor (`/page_builder/edit/:id`)
+
+![Page Builder editor](/img/detailed-documentation/page-builder-editor.webp)
+
+- **Top bar**: back arrow, page name, **Draft** / **Published** state, **Edit Draft** / **Edit Published** switch, **Save Draft**, and **Publish** (or **Publish Changes** when editing the published version). A note under it says which version you are editing ("Editing the published page.").
+- **Left column**: **Page Settings** entry, the **Sections** list (drag handle, active switch, a ⋮ menu to **Clone** or **Delete**), and **Add** to insert a new section.
+- **Section types**: Banner Slider, Category Section, Product Slider, Tabbed Products, Top Brands, Grid Banner, Title Image, Heading / Text, Nearby Stores, Shop by Country.
+- **Centre — live preview** with **Phone**, **Tablet** and **Web** tabs ("This preview is an approximate view — the actual layout may vary").
+- **Right column — settings** of the selected section, with toggles to show it on **App**, **Tablet** and/or **Web**, and **Save as template** to reuse it later.
+
+### Field Reference: Page Settings
+
+| Field | Required | What it does | Example |
+| :--- | :--- | :--- | :--- |
+| **Name** | Yes | "Shown only in the admin panel and the redirect picker." | Weekend Fresh Deals |
+| **Slug** | No | "Used in the web URL, e.g. /page/diwali-sale. Leave blank to generate from the name." The refresh button regenerates it from the name. | weekend-fresh-deals |
+| **Page Title** | No (per language) | Title customers see at the top of the page. | Weekend Fresh Deals |
+| **Header Colour** | No | Background of the page's top bar in the app (white unless changed). | `#FFFFFF` |
+| **Title Text Colour** | No | Colour of the title and back arrow; empty uses the app's own colour. | `#111111` |
+| **Header color (dark theme)**, **Title color (dark theme)** | No | Same for the dark theme; blank lets the app choose. | — |
+| **Active** | No | Same as the list's **Active** switch. | On |
+
+### Tutorial: Build a Landing Page and Link It from a Banner
+
+*Scenario:* the Grocery module runs "Weekend Fresh Deals" and a home banner should open a page with the discounted products.
+
+1. Make sure the header shows **Grocery**. Open **Home Builder → Page Builder** and click **Create Page**; enter the name `Weekend Fresh Deals` and confirm.
+2. In the editor, click **Page Settings** and fill **Page Title** (e.g. "Weekend Fresh Deals"). Leave **Slug** empty to generate `weekend-fresh-deals`.
+3. Click **Add** and choose **Banner Slider**; upload the campaign banner in its settings on the right.
+4. Click **Add** again and choose **Tabbed Products** or **Product Slider**, then pick the discounted products. Check the **Phone** and **Web** previews.
+5. Click **Save Draft**, then **Publish** and confirm ("This will make the page live…").
+6. Back on the page list, make sure the **Active** switch is on.
+7. Open **Home Builder → Home Builder**, edit the home layout, select the banner, set **Redirect Type** to **Page Builder** and pick `Weekend Fresh Deals` in **Redirect Target**. Save and publish the home layout.
+
+![Banner redirecting to a custom page](/img/detailed-documentation/banner-redirect-page.webp)
+
+**Result:** customers tapping the home banner in the app or website open the Weekend Fresh Deals page. In the redirect picker, unpublished pages are marked "(Draft)" and inactive ones "(Inactive)", so you can see when a link would not work. See the [Promotions Guide](./promotions.mdx) for the Home Builder itself.
+
+### Tutorial: Change a Live Page Safely
+
+1. Open the page and switch to **Edit Draft**.
+2. Make your changes and click **Save Draft** as often as you like — customers still see the published version.
+3. When ready, click **Publish** to replace the live version.
+
+**Result:** the live page changes only at the moment you publish. Editing in **Edit Published** mode and clicking **Publish Changes** instead updates the live layout directly and leaves the draft untouched.
+
+:::caution Tips & common mistakes
+- A page must be **published** before its **Active** switch can be turned on.
+- Pages belong to the module that was selected when they were created; switch the header module to find them.
+- Deleting a page breaks banners that still redirect to it — the delete dialog lists them.
+- Sections switched off for **App** or **Web** do not appear on that platform even though they show in the editor.
+:::
+
+---
+
+## 4. About Us (`/about_us`)
+
+![About Us](/img/detailed-documentation/about-us.webp)
+
+### Overview
+
+The content of your store's **About Us** page ("Content shown on the About Us page of your store, per language"), shown in the customer app and website. Needs `manage_about_us`. Reached from **Settings → Content & Policies → About Us**.
+
+### Key Components
+
+- **Update Information** card with one tab per language and the translate buttons.
+- **About Us** rich-text editor *(required in the default language)* with File, Edit, View, Insert, Format, Tools and Table menus, image/video/link buttons and a word count.
+- **Update** saves the page.
+
+### Tutorial: Edit About Us in Each Language
+
+*Scenario:* the store runs in English and Hindi and wants the same story in both.
+
+1. Open **Settings → Content & Policies → About Us**.
+2. In the **English** tab, write the text: who you are, which cities you serve, your delivery promise. Use **Format** or the toolbar for headings and bold text.
+3. Click **Translate Empty Fields** to fill the Hindi tab, then open that tab and correct the wording.
+4. Click **Update**.
+
+**Result:** customers see the About Us text in the language they chose in the app or website.
+
+:::tip
+Images pasted into the editor are uploaded to your server. Keep them small — this page is often opened on mobile data.
+:::
+
+---
+
+## 5. Contact Us (`/contact_us`)
+
+![Contact Us](/img/detailed-documentation/contact-us.webp)
+
+### Overview
+
+The contact details shown on your store's **Contact Us** page, per language. Needs `manage_contact_us`. Reached from **Settings → Content & Policies → Contact Us**. It works exactly like About Us.
+
+- **Update Information** card with one tab per language and the translate buttons.
+- **Contact Us** rich-text editor (address, phone, email, opening hours — whatever you want to show).
+- **Update** saves the page.
+
+:::tip
+Keep the phone number and email here the same as the support contacts in **Store Settings → Store Setting**, so customers do not get two different numbers.
+:::
+
+---
+
+## 6. Customer Policies (`/privacy_policy`)
+
+![Customer Policies](/img/detailed-documentation/privacy-policy.webp)
+
+### Overview
+
+**Privacy Policy And Terms & Conditions** — the "customer-facing policies shown in the app and website, per language". Needs `manage_privacy_policy`. Reached from **Customers → Customer Policies** in the sidebar or **Settings → Content & Policies → Customer Policies**. (Seller and delivery boy policies have their own pages, covered in the [Sellers](./sellers.mdx) and [Delivery](./delivery.mdx) guides.)
+
+### Key Components
+
+- **Update Privacy Policy** card with one tab per language and the translate buttons.
+- **Update** saves all five policies at once.
+
+### Field Reference
+
+| Field | Required | What it does | Example content |
+| :--- | :--- | :--- | :--- |
+| **Privacy Policy** | Yes | What customer data you collect and why. | Data collected at sign-up, payment data handling |
+| **Returns and Exchanges Policy** | Yes | Return window and conditions. | Fresh produce can be returned at delivery if damaged |
+| **Shipping Policy** | Yes | Delivery areas, times and charges. | Free delivery above ₹499 |
+| **Cancellation Policy** | Yes | Until when and how orders can be cancelled. | Cancel until the order is shipped |
+| **Terms & Conditions** | Yes | General terms of use. | — |
+
+An **eye** button next to each policy opens its public page in a new tab (for example `/customer-privacy-policy?lang=en`).
+
+### Tutorial: Publish a Return Policy
+
+1. Open **Customers → Customer Policies**.
+2. In the default-language tab, write the **Returns and Exchanges Policy**: return window, condition of items, refund method (wallet or original payment).
+3. Fill the other four editors too — all five are required in the default language.
+4. Click **Update**, then click the **eye** button next to the policy to check the public page.
+
+**Result:** the policy shows in the app and on the website, and the public link can be used in app-store listings.
+
+:::caution
+Keep the policy text in line with your real settings (return days on products, cancellation rules). Customers and payment providers read these pages.
+:::
+
+---
+
+## 7. Blog Categories (`/blog_categories`)
 
 ![Blog Categories](/img/detailed-documentation/blog-categories.webp)
 
-Group articles into topical silos such as "Healthy Living", "Recipes", "Tech Gadgets", or "Merchant Spotlight".
+### Overview
+
+Groups for your blog posts (e.g. "Recipes", "Healthy Living"). In the sidebar under **Blogs → Blog Categories** (MODULES group): categories belong to the module selected in the header. Needs `blog_category_list`; Add / Edit / Delete need the matching blog category permissions.
+
+### Key Components
+
+- **Search**, **Refresh** and **Add Category**; **Per page** and pagination.
+
+| Column | Meaning |
+| :--- | :--- |
+| **ID** | Category number. |
+| **Name** | Category name (e.g. Kitchen Tips). |
+| **Slug** | Web address part (e.g. `kitchen-tips`). |
+| **Blogs Count** | Number of posts in the category (e.g. 3). |
+| **Status** | **Active** or **Deactive** (e.g. Seasonal Picks is Deactive). |
+| **Actions** | **Edit**, **Delete**. |
+
+### Field Reference: Add / Edit Category
+
+| Field | Required | What it does | Example |
+| :--- | :--- | :--- | :--- |
+| **Category Name** | Yes (default language) | Name shown on the blog. | Recipes |
+| **Slug** | Yes | Filled from the name; must be unique among blog categories. | recipes |
+| **Meta Title**, **Meta Keywords**, **Meta Description** | No | SEO texts for the category page. | Easy recipes with fresh produce |
+| **Status** | Yes | Activate / Deactivate. | Activate |
+
+:::danger Deleting a category deletes its blogs
+Deleting a category that has posts also deletes **every blog in it**, permanently, together with their cover images and the images in their text (images still used by other content are kept). The dialog lists the posts and asks you to tick "I agree to delete this category and all blogs that belong to it." To keep the posts, move them to another category first, or set the category to **Deactivate** instead.
+:::
 
 ---
 
-### 3.2 Publish Blogs (`/blogs`)
+## 8. Blogs (`/blogs`)
 
 ![Blogs](/img/detailed-documentation/blogs.webp)
 
-A rich WYSIWYG blogging console for drafting and publishing articles.
+### Overview
 
-#### Publishing Steps
-1. Navigate to **Blogs > Add Blog**.
-2. Enter the **Article Title** and select the **Blog Category**.
-3. Upload a hero **Featured Image**.
-4. Draft the article body using rich text formatting, bullet points, and embedded images.
-5. Fill in **SEO Meta Keywords** and **Meta Description** to maximize search rankings.
-6. Toggle status to `Published`.
+The articles of your store's blog, shown on the website and in the apps. In the sidebar under **Blogs → Blogs**. Needs `blog_list`; Add / Edit / Delete need `blog_create`, `blog_update` and `blog_delete`. Each post belongs to a blog category, so it follows that category's module.
+
+### Key Components
+
+- **Search**, a **category filter** (**All Categories** or one category), a **Grid View** / **List View** switch, **Refresh** and **Add Blog**.
+- **Grid view**: a card per post with image, title, status badge and actions. **List view** columns: ID, Image, Title, Category, Status, Actions.
+
+### Field Reference: Add / Edit Blog
+
+| Field | Required | What it does | Example |
+| :--- | :--- | :--- | :--- |
+| **Title** | Yes (default language) | Post title. | 5 Quick Breakfasts with Seasonal Fruit |
+| **Slug** | Yes | Filled from the title; must be unique among blogs. | 5-quick-breakfasts-with-seasonal-fruit |
+| **Category** | Yes | The blog category. | Recipes |
+| **Image** | Yes when adding | Cover image. JPG, PNG or GIF (WEBP also accepted), max 2 MB. | breakfast.jpg |
+| **Status** | Yes | Activate / Deactivate. Only active posts are shown to customers. | Activate |
+| **Short Description** | Yes (default language) | Summary shown on the blog list. Has the **Generate with AI** button. | Five breakfasts ready in ten minutes. |
+| **Description** | Yes (default language) | Full article in a rich-text editor. | — |
+| **Tags** | No | "These tags help you in search result." | breakfast, fruit |
+| **Meta Title**, **Meta Keywords**, **Meta Description** | No | SEO texts for the post. | Quick fruit breakfasts — eMarket Blog |
+
+### Tutorial: Write and Publish a Blog Post (with Generate with AI)
+
+![Add Blog form](/img/detailed-documentation/blog-form.webp)
+
+*Scenario:* the Grocery marketing team publishes a weekly recipe in the **Recipes** category.
+
+1. Check that the header module is **Grocery** and that **Blogs → Blog Categories** has an active **Recipes** category.
+2. Open **Blogs → Blogs** and click **Add Blog**.
+3. In the default-language tab, type the **Title**, e.g. `5 Quick Breakfasts with Seasonal Fruit`. The **Slug** fills itself.
+4. Choose **Category** `Recipes` and upload the **Image**.
+5. Click **Generate with AI**. It sends the title to the AI service and fills the title, **Short Description** and **Description** of the default language. Read and edit the text — check prices, product names and claims.
+6. Add **Tags** and the three meta fields; set **Status** to **Activate**.
+7. For other languages, click **Translate Empty Fields** and review the tabs.
+8. Click **Save**.
+
+**Result:** the post appears in the grid with an **Active** badge, the **Recipes** category's **Blogs Count** goes up by one, and customers can read it on the blog.
+
+:::caution Tips & common mistakes
+- **Generate with AI** needs the **Gemini Key** in **Store Settings → Third Party API Credentials**, and a title in the default language; otherwise it shows an error.
+- The AI overwrites the default-language title, short description and description you already typed.
+- Blog lists follow the header module: a post created under Grocery is not listed while Pharmacy is selected.
+- Deleting a post also deletes its cover image and the images in its text (images still used elsewhere are kept).
+:::
 
 ---
 
-## 4. Vendor Subscriptions (`/subscriptions`)
+## 9. Subscription Plans (`/subscriptions`)
 
 ![Subscriptions](/img/detailed-documentation/subscriptions.webp)
 
-In addition to order commissions, marketplace operators can monetize vendors through recurring subscription membership plans (Free, Bronze, Silver, Gold).
+### Overview
 
-### Subscription Plan Parameters
-- **Plan Name & Pricing**: Monthly or annual fee.
-- **Product Limit**: Maximum active SKUs a vendor can list (e.g. 50 products for Bronze, Unlimited for Gold).
-- **Order Limit**: Monthly order cap before requiring plan upgrade.
-- **Commission Discount**: Preferential lower commission rates for premium subscription subscribers.
+**Manage Subscriptions** — paid membership plans that **customers** buy for a number of days to get **free delivery above** a set order amount. (These are not seller plans.) In the sidebar under **Subscriptions → Subscription Plans** (GENERAL group). Needs `subscription_list`; Add / Edit / Delete need the matching subscription permissions. Customers buy a plan for themselves (in the iOS app it is sold as an in-app purchase); ended subscriptions are expired automatically by the scheduler (see [System Status, Logs & Updates](./system-maintenance.mdx#5-the-scheduler-requirement)).
 
-### Subscriptions FAQ (`/subscriptions_faqs`)
+### Key Components
 
-![Subscriptions FAQs](/img/detailed-documentation/subscriptions-faqs.webp)
+- **Search**, the **Enter subscription name** box with a save button (the name of your membership programme as customers see it, e.g. "eMarket Plus"), **Refresh** and **Add Subscription**.
+- **Plan cards**: plan name, `#ID`, **Active** / **Deactive** badge, price with the original price struck through when a discounted price is set and "/ *N* Days" (e.g. **₹99.00** ~~₹149.00~~ / 30 Days), **Days**, **Free Delivery Above** ("-" when empty), an **Active** switch, and **Edit** / **Delete**.
 
-Provides vendors with clear answers regarding plan upgrades, billing cycles, automated renewals, and cancellation terms.
+### Field Reference: Add / Edit Subscription Plan
+
+| Field | Required | What it does | Example |
+| :--- | :--- | :--- | :--- |
+| **Plan Name** | Yes (default language) | Plan name shown to customers; per-language tabs. | Monthly Saver |
+| **Days** | Yes | Length of the plan in days. Each plan must have a different number of days. | 30 |
+| **Price** | Yes | Regular price, at least 1. | 149 |
+| **Discounted Price** | No | Price customers actually pay; must be less than **Price**. | 99 |
+| **Free Delivery Above** | No | "Minimum order amount for free delivery" for subscribers. | 199 |
+| **iOS Product ID** | For iOS | The in-app purchase product ID created in App Store Connect. | `emarket.plus.monthly` |
+| **Status** | Yes | Active / Deactive. | Active |
+
+A note in the modal reminds you to configure free delivery in **Delivery Settings** "to avoid conflicts with time slots that have free delivery enabled".
+
+### Tutorial: Create a Monthly Plan with a Free-Delivery Threshold
+
+*Scenario:* you want a **Monthly Saver** plan: 30 days for ₹99 (normally ₹149), with free delivery on orders above ₹199.
+
+1. Open **Subscriptions → Subscription Plans**. If the programme has no name yet, type it in **Enter subscription name** (e.g. `eMarket Plus`) and click the save button next to it.
+2. Click **Add Subscription**.
+3. Enter **Plan Name** `Monthly Saver`, **Days** `30`, **Price** `149` and **Discounted Price** `99`.
+4. Enter **Free Delivery Above** `199`.
+5. If you sell through the iOS app, enter the **iOS Product ID** of the matching in-app purchase.
+6. Set **Status** to **Active** and click **Save**.
+
+**Result:** a **Monthly Saver** card shows **₹99.00** ~~₹149.00~~ / 30 Days and **Free Delivery Above ₹199.00**. Customers can now buy it; while it runs, their orders above ₹199 get free delivery.
+
+:::caution Tips & common mistakes
+- If active **time slots with free delivery** exist (with time slots switched on), the panel shows "Cannot Create Subscription Plan" — remove free delivery from those time slots in [Delivery Settings](./delivery.mdx) first.
+- Two plans cannot have the same **Days** value.
+- **Discounted Price** must be lower than **Price**, or the form shows an error.
+- Plans are shared by all modules.
+- Without the scheduler running, ended subscriptions are not expired and customers keep free delivery.
+:::
 
 ---
 
-## Real-World Web & Subscription Use Cases
+## 10. Subscription FAQs (`/subscriptions_faqs`)
 
-- **Monetizing High-Volume Merchants**: Instead of charging a 15% commission on every order, high-volume supermarkets subscribe to a ₹4,999/month **Gold Subscription Plan** that cuts their per-order commission down to 5%.
-- **SEO Traffic Acquisition via Recipe Blogs**: An online grocery marketplace publishes weekly seasonal recipes (e.g. "Top 5 Summer Smoothies") with direct clickable links to add all recipe ingredients to cart with a single tap.
-- **App Store Download Acquisition**: Directing website visitors via prominent **General Web Settings** app badges increases daily mobile app installation volume.
+![Subscriptions FAQs](/img/detailed-documentation/subscriptions-faqs.webp)
+
+### Overview
+
+Questions and answers shown to customers next to the subscription plans. In the sidebar under **Subscriptions → Subscriptions FAQs**. Needs `subscription_faq_list`; Add / Edit / Delete need the matching permissions. These are separate from the general [FAQs](./admin-faqs.mdx#3-faqs-faqs).
+
+### Key Components
+
+- **Search**, an **Enable drag and drop** switch, **Refresh** and **Add Subscription FAQ**.
+- With **Enable drag and drop** on, a drag column appears and rows can be dragged into a new order; the sort orders are saved for you.
+
+| Column | Meaning |
+| :--- | :--- |
+| **ID** | FAQ number. |
+| **Frequently Asked Questions** | Question and answer (long answers have **View More / View Less**). |
+| **Sort Order** | Position in the list shown to customers (e.g. 1 for "What do I get with an eMarket membership?"). |
+| **Status** | **Active** or **Deactive**. |
+| **Actions** | **Edit**, **Delete**. |
+
+### Field Reference: Add / Edit Subscription FAQ
+
+| Field | Required | What it does | Example |
+| :--- | :--- | :--- | :--- |
+| **Query** | Yes (default language) | The question. | Can I cancel my membership? |
+| **Answer** | Yes (default language) | The answer. | Your membership stays active until the end of the plan period. It does not renew automatically. |
+| **Sort Order** | Yes | Position; must be unique among subscription FAQs. | 2 |
+| **Status** | Yes | Active / Deactive. | Active |
+
+### Tutorial: Add and Reorder Subscription FAQs
+
+1. Click **Add Subscription FAQ**, enter **Query** `Is the membership valid in all cities?`, the **Answer**, a free **Sort Order** (e.g. `7`) and **Status** Active. Click **Save**.
+2. To move it to the top, turn on **Enable drag and drop** and drag the row above the others.
+3. Turn the switch off again.
+
+**Result:** customers see the FAQs under the plans in the new order.
+
+:::tip
+If saving fails on **Sort Order**, another FAQ already uses that number — pick a free number, or use drag and drop instead.
+:::
+
+---
+
+## Real-World Use Cases
+
+- **Free-delivery membership**: a grocery store sells a 30-day plan that gives free delivery on orders above ₹199, and answers "Can I cancel?" and "How do I pay?" in the Subscription FAQs.
+- **Campaign landing page**: for a weekend sale, marketing builds a "Weekend Fresh Deals" page in the Page Builder, publishes it, and points a Home Builder banner at it.
+- **Recipe blog**: a grocery store publishes weekly recipes in a "Recipes" blog category, with meta titles and tags for search engines.
+- **Planned downtime**: during a server move, the admin turns on **Website Maitenance Mode** with a short remark so customers know when the store is back.

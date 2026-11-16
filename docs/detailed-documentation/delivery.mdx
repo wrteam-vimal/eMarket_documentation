@@ -1,120 +1,445 @@
 ---
 sidebar_position: 5
 title: Delivery Operations & Fleet
-description: Comprehensive operational manual for delivery partner onboarding, time slot scheduling, cash collection reconciliation, driver payouts, and compensation models.
+description: How to add, approve and delete delivery boys in eMarket, set bonuses, delivery time slots and auto-assignment, collect COD cash, transfer funds, record salaries and manage the delivery boy policies.
 ---
 
 # Delivery Operations & Fleet Management
 
-Last-mile delivery is often the most critical touchpoint in on-demand commerce. The Delivery Operations suite in eMarket equips logistics managers to supervise driver fleets, manage scheduled delivery time windows, reconcile cash collected on delivery, and administer driver payroll.
+Two sidebar groups cover delivery:
+- **Delivery Settings**: **Delivery Settings** (time slots) and **Delivery Boy Assignment** (auto-assign).
+- **Delivery Boys**: **Add Delivery Boy**, **Delivery Boy Requests**, **Manage Delivery Boys**, **Fund Transfers**, **Delivery Boy Cash**, **Delivery Boy Policies** and **Salary**.
+
+Delivery charges are not set here: they belong to each city's delivery zone (see [Cities and Delivery Areas](./localization.mdx#3-cities-and-delivery-areas)). Delivery-boy payouts that riders ask for are approved in [Withdrawal Requests](./customer-finance.mdx#9-withdrawal-requests-withdrawal_requests). Demo mode and the Export menu work as described in the introduction ([Demo mode](./intro.mdx#6-demo-mode-read-only-panels), [Export menu](./intro.mdx#7-export-menu-csv-excel-pdf-print-copy)).
+
+**Money words used on this page**
+- **Balance** (Wallet Balance): what the delivery boy has earned (order bonuses, return-pickup bonuses) and can be paid out.
+- **Cash Received** (Cash in Hand): cash-on-delivery money the delivery boy collected from customers and has not handed over yet.
+- **Salary**: a fixed payment you record for salaried riders. It is a record only and does not change Balance.
 
 ---
 
-## 1. Manage Delivery Partners (`/delivery_boys`)
+## 1. Manage Delivery Boys (`/delivery_boys`)
 
 ![Manage Delivery Boys](/img/detailed-documentation/delivery-boys-manage.webp)
 
-The live master roster of all registered delivery personnel operating across your service territory.
+### Overview
+The list of all delivery boys of the admin's fleet. Sidebar: **Delivery Boys → Manage Delivery Boys** (permission `delivery_boy_list`). Only **Active** delivery boys are offered orders (by hand or by auto-assign). The page has two tabs: **Delivery Boys** and **Deleted delivery boys**.
 
-### Key Columns & Driver Parameters
-- **Name & Avatar**: Driver identity and profile photo.
-- **Mobile Number**: Primary contact for dispatch and emergency communication.
-- **Cash in Hand (₹)**: Current un-remitted cash collected by the driver from Cash-on-Delivery (COD) orders.
-- **Cash Limit (₹)**: Maximum COD cash threshold allowed before the driver is locked from receiving new orders until remitting funds.
-- **Bonus / Commission Percentage (%)**: Driver payout incentive per completed delivery.
-- **Availability / Status Switch**: Toggle to mark a driver as active or temporarily offline.
-- **Actions**: Edit driver profile, view order fulfillment history, or suspend account.
+### Screen layout
+- **Toolbar**: search box, **Filters** (Status: All, Active, Not-Approved, Deactive, Blocked), grid / list view switch, **Export**, **Refresh** and **Add Delivery Boy**.
+- **Grid cards** (as in the screenshot): initial, name, mobile, email, address, ID chip, **Balance**, **Cash Received**, **Bonus(%)** (hover for the bonus details), **Available** (Yes / No), the status badge and the View / Edit / Delete icons.
+
+| Column (list view) | Meaning |
+| --- | --- |
+| ID / Name / Mobile / Email / Address | The delivery boy's identity and contact details. |
+| Bonus(%) | Hover to see bonus type, commission %, minimum and maximum bonus. |
+| Balance | Earned money that can be paid out (see Fund Transfers). |
+| Cash Received | COD cash still to be handed over (see Delivery Boy Cash). |
+| Status | Registered, Active, Not-Approved, Deactive or Blocked. |
+| Available | Yes when the delivery boy is available for orders in the app. |
+| Actions | View, Edit and Delete. |
+
+### Deleting a delivery boy
+
+![Delete delivery boy dialog](/img/detailed-documentation/delivery-boy-delete-preview.webp)
+
+1. Click **Delete**. The dialog **Delete this delivery boy?** explains that the login is switched off, the delivery boy is removed from the lists and the email can be used to register again. It warns that any amount in the wallet is lost, and how many active orders are still assigned (in the screenshot: "3 active order(s) are still assigned to this delivery boy." for **Subhajit Roy**).
+2. Tick **I agree to delete this delivery boy account.** (the **Delete** button stays disabled until the box is ticked) and click **Delete**.
+3. Orders, cash collections and payouts are kept.
+
+### Deleted delivery boys tab
+
+![Deleted delivery boys](/img/detailed-documentation/delivery-boys-deleted.webp)
+
+Deleted delivery boys are listed here. There is no restore. The only action is **Delete permanently**: the dialog **Delete this delivery boy permanently?** explains that the login and uploaded documents and images are removed (from this server and external storage). Tick **I agree to delete this delivery boy permanently, with their documents and images. This cannot be undone.** and confirm. Orders, cash collections and payouts are still kept.
+
+### Tutorial: Let a rider go without losing money or orders
+Scenario: **Subhajit Roy** is leaving. He still has 3 active orders, ₹406.86 COD cash in hand and ₹615 balance.
+
+1. Open his card with the eye icon and check **Cash in Hand**, **Wallet Balance** and **Remaining to Deliver**.
+2. Reassign his open orders to other riders with **Assign Delivery Partner** on each [order's details page](./orders.mdx#2-order-details-ordersviewid).
+3. Record the cash he hands over in **Delivery Boy Cash** (section 7) until **Cash Received** is 0.
+4. Pay his balance with **Fund Transfers** (section 8) until **Balance** is 0.
+5. Back in **Manage Delivery Boys**, click Delete, tick **I agree to delete this delivery boy account.** and click **Delete**.
+
+**Result:** he can no longer sign in, the books are settled, and his past orders and cash records stay in the reports.
+
+:::caution Tips & common mistakes
+- Use Edit → **Status** → Deactive to pause a rider; deleting cannot be undone from the panel.
+- Delete only after the cash in hand and the wallet are settled; the dialog warns that the wallet amount is lost.
+- A seller's own delivery boys are managed by the seller (in the seller panel) and are not part of this admin fleet.
+:::
 
 ---
 
-## 2. Onboard Delivery Partner (`/delivery_boys/create`)
+## 2. Delivery Boy Details (`/delivery_boys/view/:id`)
+
+![Delivery Boy Details](/img/detailed-documentation/delivery-boy-details.webp)
+
+### Overview
+Opened with **View** on a row or card (permission `delivery_boy_list`). Everything about one rider: status, bonus, documents, money and work done. Use it before paying a rider or settling cash.
+
+### Screen layout
+- **Header**: name, status and **Online** / **Offline** badges, phone, email, city, date of birth, "Joined" date and ID, **Edit**, **Back** and an **Active** switch. For a seller's own delivery boy it shows which seller's fleet it belongs to.
+- **Bonus Type** chip (Commission or **Fixed / Salaried**) and document buttons (**Driving License**, **National Identity Card**). Bank details from the custom fields are shown too.
+- **Figure cards**: **Wallet Balance** (with Pending), **Total Earned** (with Salary), **Total Withdrawn**, **Cash in Hand** (with Collected) and **Cash Deposited**, then **Remaining to Deliver**, **Delivered** and **Returns Completed**.
+- **Tabs** with counts: **Settlement History**, **Cash Collection**, **Withdrawal Requests**, **Salary Transactions** and **Orders**, each with search and **Export**.
+
+| Settlement History column | Meaning |
+| --- | --- |
+| ID | Fund transfer ID. |
+| Type | Credit (earned) or Debit (paid out). |
+| Amount | Amount, with + or − sign. |
+| Closing Balance | Balance after this entry. |
+| Message | Reason (for example an order commission or a payout note). |
+| Date | When the entry was made. |
+
+:::tip Tips
+- **Cash in Hand** minus what you collect in **Delivery Boy Cash** should reach 0 at the end of each shift.
+- **Total Earned** shows the recorded salary underneath, but salary is not part of **Wallet Balance**.
+:::
+
+---
+
+## 3. Add / Edit Delivery Boy (`/delivery_boys/create`, `/delivery_boys/edit/:id`)
 
 ![Add Delivery Boy](/img/detailed-documentation/delivery-boys-add.webp)
 
-Form used by dispatch operations to register verified couriers into the dispatch system.
+### Overview
+The **Create Delivery Boy** form (**Delivery Boys → Add Delivery Boy**, permission `delivery_boy_create`) and the edit form (**Edit** on the list or details page). A delivery boy added by an admin is saved as **Active** and can sign in to the delivery boy app at once. **View Delivery boys** at the top right goes back to the list. With more than one active language, the **Name** can be filled per language (with **Translate Empty Fields** / **Translate & Overwrite**); the default language must be filled first.
 
-### Step-by-Step Onboarding Guide
-1. Enter the driver's **Full Name**, **Email**, **Phone Number**, and initial **Login Password** for the Delivery Partner Flutter App.
-2. Enter their residential **Address**, **City**, and assign operational delivery zones.
-3. Configure financial parameters:
-   - **Cash Limit**: Set threshold (e.g. ₹5,000 maximum COD cash holding).
-   - **Bonus Percentage**: Set per-order commission or incentive rate.
-4. Upload KYC verification documents:
-   - **Driving License** (Front & Back).
-   - **National Identity Card** (Government-issued photo ID).
-5. Set status to `Active` and click **Save**.
+### Field reference
+
+| Field | Required | What it does | Example |
+| --- | --- | --- | --- |
+| Name | Yes | Rider's name (per language). | Subhajit Roy |
+| Date Of Birth | Yes | Shown on the details page and in requests. | 15 Sep 1995 |
+| Mobile | Yes | Phone number. | 8715560060 |
+| Email | Yes | Login email for the delivery boy app; must not belong to another panel login. | delivery9@test.com |
+| Password / Confirm Password | Yes when adding | Must match. | |
+| Select or Search City | Yes | One or more cities the rider serves. Auto-assign only offers orders from sellers in these cities. | Kolkata |
+| Bonus Type | Yes | **Commission** (a % of each order) or **Fixed/Salaried** (no per-order bonus). | Commission |
+| Bonus Percentage (%) | Yes for Commission | At least 0.1. | 5 |
+| Minimum bonus amount / Maximum bonus amount | No | Limits per order; set 0 to remove a limit. | 15 / 50 |
+| Custom Fields | As set per field | By default: Driving License, National ID Card, Bank Name, Bank A/C No., Bank IFSC Code, A/C Name, Address, Other Payment Info. | |
+| Status (edit only) | Yes | Registered, Active, Not-Approved, Deactive, Block. | Active |
+| Remark (edit only) | Yes for Not-Approved, Deactive, Block | Reason shown to the rider. | Documents expired |
+
+How the Commission bonus is worked out: order final total × Bonus Percentage / 100, then raised to the minimum or cut to the maximum (a limit of 0 is ignored). Example: 5% of an order of ₹420 = ₹21; with minimum 15 and maximum 50 the rider gets ₹21. For an order of ₹200 (5% = ₹10) the rider gets the minimum ₹15. The bonus is fixed when the rider is assigned to the order.
+
+**Add Default Bonus** appears when the default bonus is switched on in [Store Settings](./settings.mdx#2-store-settings-store_settings) (**Bonus Settings**); it fills in the default bonus type and amounts. On the edit page, **Reset Bonus** clears the bonus values.
+
+### Tutorial: Add a delivery boy with bonus settings
+
+![Bonus details with the Commission type](/img/detailed-documentation/delivery-boys-add-bonus.webp)
+Scenario: a new part-time rider in Kolkata is paid 5% per order, at least ₹15 and at most ₹50.
+
+1. Open **Delivery Boys → Add Delivery Boy**.
+2. Enter **Name**, **Date Of Birth**, **Mobile**, **Email**, **Password** and **Confirm Password**.
+3. In **Select or Search City**, pick `Kolkata`. Add a second city if the rider also covers it.
+4. In **Delivery Boy Bonus Details**, choose **Bonus Type** `Commission`, enter **Bonus Percentage (%)** `5`, **Minimum bonus amount** `15` and **Maximum bonus amount** `50`. (Or click **Add Default Bonus** to copy your store defaults.)
+5. Fill the **Custom Fields**: upload the **Driving License** and **National ID Card**, and enter the bank details for payouts.
+6. Click **Save**.
+
+**Result:** the rider appears in **Manage Delivery Boys** as Active with **Bonus(%)** 5, can sign in to the delivery boy app, and is offered Kolkata orders (manually or by auto-assign).
+
+For a full-time rider, choose **Bonus Type** `Fixed/Salaried` instead and record the monthly pay in **Salary** (section 9).
+
+:::caution Tips & common mistakes
+- **Bonus Percentage** must be at least 0.1 for the Commission type; 0 is refused.
+- A rider with no city, or the wrong city, is never offered orders by auto-assign.
+- Changing the bonus does not change bonuses already fixed on assigned orders.
+:::
 
 ---
 
-## 3. Delivery Partner Applications (`/registered_delivery_boys`)
+## 4. Delivery Boy Requests (`/registered_delivery_boys`)
 
 ![Delivery Boy Requests](/img/detailed-documentation/delivery-boy-requests.webp)
 
-When couriers sign up independently through the Delivery Partner Mobile App, their profiles remain pending here until background verification is finalized.
+### Overview
+The **New Registered Delivery Boys** list: riders who signed up in the delivery boy app or on the registration page and wait for approval. Sidebar: **Delivery Boys → Delivery Boy Requests** (permission `delivery_boy_list`); a dot on the menu shows waiting requests.
 
-### Verification Steps
-1. Inspect uploaded license copies, vehicle registration documents, and identity numbers.
-2. Confirm telephone verification or reference checks.
-3. Click **Approve** to activate their account and permit immediate order dispatching.
+### Screen layout
+- Search, grid / list view and **Refresh**.
+- **Grid cards**: name, mobile, email, **Registered** badge, ID, **Bonus(%)** (0 until you set one), **Documents** (hover to open the driving license and ID proof), **Date of Birth**, registration date, and the buttons **Approved** and **Reject**.
+
+| Column (list view) | Meaning |
+| --- | --- |
+| ID / Name / Mobile / Email | The applicant. |
+| Bonus | Bonus set so far (usually 0). |
+| Documents | Uploaded driving license and ID proof. |
+| DOB / City / Date | Date of birth, city, registration date. |
+| Status / Actions | Registered; **Approved** and **Reject**. |
+
+### Tutorial: Approve a rider and give him a bonus
+Scenario: **Rakesh Bhoi** registered on 08 Nov 2026 with his documents.
+
+1. Open **Delivery Boys → Delivery Boy Requests**.
+2. Hover **Documents** on his card and open the driving license and ID proof.
+3. Click **Approved** and confirm. He becomes **Active**.
+4. Open **Manage Delivery Boys**, click **Edit** on Rakesh Bhoi and set his **Bonus Type** and amounts (requests come in with Bonus 0). Click **Update**.
+
+To refuse an applicant, click **Reject** and enter a remark in the **Remarks** box; the rider becomes Not-Approved.
+
+**Result:** Rakesh Bhoi can sign in to the delivery boy app and receive orders with the bonus you set.
+
+:::tip Tips
+- A rejection is only saved with a remark.
+- Approving does not set a bonus. Edit the rider right after approval, or he earns nothing per order.
+:::
 
 ---
 
-## 4. Delivery Settings & Time Slots (`/delivery_settings`)
+## 5. Delivery Settings (`/delivery_settings`)
 
 ![Delivery Settings](/img/detailed-documentation/delivery-settings.webp)
 
-Configure operational delivery windows, estimated fulfillment lead times, and daily order capacity limits.
+### Overview
+The **Manage Time Slots** page: "Turn delivery time slots on or off and choose how customers pick a delivery time." Sidebar: **Delivery Settings → Delivery Settings** (permission `delivery_settings`). Settings and slots are saved per module (the module selected in the panel header). The customer app and website show the active slots at checkout.
 
-### Time Slot Configuration
-- **Operating Days**: Select which days of the week delivery operations run.
-- **Time Slot Windows**: Create customizable time bands (e.g. `08:00 AM - 11:00 AM`, `01:00 PM - 04:00 PM`, `06:00 PM - 09:00 PM`).
-- **Maximum Order Capacity**: Limit orders per time window (e.g., maximum 50 orders per slot) to prevent delivery partner bottlenecks.
+### Time Slot Config
+
+| Field | Required | What it does | Example |
+| --- | --- | --- | --- |
+| Enable / Disable Time Slots | No | Off = customers get no time-slot choice; nothing else is required. | On |
+| Slot Type | No | **Fixed Time Window** (customers pick a window) or **Quick Delivery** (delivered within a set number of minutes). Quick Delivery needs **One Seller Cart** on in Store Settings → Seller Setting. | Fixed Time Window |
+| Delivery Estimate Days | No | Estimated delivery days. | |
+| How many Days you want to allow? | Yes for Fixed Time Window with slots on | How many days ahead customers can book. | 7 |
+
+Click **Save**.
+
+### Time slots table and form
+Columns: ID, Title, Slot Type, From Time, To Time, Last Order Time, Status, Free Delivery, Actions (Edit, Delete). Only slots of the selected slot type are listed. **Add New Time Slot** opens the form:
+
+| Field | Required | What it does | Example |
+| --- | --- | --- | --- |
+| Title | Yes | Slot name (per language). | Morning |
+| From Time / To Time | Yes (Fixed) | The delivery window. | 07:00 AM / 10:00 AM |
+| Last Order Time | Yes (Fixed), optional (Quick) | Ordering cut-off for the slot, 24-hour format. | 06:00 AM |
+| Duration (minutes) | Yes (Quick) | "Delivered within this many minutes of the order being placed." At least 1. | 30 |
+| Free Delivery | No | **Enable Free Delivery** for orders in this slot. Disabled while active subscription plans exist. | Off |
+| Status | No | Activate or Deactivate. | Activate |
+
+Only one Quick Delivery slot can exist; delete it before adding another.
+
+![Add New Time Slot form](/img/detailed-documentation/time-slot-add.webp)
+
+### Tutorial: Configure time slots for a grocery store
+Scenario: the Grocery module delivers in four windows a day, bookable up to 7 days ahead.
+
+1. Select **Grocery** in the panel header and open **Delivery Settings → Delivery Settings**.
+2. In **Time Slot Config**, switch **Enable / Disable Time Slots** on, choose **Fixed Time Window**, enter `7` in **How many Days you want to allow?** and click **Save**.
+3. Click **Add New Time Slot**. **Title** `Morning`, **From Time** 07:00, **To Time** 10:00, **Last Order Time** 06:00, **Status** Activate. Click **Save**.
+4. Repeat for `Afternoon` (12:00–15:00, last order 11:00), `Evening` (16:00–19:00, last order 15:00) and `Night` (19:00–22:00, last order 18:00).
+5. Check that the delivery charges for your cities are set in **Location → Cities** (see [Cities and Delivery Areas](./localization.mdx#3-cities-and-delivery-areas)); the time slots do not set prices, except for **Free Delivery** per slot.
+
+**Result:** at checkout in the Grocery module, customers pick a day within the next 7 days and one of the four windows.
+
+:::caution Tips & common mistakes
+- Slots are per module: slots made while Pharmacy is selected do not show in Grocery.
+- Switching **Slot Type** hides the slots of the other type from the table; they are not deleted.
+- **Quick Delivery** is refused unless **One Seller Cart** is on.
+:::
 
 ---
 
-## 5. Cash Collection Reconciliation (`/cash_collection`)
+## 6. Delivery Boy Assignment (`/auto-assign-settings`)
+
+![Delivery Boy Assignment](/img/detailed-documentation/auto-assign-settings.webp)
+
+### Overview
+Sidebar: **Delivery Settings → Delivery Boy Assignment** (permission `seller_delivery_boys`). Two cards: **Auto-Assign Settings** ("Control how new orders are offered to nearby delivery boys for the selected module") and **Seller Delivery Boys**. Settings are per module.
+
+### How auto-assign works
+1. When an order reaches **Shipped** (Quick Delivery orders already at **Received**), eMarket looks for drivers. Orders shipped with an external courier (courier name, tracking number or tracking URL filled) are skipped.
+2. Eligible drivers are **Active**, serve one of the seller's cities, and belong to the right pool: the admin's fleet, or the seller's own delivery boys if the seller uses **Own Delivery Boys**. Online drivers are preferred; drivers already at **Max Concurrent Orders / Driver** are left out.
+3. All eligible drivers get the offer in the delivery boy app, nearest first (distance from the store, only when the driver's location is fresher than **Location Staleness**). The first driver to accept gets the order.
+4. If nobody accepts within **Response Timeout**, a new round starts without the drivers who declined or timed out, up to **Max Rounds** or **Total Wait Cap**. Then the admins are notified that the order needs manual assignment.
+
+### Field reference
+
+| Field | Required | What it does | Example |
+| --- | --- | --- | --- |
+| Auto-Assign Enabled | Yes | "Automatically send new orders to nearby drivers instead of assigning manually." | On |
+| Response Timeout (seconds) | No | "How long a driver has to accept before it moves to the next driver." Minimum 60. | 60 |
+| Max Rounds | No | "How many times to retry with drivers before giving up." Minimum 1. | 4 |
+| Total Wait Cap (seconds) | No | "Maximum total time to keep trying before it gives up." | 300 |
+| Max Concurrent Orders / Driver | No | "Stop offering new orders to a driver already this busy. Set 0 for unlimited." | 2 |
+| Location Staleness (minutes) | No | "Ignore a driver's location if it hasn't updated in this long." | 10 |
+| Allow Sellers' Own Drivers | Yes | On: sellers whose **Who Delivers Their Orders** is Own Delivery Boys use their own drivers. Off: every seller uses the admin's drivers. | On |
+
+Each card has its own **Update** button.
+
+### Tutorial: Turn on auto-assign and tune its rounds
+Scenario: evenings are busy and dispatch by hand is too slow. You want each driver to get 60 seconds, at most 4 rounds within 5 minutes, and no driver with more than 2 open orders.
+
+1. Select the module (for example **Grocery**) and open **Delivery Settings → Delivery Boy Assignment**.
+2. Switch **Auto-Assign Enabled** on.
+3. Enter **Response Timeout (seconds)** `60`, **Max Rounds** `4`, **Total Wait Cap (seconds)** `300`, **Max Concurrent Orders / Driver** `2` and **Location Staleness (minutes)** `10`.
+4. Click **Update** in the Auto-Assign Settings card.
+5. Make sure the riders have the right cities (section 3) and keep the delivery boy app open and online during their shift.
+
+**Result:** when an order of this module is marked Shipped, the nearest free riders get an offer in the app. If no one accepts within 5 minutes or 4 rounds, the admins are notified to assign the order by hand.
+
+:::warning Scheduler required
+Timed-out offers are moved on by the scheduled command `auto-assign:sweep-timeouts`, which runs every minute. Without the server cron `* * * * * php artisan schedule:run`, an order whose first round is ignored is never offered again.
+:::
+
+:::tip Tips & common mistakes
+- **Response Timeout** below 60 is refused.
+- Riders who are offline are only used when no rider in the pool is online.
+- Turning **Allow Sellers' Own Drivers** off sends every seller's orders to the admin's fleet, even for sellers set to Own Delivery Boys.
+:::
+
+---
+
+## 7. Delivery Boy Cash (`/cash_collection`)
 
 ![Cash Collection](/img/detailed-documentation/cash-collection.webp)
 
-Tracks the vital financial loop of Cash-on-Delivery (COD) orders, ensuring physical cash collected from customers is properly deposited with the platform cashier.
+### Overview
+The **Cash Collection** page tracks cash-on-delivery money: what riders collected from customers (COD rows, created automatically) and what they handed over to you (**Delivery Boy Cash Collection** rows, added by you). Sidebar: **Delivery Boys → Delivery Boy Cash** (permission `cash_collection_list`).
 
-### Step-by-Step Cash Handover
-1. When a delivery partner visits the depot or hub to deposit physical cash:
-2. Open **Cash Collection** and search for the driver's name.
-3. Review their recorded **Cash in Hand** balance.
-4. Enter the physical amount received into the **Collect Cash** prompt.
-5. Click **Confirm Collection**. The driver's cash-in-hand liability decreases immediately, unlocking their dispatch queue if they had previously hit their cash ceiling.
+### Screen layout
+- Search, **Filters** (**From & To Date** and **Delivery Boy**: All Delivery Boy or one rider), **Refresh** and **Add Cash Collection**.
+
+| Column | Meaning |
+| --- | --- |
+| ID / Name / Mobile | The entry and the rider. |
+| Order ID / Final Total | Filled for COD rows (for example order 106, 1236.86). |
+| Amount | Cash collected (COD) or handed over (cash collection). |
+| Type | **COD** or **Delivery Boy Cash Collection**. |
+| Bonus Amount | Rider bonus on the COD order. |
+| Message / Date & Time | Note and time of the entry. |
+
+### Field reference: Add Cash Collection
+
+| Field | Required | What it does | Example |
+| --- | --- | --- | --- |
+| Delivery Boy | Yes | Rider who hands over cash; the form shows the cash he holds. | Subhajit Roy (cash 406.86) |
+| Amount | Yes | Greater than 0 and not more than the cash held. | 406.86 |
+| Date & Time | Yes | When the cash was received. | 16 Nov 2026 21:00 |
+| Message | No | Note. | Cash deposited to hub |
+
+### Tutorial: Record a cash collection from a delivery boy
+
+![Add Cash Collection form](/img/detailed-documentation/cash-collection-add.webp)
+Scenario: at the end of his shift **Subhajit Roy** hands over ₹406.86 at the hub.
+
+1. Open **Delivery Boys → Delivery Boy Cash** and click **Add Cash Collection**.
+2. Select **Delivery Boy** `Subhajit Roy`; the form shows his cash in hand.
+3. Enter **Amount** `406.86`, pick the **Date & Time** and type `Cash deposited to hub` in **Message**.
+4. Click **Save**.
+
+**Result:** a **Delivery Boy Cash Collection** row appears at the top, his **Cash Received** in Manage Delivery Boys drops to 0, and **Cash Deposited** on his details page goes up.
+
+:::tip Tips & common mistakes
+- An amount above the cash the rider holds is refused, so count the cash first.
+- Use the **Delivery Boy** filter with a date range to reconcile one rider's day.
+- Cash collections cannot be edited or deleted from this page; record exactly what you received.
+:::
 
 ---
 
-## 6. Fund Transfers (`/fund_transfers`)
+## 8. Fund Transfers (`/fund_transfers`)
 
 ![Fund Transfers](/img/detailed-documentation/fund-transfers.webp)
 
-Audits payout disbursements and incentive bonuses transferred directly into delivery partners' registered bank accounts or digital wallets.
+### Overview
+The rider wallet ledger. Every change to a rider's **Balance** is logged here with the opening and closing balance: earned bonuses as **Credit**, payouts as **Debit**. Sidebar: **Delivery Boys → Fund Transfers** (permission `fund_transfers_list`). **Add Fund Transfer** records a payment you made to a rider out of his balance.
+
+| Column | Meaning |
+| --- | --- |
+| ID / D. Boy ID / Name / Mobile / Address | The entry and the rider. |
+| Opening Balance / Closing Balance | Balance before and after the entry. |
+| Amount | Amount of the entry. |
+| Type | Credit or Debit. |
+| Message | Reason (for example a delivery incentive or "Approve Withdraw Request ID : 35"). |
+| Status / Date | Entry status and date. |
+
+### Field reference: Add Fund Transfer
+
+| Field | Required | What it does | Example |
+| --- | --- | --- | --- |
+| Delivery Boy | Yes | Rider to pay; the form shows his balance. | Karthik Raja (balance 600) |
+| Amount | Yes | Greater than 0 and not more than the balance. Always a Debit. | 350 |
+| Message | No | Payment note. | Weekly payout, UPI ref 8812 |
+
+### Tutorial: Pay a rider's weekly earnings
+1. Pay the rider outside eMarket (bank transfer or UPI) using the bank details on his details page.
+2. Open **Delivery Boys → Fund Transfers** and click **Add Fund Transfer**.
+3. Select **Delivery Boy** `Karthik Raja`, enter **Amount** `350` and the payment reference in **Message**.
+4. Click **Save**.
+
+**Result:** a Debit row with opening balance 600 and closing balance 250 appears, and his **Balance** shows 250 in the list and the app.
+
+:::caution Tips & common mistakes
+- If the rider sent a withdrawal request, approve it in **Withdrawal Requests** instead; that adds the Debit for you. Doing both pays him twice.
+- **Add Fund Transfer** cannot add money. Bonuses are credited automatically from orders and return pickups.
+:::
 
 ---
 
-## 7. Salary Management (`/salary`)
+## 9. Salary (`/salary`)
 
 ![Salary Management](/img/detailed-documentation/salary.webp)
 
-Enables hybrid fleet compensation models:
-- **Fixed Monthly Salary**: Full-time dedicated couriers receive standard monthly pay schedules.
-- **Commission + Incentive Model**: Gig couriers receive tiered payouts tied to on-time delivery rates, weather bonuses, and peak hour performance.
+### Overview
+The **Delivery Boy Salary** page records salary payments to the admin's delivery boys (a seller's own delivery boys are not listed and cannot be chosen). Sidebar: **Delivery Boys → Salary** (permission `salary_list`). Entries show in the rider's **Salary Transactions** tab and under **Total Earned** on his details page. A salary entry does **not** change the rider's wallet **Balance**: it records money you paid outside eMarket.
+
+| Column | Meaning |
+| --- | --- |
+| ID / Delivery Boy | The entry and the rider. |
+| Salary | Amount paid. |
+| Message | Note, for example "September salary". |
+| Date | Date paid. |
+| Actions | Edit, Delete. |
+
+### Field reference: Add Salary
+
+| Field | Required | What it does | Example |
+| --- | --- | --- | --- |
+| Delivery Boy | Yes | Rider (admin fleet only). | Subhajit Roy |
+| Salary | Yes | Amount, greater than 0. | 5000 |
+| Date | Yes | Date it was paid. | 31 Oct 2026 |
+| Message | No | Note. | October salary |
+
+### Tutorial: Record a monthly salary
+1. Pay the salary outside eMarket.
+2. Open **Delivery Boys → Salary** and click **Add Salary**.
+3. Select **Delivery Boy** `Subhajit Roy`, enter **Salary** `5000`, **Date** 31 Oct 2026 and **Message** `October salary`.
+4. Click **Save**.
+
+**Result:** the entry is listed here, in his **Salary Transactions** tab, and in **Total Earned** on his details page.
+
+:::tip Tips
+- Use **Filters → From & To Date** to list one month's salaries for your accounts.
+- Salaried riders usually have **Bonus Type** Fixed/Salaried so they do not also earn per-order bonuses.
+:::
 
 ---
 
-## 8. Delivery Boy Policies (`/privacy_policy_delivery_boy`)
+## 10. Delivery Boy Policies (`/privacy_policy_delivery_boy`)
 
 ![Delivery Boy Policies](/img/detailed-documentation/delivery-boy-policies.webp)
 
-The contractual agreement and code of conduct for couriers covering road safety rules, customer interaction etiquette, parcel handling, and grounds for deactivation.
+### Overview
+The **Delivery boy Privacy Policy And Terms & Conditions** page, with two rich-text editors: **Privacy Policy** and **Terms & Conditions**. Sidebar: **Delivery Boys → Delivery Boy Policies** (permission `manage_privacy_policy_delivery_boy`). The delivery boy app and registration page show them. With more than one active language there is a tab per language and the **Translate Empty Fields** / **Translate & Overwrite** buttons. Click **Update** to save.
+
+### Tutorial: Update the rider terms
+1. Open **Delivery Boys → Delivery Boy Policies**.
+2. In **Terms & Conditions**, describe cash handling ("All COD cash must be handed over at the hub on the same day"), bonus rules and document requirements.
+3. Preview with the eye icon and click **Update**.
+
+**Result:** riders see the new terms in the delivery boy app and when they register.
 
 ---
 
-## Real-World Logistics Use Cases
+## Real-World Use Cases
 
-- **Preventing COD Cash Loss**: By setting a strict ₹3,000 **Cash Limit**, the platform automatically stops assigning new COD orders to a driver until they remit their collected cash to an authorized hub.
-- **Handling Weather / Holiday Capacity Spikes**: During rainy days or holidays, operations managers edit **Delivery Settings** to restrict maximum orders per slot, preventing over-commitment and protecting customer satisfaction.
-- **Autonomous Driver Onboarding**: Delivery drivers download the partner app, submit their own license photos via mobile, and administrators verify and approve them within 15 minutes via **Delivery Boy Requests**.
+- **COD cash at the end of a shift**: a rider hands over the day's cash at the hub; the cashier records it in **Delivery Boy Cash**, and the rider's **Cash Received** goes down by that amount.
+- **Weekly payouts**: finance pays each rider's earned balance with **Fund Transfers** (or approves his withdrawal request), so the opening and closing balance of every payout is on record.
+- **Mixed fleet**: full-time riders use the **Fixed/Salaried** bonus type and get monthly entries in **Salary**; part-time riders use **Commission** with a minimum and maximum bonus per order.
+- **Busy evenings**: with **Auto-Assign Enabled**, a 60-second **Response Timeout** and **Max Concurrent Orders / Driver** set to 2, new orders go to the nearest free rider without manual dispatch.

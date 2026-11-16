@@ -1,112 +1,413 @@
 ---
 sidebar_position: 6
 title: Customer & Financial Operations
-description: Comprehensive operational guide for customer account management, digital wallets, payment transaction auditing, return request approvals, and vendor withdrawal processing.
+description: How to manage customers, wishlists, product requests and abandoned carts in eMarket, credit customer wallets, read payment transactions, process return and withdrawal requests, and set up custom fields.
 ---
 
 # Customer Accounts & Financial Operations
 
-Managing customer accounts, digital wallets, and reverse logistics workflows is essential for customer retention and fraud prevention. This guide details user management, returns processing, and payout reconciliation in eMarket.
+This page covers the **Customers** sidebar group (**Customers**, **Wishlists**, **Product Requests**, **Wallet Transactions**, **Transactions**), the **Abandoned Carts** list, **Return Requests**, **Withdrawal Requests** and **Custom Fields**.
+
+In demo mode, customers' names, emails and phone numbers are also masked in every list and export (for example `C******* 2`); sellers, delivery boys and admins are not masked. The other demo-mode rules and the Export menu are explained in the introduction: [Demo mode](./intro.mdx#6-demo-mode-read-only-panels), [Export menu](./intro.mdx#7-export-menu-csv-excel-pdf-print-copy).
 
 ---
 
-## 1. Customers Registry (`/users`)
+## 1. Customers (`/users`)
 
 ![Customers](/img/detailed-documentation/customers.webp)
 
-The central database of all shoppers registered across the mobile applications and web storefront.
+### Overview
+The **Customers List**: everyone who registered in the customer app or on the website. Sidebar: **Customers → Customers** (permission `customer_list`). Use it to find a customer, open their full history, or block an account. A deactivated customer can no longer sign in; the app shows "This customer account is deactivated, kindly contact admin".
 
-### Key Table Information
-- **Customer Name & Avatar**: User profile details.
-- **Email & Mobile**: Verified communication channels.
-- **Wallet Balance (₹)**: Current digital wallet credits available for order payment.
-- **Referral Code**: Unique invitation code for the platform Refer & Earn program.
-- **Account Status Switch**: Instant control to deactivate bad-faith or fraudulent customer accounts.
-- **Actions**: View complete order history, adjust wallet balances manually, or inspect saved addresses.
+### Screen layout
+- **Toolbar**: search box, grid / list view switch, **Export** and **Refresh**.
+- **Grid cards** (as in the screenshot): initial, name, email, mobile, ID chip, **Balance** (wallet), the sign-in type chip (for example **email**), registration date and time, the status switch and the **View** (eye) button.
+
+| Column (list view) | Meaning |
+| --- | --- |
+| ID | Customer ID (used in Wallet Transactions as **User ID**). |
+| Name / Email / Mobile No | Customer details. |
+| Balance | Current wallet balance. |
+| Status | Active or Deactive. |
+| Type | How the customer signs in: phone, Google, Apple or email. |
+| Date & Time | Registration time. |
+| Actions | Status switch (with an "Are you sure?" confirmation, needs `customer_update`) and **View**. |
+
+### Tutorial: Look up a customer and block a misused account
+1. Open **Customers → Customers** and type part of the name, email or phone in the search box, for example `Priya`.
+2. Click **View** on **Priya Nair** to check her orders and wallet (section 2).
+3. To block an account, switch the status toggle on the card off and confirm.
+
+**Result:** the customer shows as **Deactive** and cannot sign in until you switch the toggle back on. Orders and wallet are kept.
 
 ---
 
-## 2. Customer Digital Wallet (`/wallet_transactions`)
+## 2. Customer Details (`/users/view/:id`)
+
+![Customer Details](/img/detailed-documentation/customer-details.webp)
+
+### Overview
+Opened with **View** on a customer (permission `customer_list`). Everything about one customer: profile, spending, orders, addresses, wallet, cart and requests. Support staff use it to answer "where is my order / my refund?" questions.
+
+### Screen layout
+- **Header**: a module selector (**All Modules** or one module, for example **Grocery**) and **Back**.
+- **Profile card**: name with status badge, phone, email, "Customer since" date and ID, an **Active** switch, **Login Type** and **Referral Code**.
+- **Figure cards**: **Total Orders**, **Delivered**, **Total Spent**, **Avg Order Value**, **Wallet Balance** and **Last Order**, plus a **Spend - last 12 months** chart.
+- **Tabs** with counts: **Orders**, **Addresses** (with **View on map**), **Analytics**, **Order Transactions**, **Wallet Transactions**, **Cart Items**, **Favourites** and **Product Requests**. List tabs have search and **Export**.
+
+| Orders tab column | Meaning |
+| --- | --- |
+| Order ID | Order number (for example EM001116); click to open the order. |
+| Items | Product names and item count. |
+| Module | Module of the order. |
+| Amount | Order total. |
+| Payment Method | For example Razorpay or COD. |
+| Status | Current status (Processed, Payment Pending, ...). |
+| Date | Order date. |
+
+### Tutorial: Look up a customer, credit the wallet, see their orders
+Scenario: **Priya Nair** says order EM001103 was charged but stayed on "Payment Pending", and you decide to give her a ₹100 goodwill credit.
+
+1. Open **Customers → Customers**, search `Priya` and click **View**.
+2. In the **Orders** tab, find **EM001103**; its status is **Payment Pending**. Click the order number to see the details.
+3. Open the **Order Transactions** tab to check whether a payment was recorded for that order.
+4. Note her **Wallet Balance** (₹1200.00), then go to **Customers → Wallet Transactions** and add a credit of 100 with the reason (section 6).
+5. Come back to her page and open the **Wallet Transactions** tab: the new credit is listed and **Wallet Balance** shows ₹1300.00.
+
+**Result:** Priya can spend the ₹100 on her next order in the customer app or website.
+
+:::tip Tips
+- Use the module selector to see spending in one module only; choose **All Modules** for the full picture.
+- **Cart Items** shows what she has in her cart right now; the same data is in Abandoned Carts.
+:::
+
+---
+
+## 3. Wishlists (`/wishlists`)
+
+![Wishlists](/img/detailed-documentation/wishlists.webp)
+
+### Overview
+The **Wishlists List** shows which products customers save to their wishlists, one row per product. Sidebar: **Customers → Wishlists** (permission `manage_wishlists`). Use it to see demand: products saved often but rarely bought may need a price or stock change.
+
+| Column | Meaning |
+| --- | --- |
+| ID | Row ID. |
+| Product | Saved product (for example Cumin Seeds). |
+| Quantity | How many times the product was saved. |
+| Seller | Seller of the product. |
+| Actions | **View** opens the product's detail page. |
+
+Search and **Refresh** are in the toolbar. The list is read-only.
+
+---
+
+## 4. Product Requests (`/product_requests`)
+
+![Product Requests](/img/detailed-documentation/product-requests.webp)
+
+### Overview
+Products that customers asked for but could not find (for example "Please add organic jaggery powder (1 kg)."). Sidebar: **Customers → Product Requests** (permission `product_request_list`); a dot on the menu shows pending requests. The customer is notified when you accept or reject a request.
+
+### Screen layout
+- Search, a status filter (All Statuses, Pending, Accepted, Rejected), grid / list view and **Refresh**.
+- **Grid cards**: image, description, customer name, the linked product once accepted, a status badge, and icons for **View** (request details), **Approve** (tick), **Reject** (cross) and **Delete**. Accepted and rejected cards keep only View and Delete.
+
+| Column (list view) | Meaning |
+| --- | --- |
+| Customer Name | Who asked. |
+| Product Description | What they asked for. |
+| Product Image | Photo from the customer (click to enlarge). |
+| Request Status | Pending, Accepted or Rejected. |
+| Requested Product | The catalog product you linked when accepting. |
+| Actions | View, Approve, Reject, Delete (approve / reject need `product_request_update`). |
+
+### Field reference
+
+| Dialog field | Required | What it does | Example |
+| --- | --- | --- | --- |
+| Select Product (Accept Request) | Yes | Catalog product that answers the request ("add product before accepting request"). | Organic Jaggery Powder 1 kg |
+| Admin Notes (Reject Request) | Yes | Reason sent with the rejection, up to 1000 characters. | Not available from our sellers |
+
+### Tutorial: Fulfil a customer's product request
+1. Open **Customers → Product Requests** and filter on **Pending**.
+2. On **Priya Nair**'s card ("Please add organic jaggery powder (1 kg).") click **View** to read the details and see the image.
+3. Ask a seller to add the product, or add it yourself in **Products**.
+4. Back on the card, click **Approve**. In **Accept Request**, choose the new product in **Select Product** and click **Accept Request**.
+5. For a request you cannot meet, click **Reject**, write **Admin Notes** and click **Reject Request**.
+
+**Result:** the card shows **Accepted** with the linked product and Priya is notified; rejected requests show **Rejected** with your note.
+
+---
+
+## 5. Abandoned Carts (`/abandoned_carts`)
+
+![Abandoned Carts](/img/detailed-documentation/abandoned-carts.webp)
+
+### Overview
+Sidebar: **Abandoned Carts** (below Self Pickup Orders, permission `order_list`). Every item a customer has added to the cart and not ordered yet, grouped per customer and store, for the module selected in the panel header. Use it to see which carts and products are left behind and to follow up.
+
+### Screen layout
+- **Filters**: seller (**All Sellers** or one store), **Select date range**, search (customer name, email, mobile, store or product) and refresh.
+- **View items** (eye icon) opens the cart: product image, name, variant, unit price × quantity, line total and the cart total; items **Saved for later** are marked.
+- The table footer shows totals for the filtered list: **Carts**, **Items** and **Cart value**.
+
+| Column | Meaning |
+| --- | --- |
+| Customer | Name, email and mobile. |
+| Store | Store the items are from (for example Patel Fresh Mart). |
+| Items | Number of products and total quantity, for example 2 (Qty 5). |
+| Cart value | Value of the items in this store's cart. |
+| Last activity | When the cart last changed. |
+| Action | **View items**. |
+
+Click a column header to sort.
+
+### Tutorial: Recover an abandoned cart
+Scenario: **Rahul Krishnan** left 3 products (Qty 9, ₹1422.00) from **Patel Fresh Mart** on 13 Nov.
+
+1. Open **Abandoned Carts**, choose **Patel Fresh Mart** in the seller filter and the last 7 days in **Select date range**.
+2. Click the **Cart value** header to put the biggest carts first.
+3. Click **View items** on Rahul Krishnan's row to see the products and quantities.
+4. Send him a reminder: open **Notifications → Send Notification**, choose **Type** `Customer`, enter his customer ID and a message such as "Your Patel Fresh Mart cart is waiting". See [Send Notification](./communications.mdx#1-send-notification-notifications). Optionally create a promo code for him first.
+5. A day later, check **Abandoned Carts** again: once he orders, the row disappears.
+
+**Result:** the customer gets a push notification that leads him back to his cart.
+
+:::tip Tips & common mistakes
+- This page does not send reminders. Automatic reminders come from **Store Settings → Cart Setting → Cart reminders** (Cart Notification, Notification Delay After Cart Addition, Notification Interval, Notification Stop Time); see [Store Settings](./settings.mdx#2-store-settings-store_settings). They need the scheduled command `cart:notification` (every minute) and the server cron.
+- The list only shows carts of the module selected in the panel header.
+:::
+
+---
+
+## 6. Wallet Transactions (`/wallet_transactions`)
 
 ![Customer Wallet](/img/detailed-documentation/customer-wallet.webp)
 
-Tracks every credit and debit transaction across customer digital wallets.
+### Overview
+The **Manage Customer Wallet** page: every credit and debit on customer wallets. Sidebar: **Customers → Wallet Transactions** (permission `manage_customer_wallet`). Customers spend their wallet balance at checkout in the customer app and website.
 
-### Common Wallet Movements
-- **Cashback Credits**: Promotional cashbacks rewarded from promo codes.
-- **Instant Order Refunds**: Money returned immediately to the customer wallet when an out-of-stock item is cancelled.
-- **Order Debit**: Wallet funds deducted during cart checkout.
-- **Manual Admin Adjustment**: Customer support crediting goodwill balance to resolve service grievances.
+| Column | Meaning |
+| --- | --- |
+| ID / User ID / User Name | The entry and the customer. |
+| Type | **Credit** (for example "Refund for cancelled order", "Refund for returned item") or **Debit** ("Used for order"). |
+| Payment Type / Txn. ID | How the entry was made; both are `admin` for entries added on this page. |
+| Amount | Amount of the entry. |
+| Message | Reason. |
+| Transaction Date / Last Updated | When the entry was made and changed. |
+
+### Field reference: Add Transactions
+
+| Field | Required | What it does | Example |
+| --- | --- | --- | --- |
+| Customer | Yes | Customer to credit; the form shows the current balance. | Priya Nair |
+| Type | — | Fixed to **Credit**; the admin panel cannot debit a customer wallet. | Credit |
+| Amount | Yes | At least 1. | 100 |
+| Message | Yes | Reason for the credit. | Goodwill credit for order EM001103 |
+
+### Tutorial: Credit a customer's wallet
+1. Click **Add Transactions**.
+2. Select **Customer** `Priya Nair` (the form shows her balance).
+3. Enter **Amount** `100` and **Message** `Goodwill credit for order EM001103`.
+4. Click **Save**.
+
+**Result:** a Credit row appears at the top and her **Balance** goes up by 100 in the Customers list, on Customer Details and in her app.
+
+:::caution Tips & common mistakes
+- A credit cannot be taken back from the panel, because debits are not possible here. Check the customer and amount before saving.
+- Refunds for cancelled and returned items are credited automatically; do not add them by hand as well.
+:::
 
 ---
 
-## 3. Payment Gateway Transactions (`/transactions`)
+## 7. Transactions (`/transactions`)
 
 ![Transactions](/img/detailed-documentation/transactions.webp)
 
-The master payment ledger recording all inbound financial settlements via external payment gateways (Stripe, Razorpay, PayPal, Cashfree, Midtrans, Paytm).
+### Overview
+The **Transactions List**: online payments made through the payment gateways, for orders and for subscription purchases. Sidebar: **Customers → Transactions** (permission `transaction_list`). Read-only; use it to match gateway payouts with orders.
 
-### Transaction Fields
-- **Transaction ID & Order ID**: Cross-reference identifiers.
-- **Payment Gateway**: Gateway processor name.
-- **Amount & Currency**: Settled funds.
-- **Status**: `Success`, `Pending`, or `Failed`.
-- **Timestamp**: Exact gateway authorization time.
+| Column | Meaning |
+| --- | --- |
+| ID / Name | The entry and the customer. |
+| Order ID | Order paid; `0` for a subscription purchase (message "Subscription purchase: ..."). |
+| Type | Payment method, for example razorpay. |
+| Txn. ID | Gateway payment ID, for example `pay_lFFkw1ALn8nFij`. |
+| Amount / Message | Amount paid and note ("Payment received"). |
+| Transaction Date / Status | When it was paid and the payment status. |
+
+Search, **Export** and **Refresh** are in the toolbar.
+
+:::tip Tip
+To check a disputed payment, search the gateway's payment ID in **Txn. ID**, then compare the amount with the order on the order details page.
+:::
 
 ---
 
-## 4. Return Requests & Reverse Logistics (`/return_requests`)
+## 8. Return Requests (`/return_requests`)
 
 ![Return Requests](/img/detailed-documentation/return-requests.webp)
 
-Handles customer product returns when goods arrive damaged, expired, or incorrect.
+### Overview
+Returns that customers asked for on delivered order items. Sidebar: **Return Requests** (permission `return_request_list`; editing needs `return_request_update`). The seller panel and the delivery boy app show the same requests: sellers can move requests between Pending, Delivery Boy Assigned, Approve and Reject; delivery boys can set Out for Pickup, Received from Customer, Return to Seller and Cancelled.
 
-### Step-by-Step Return Resolution Workflow
-1. When a customer submits a return request through their order history screen in the mobile app:
-2. Open **Return Requests** in the admin panel to view the case.
-3. Review the customer's stated reason, uploaded photo proofs, and original order invoice.
-4. **Approve Request**:
-   - Assign a delivery partner for doorstep package pickup.
-   - Once the driver confirms package handover at the depot, the system automatically credits the refund back to the customer's wallet or original payment method.
-5. **Reject Request**:
-   - Enter an explanatory remark (e.g., "Return window expired" or "Item opened/consumed").
+| Column | Meaning |
+| --- | --- |
+| ID / User ID / Name | The request and the customer. |
+| Product Name / Variant / Quantity | The returned item (for example Toned Milk, 500 ml, 2). |
+| Total | Item value. |
+| Bonus | Delivery boy bonus for the pickup. |
+| Status | Pending, Delivery Boy Assigned, Out for Pickup, Received from Customer, Return to Seller, Approved, Rejected or Cancelled. |
+| Reason | Customer's reason (for example "Missing quantity"). |
+| Date / Actions | Request date; Edit and Delete. |
+
+### Field reference: Edit Return Requests
+
+![Edit return request](/img/detailed-documentation/return-request-edit.webp)
+
+| Field | Required | What it does | Example |
+| --- | --- | --- | --- |
+| Customer Details / Return Item | — | Read-only: customer name, mobile, address; product, variant, quantity and price. | Toned Milk, 500 ml, Quantity 2, ₹54 |
+| Status | Yes | One of the eight status cards. | Delivery Boy Assigned |
+| Assign Delivery Boy | Yes for Delivery Boy Assigned | Rider who collects the item; his return bonus is worked out from the item's sub total. | Imran Shaikh |
+| Cancellation Reason | Yes for Cancelled | Up to 500 characters. | Customer no longer wants to return |
+| Remark | No | Note saved with the request. | Pickup between 4 and 6 pm |
+
+### What each step changes
+- **Delivery Boy Assigned**: the rider sees the pickup in the delivery boy app; the bonus is fixed.
+- **Received from Customer**: the rider's return bonus is credited to his wallet (logged in Fund Transfers).
+- **Approve**: the refund for the item is credited to the customer's wallet (logged in Wallet Transactions). When the whole order is returned, the delivery charge is refunded too if **Is Delivery Charge Refundable?** is on in Store Settings.
+- **Approve**, **Reject** and **Cancelled** are final: the request cannot be changed afterwards. Other statuses can only move forward.
+
+### Tutorial: Process a return end-to-end
+
+![Assign a delivery boy to a return](/img/detailed-documentation/return-request-assign.webp)
+Scenario: **Siddharth Patil** returns 2 × Toned Milk 500 ml (₹54), reason "Product expired" (request 20, Pending).
+
+1. Click **Edit** on request 20.
+2. Choose **Delivery Boy Assigned**, pick **Imran Shaikh** in **Assign Delivery Boy**, add a **Remark** if needed and click **Save**.
+3. The rider updates the pickup in his app (**Out for Pickup**, then **Received from Customer**). You can also set these statuses here.
+4. When the item is back, open **Edit** again, choose **Approve** and click **Save**.
+5. Check **Customers → Wallet Transactions**: a Credit for Siddharth Patil for the returned item appears. Check **Fund Transfers** for the rider's return bonus.
+
+**Result:** the request shows **Approved**, the customer has the refund in his wallet and can spend it at checkout, and the rider has his pickup bonus.
+
+:::caution Tips & common mistakes
+- In the admin panel every status except **Delivery Boy Assigned** needs a delivery boy to be assigned first, including **Reject**. Assign a rider before rejecting.
+- The status cannot go backwards; choosing an earlier status is refused.
+- Approve gives the refund to the customer's **wallet**, not back to the card or bank account.
+:::
 
 ---
 
-## 5. Withdrawal Requests (`/withdrawal_requests`)
+## 9. Withdrawal Requests (`/withdrawal_requests`)
 
 ![Withdrawal Requests](/img/detailed-documentation/withdrawal-requests.webp)
 
-When vendors or delivery partners accumulate earnings in their wallet balances, they submit payout withdrawal requests to cash out into their registered bank accounts.
+### Overview
+Payout requests from sellers and delivery boys who want to withdraw their wallet balance. They send them from the seller panel or app and the delivery boy app. Sidebar: **Withdrawal Requests** (permission `withdrawal_request_list`; editing needs `withdrawal_request_update`). eMarket does not send the money: you pay outside the system and then record it here.
 
-### Step-by-Step Payout Fulfillment
-1. Open **Withdrawal Requests** to view pending cash-out petitions.
-2. Check the requester's identity, verified bank account number, and requested payout amount.
-3. Execute the electronic bank wire transfer via your banking portal or payment API.
-4. Return to the admin panel, enter the **Bank Transaction / UTR Number**, and click **Mark as Approved / Transferred**.
-5. The requester's wallet balance updates instantly and a confirmation notification is dispatched.
+### Screen layout
+- Search, **Filters** (**Filter by Role (Type)**: All Roles, Seller, Delivery Boy; **Filter by Status**: Pending, Approved, Rejected) and **Refresh**.
+
+| Column | Meaning |
+| --- | --- |
+| ID | Request ID (used in the ledger message "Approve Withdraw Request ID : 34"). |
+| Type / Name | Seller or Delivery Boy, and who asked. |
+| Amount | Requested amount. |
+| Message | Requester's note (info icon). |
+| Status | Pending, Approved or Rejected. |
+| Remark | Your remark (for example "Pending cash deposit must be cleared first"). |
+| Receipt Image | Payment proof you uploaded. |
+| Date / Actions | Request date; Edit and Delete. |
+
+### Field reference: Edit
+
+| Field | Required | What it does | Example |
+| --- | --- | --- | --- |
+| Status | Yes | Pending, Approved or Rejected. | Approved |
+| Upload Receipt Image | Yes for Approved | Payment proof: jpeg, png, jpg or webp, up to 2 MB. | bank-receipt.png |
+| Remark | Yes for Rejected | Reason, up to 500 characters. | Pending cash deposit must be cleared first |
+
+### Tutorial: Pay a seller withdrawal request with a receipt
+
+![Approve a withdrawal request with a receipt](/img/detailed-documentation/withdrawal-request-approve.webp)
+Scenario: seller **Sourav Das** asked to withdraw ₹5000.
+
+1. Filter **Filter by Role (Type)** on `Seller` and **Filter by Status** on `Pending`.
+2. Open **Seller Details** for Sourav Das and check that **Wallet Balance** covers ₹5000 (see [Seller Details](./sellers.mdx#2-seller-details-sellersviewid)).
+3. Pay ₹5000 by bank transfer to the account in his custom fields and save the bank receipt as an image.
+4. Click **Edit** on the request, set **Status** to **Approved**, upload the receipt in **Upload Receipt Image** and click **Save**.
+5. Check **Seller Wallet Transactions**: a Debit of 5000 with "Approve Withdraw Request ID : …" is listed.
+
+For a delivery boy the steps are the same; the debit is logged in **Fund Transfers** instead. To refuse a request, set **Status** to **Rejected** and enter a **Remark**.
+
+**Result:** the request shows **Approved** with the receipt thumbnail, and the seller's wallet balance is lower by the paid amount.
+
+:::caution Tips & common mistakes
+- Approval is refused when the requester's balance is lower than the amount; check the balance first.
+- An approved request cannot be changed again, so pay before you approve.
+- Do not also add a manual debit in Seller Wallet Transactions or Fund Transfers; the approval already debits the wallet.
+:::
 
 ---
 
-## 6. Wishlists & Product Requests
-
-| Screen | Route | Purpose |
-| :--- | :--- | :--- |
-| **Customer Wishlists** | `/wishlists` | View real-time analytics on which products customers are saving to their wishlists, highlighting demand trends. |
-| **Product Requests** | `/product_requests` | Review items requested by customers that are not currently stocked in the store catalog. |
-
----
-
-## 7. Custom Fields Management (`/custom_fields/seller`)
+## 10. Custom Fields (`/custom_fields/:module`)
 
 ![Custom Fields](/img/detailed-documentation/custom-fields.webp)
 
-Allows administrators to define dynamic custom attributes and input fields required during seller registration (e.g., FSSAI License Number, Trade Certificate, Halal Certification).
+### Overview
+Extra fields for sellers, delivery boys, customers and products. Sidebar: **Custom Fields** (permission `custom_field_list`). The page has four tabs, each with its own address: **Sellers** (`/custom_fields/seller`), **Delivery Boys** (`/custom_fields/delivery_boy`), **Customers** (`/custom_fields/customer`) and **Products** (`/custom_fields/product`). Seller and product fields belong to the module selected in the panel; delivery boy and customer fields are shared by all modules.
+
+Where the values are filled in: seller fields on Add / Edit Seller and in the seller panel; delivery boy fields on Add / Edit Delivery Boy and at rider registration; product fields on the product form; customer fields are sent with customer registration from the customer app and website and returned with the customer's profile (they are not shown on the admin Customer Details page).
+
+| Column | Meaning |
+| --- | --- |
+| ID / Field Name / Field Type | The field and its type. |
+| Required | Yes / No. |
+| Owner | Products tab only: Mine, Seller or Global. |
+| Status | Active switch. |
+| Actions | Edit, Delete. |
+
+Search, **Refresh** and **Add Field** are in the toolbar.
+
+### Field reference: Add Field
+
+| Field | Required | What it does | Example |
+| --- | --- | --- | --- |
+| Field Name | Yes (default language) | Label shown on the form, per language (with **Translate Empty Fields** / **Translate & Overwrite**). | Alternate Mobile |
+| Field Type | Yes | Text, Number, Dropdown, File, Textarea or Date. | Number |
+| Options | Yes for Dropdown | Press Enter or comma to add each option. | Morning, Evening |
+| Required | No | Yes = the form cannot be saved without a value. | No |
+| Active | No | Off hides the field without deleting it. | On |
+
+### Tutorial: Add a custom field for customers
+
+![Add Field form on the Customers tab](/img/detailed-documentation/custom-field-add-customer.webp)
+Scenario: you want customers to give a preferred delivery time when they sign up.
+
+1. Open **Custom Fields** and click the **Customers** tab.
+2. Click **Add Field**.
+3. Enter **Field Name** `Preferred Delivery Time`, choose **Field Type** `Dropdown` and type the **Options** `Morning`, `Afternoon`, `Evening` (press Enter after each).
+4. Set **Required** to `No` so existing customers are not blocked, keep **Active** on and click **Save**.
+
+**Result:** the field is listed in the Customers tab for every module, and customer registration from the apps can send a value for it.
+
+### Editing or deleting a field that holds values
+- **Edit**: if the change would lose saved values (removing or renaming a dropdown option that records use, changing the field type), a warning lists what is lost (per option, record counts and uploaded files) and an agreement box must be ticked. The values are then cleared, and for a file field the uploads are deleted from storage and the Media library.
+- **Delete**: a field that holds values shows how many records use it and needs the agreement box. The value is removed from every record; a file field also deletes its uploaded files. An unused field only asks "Are you sure?".
+
+:::caution Tips & common mistakes
+- Switch a field off with **Active** instead of deleting it when you may need the values later.
+- Seller and product fields depend on the module in the panel header; check it before adding a field.
+:::
 
 ---
 
-## Real-World Financial & User Use Cases
+## Real-World Use Cases
 
-- **Immediate Goodwill Credits**: A customer reports a missing item in their grocery order. Support immediately credits the item's value into their **Customer Wallet** within 60 seconds, converting an unhappy customer into a loyal advocate.
-- **Auditing Disputed Chargebacks**: When a credit card chargeback notification arrives from Stripe, the finance team searches the **Payment Transactions** table by transaction reference to trace the order, customer IP, and delivery proof.
-- **Weekly Vendor Payout Batches**: Finance teams review all verified **Withdrawal Requests** every Monday morning, executing automated batch bank transfers and closing out weekly merchant disbursements cleanly.
+- **Goodwill credit**: a customer reports a missing item. Support adds a Credit in **Wallet Transactions** with the message "Missing item in order #1234", and the customer can spend it on the next order.
+- **Following up on carts**: the marketing team filters **Abandoned Carts** by one store and the last 7 days, sorts by Cart value and sends the biggest carts a personal notification.
+- **Restocking from demand**: the catalog team checks **Product Requests** and the most saved products in **Wishlists**, adds the missing products and accepts the matching requests.
+- **Weekly payouts**: every Monday finance filters **Withdrawal Requests** by Pending, pays each one by bank transfer and approves it with the bank receipt attached.

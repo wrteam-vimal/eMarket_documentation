@@ -1,104 +1,351 @@
 ---
 sidebar_position: 1
 title: Order Management
-description: Comprehensive operational guide and step-by-step instructions for managing marketplace orders and self-pickup fulfillment in eMarket.
+description: How to list, filter, export, update and fulfil home-delivery and self-pickup orders in the eMarket admin panel, with step-by-step tutorials.
 ---
 
 # Order Management & Fulfillment
 
-Order management is the operational core of the eMarket platform. It provides administrators and store managers with complete visibility and end-to-end control over incoming customer purchases across all vendors, delivery methods, and payment gateways.
+The **Orders** and **Self Pickup Orders** screens list every customer order across all sellers. From the order detail page you change the order status, assign a delivery partner or enter external courier tracking, cancel single items and print the invoice.
+
+**Permissions:** `/orders`, the order detail and the invoice page need **order_list** (deleting needs **order_delete**). The self-pickup screens need **self_pickup_order_list** (deleting needs **self_pickup_order_delete**, returning items needs **self_pickup_order_update**).
+
+Orders belong to a module. The lists and counts only show orders of the module picked in the header switcher (for example **Grocery**). Switch the module to see the orders of another one.
+
+### Order statuses
+
+Home-delivery orders use these statuses (from the **Order Status** list):
+
+| Status | Meaning | How it is set |
+| --- | --- | --- |
+| Payment Pending | Online payment not yet confirmed. | By the system at checkout. |
+| Received | New order placed. | By the system. |
+| Processed | Seller is preparing the order. | Admin or seller. |
+| Shipped | Packed and handed over for shipping. | Admin or seller. |
+| Out For Delivery | With the delivery partner. | Admin, seller or delivery boy. |
+| Delivered | Delivered to the customer. | Admin, seller or delivery boy. |
+| Cancelled | Cancelled. | By cancelling the items (see [Order Details](#2-order-details-ordersviewid)), or by the customer. |
+| Returned | Returned after delivery. | Through [Return Requests](./customer-finance.mdx#8-return-requests-return_requests). |
+
+Self-pickup orders use **Payment Pending**, **Pending**, **Ready for Pickup**, **Picked Up**, **Cancelled** and **Returned**.
+
+For how an order moves between the admin, seller, delivery and customer apps, see the [Order Lifecycle Overview](./intro.mdx#9-order-lifecycle-overview). Demo mode limits (only the Super Admin can save, customer details masked) are explained in [Demo Mode](./intro.mdx#6-demo-mode-read-only-panels).
 
 ---
 
-## 1. Orders Hub (`/orders`)
+## 1. Orders (`/orders`)
 
-![Orders Management](/img/detailed-documentation/orders.webp)
+![Orders](/img/detailed-documentation/orders.webp)
 
-The **Orders** screen is the central dashboard where all door-step delivery orders are monitored, processed, assigned to delivery personnel, and tracked through to completion.
+### Overview
 
-### Key Components & Indicators
+The **Orders** list shows **home-delivery** orders (doorstep and quick delivery) from all sellers, newest first. Self-pickup orders have their own list (section 4). Open it from **Orders** in the sidebar; it needs the **order_list** permission. The status you set here is what the customer sees in the app and website order history, and what the seller sees in the seller panel.
 
-- **KPI Metric Cards**: Quick-reference indicators at the top showing the real-time order pipeline:
-  - **New Orders** (Green): Newly placed orders awaiting vendor or admin acceptance.
-  - **Processing Orders** (Orange): Orders currently being picked, packed, or prepared.
-  - **Ready to Ship** (Blue): Packages packaged and staged for courier handover.
-  - **Out for Delivery** (Red): Orders currently in transit with an assigned delivery partner.
-- **Search Bar**: Instant full-text search across Order IDs, customer names, or seller names.
-- **Filters Dropdown**: Filter orders by date range, specific seller/vendor, order status, payment type (COD vs. Online), and assigned delivery boy.
-- **Columns Customizer**: Toggle column visibility to tailor the table view to your operational workflow.
-- **Orders Table**:
-  - **Order ID**: Unique clickable reference identifier.
-  - **Customer**: Customer profile name and registered telephone number.
-  - **Seller**: Originating vendor/store name and seller identifier.
-  - **Total Items**: Number of distinct SKUs, with a clickable link to view items drawer.
-  - **Payment**: Payable total currency amount and payment instrument (COD, Stripe, Razorpay, Wallet).
-  - **Order Date & Time**: Timestamp with relative date indicators.
-  - **Status Badge**: Color-coded fulfillment state (`Received`, `Processed`, `Shipped`, `Delivered`, `Cancelled`).
-  - **Actions**: View full details eye icon, invoice printer, and administrative deletion trigger.
+### Screen layout
 
-### Step-by-Step Operational Instructions
+- **Status tiles** at the top:
+  - **New Orders**: orders in *Received* (and *Pending*).
+  - **Processing Orders**: orders in *Processed*.
+  - **Ready To Ship**: orders in *Shipped* (and *Ready for Pickup*).
+  - **Out For Delivery**: orders in *Out For Delivery*.
+- **Search**: "Search by Order ID, User or Seller".
+- **Filters** button: opens a panel with **Date Range**, **Seller** (search-and-select, default *All Sellers*) and **Status** (default *All Orders*). The list reloads as soon as a filter changes. The date range is matched against the date the items were ordered.
+- **Export** menu: exports all rows matching the current search and filters (not only the visible page). The CSV, Excel, PDF, Print and Copy options are explained in [Export Menu](./intro.mdx#7-export-menu-csv-excel-pdf-print-copy).
+- **Columns** dropdown: tick or untick columns to show or hide them.
+- **Bulk action bar**: appears when one or more orders are ticked. Choose **Change status to…** and click **Apply**.
+- **TOTAL** row at the bottom of the table: the sum of the listed orders.
 
-#### How to Process and Update an Order Status
-1. Navigate to **Orders** from the left-hand navigation sidebar.
-2. Locate the target order using the search bar or filter by `Received` status.
-3. Click the **View (Eye Icon)** button in the **Action** column to open the comprehensive Order Details view.
-4. Review the ordered line items, delivery address, delivery time slot, and special customer notes.
-5. In the **Update Status** dropdown, select the next state:
-   - Change from `Received` to `Processed` once the seller acknowledges the order.
-   - Change from `Processed` to `Shipped` once goods are packed.
-6. Select an active **Delivery Partner** from the dropdown list to assign the delivery.
-7. Click **Update** to save the changes. An automated push notification and SMS/Email will be dispatched to both the customer and the assigned driver.
+![Orders Export menu](/img/detailed-documentation/orders-export-menu.webp)
 
-#### How to Generate and Print Invoices
-1. In the order details drawer or directly from the orders table, click the **Invoice** button.
-2. Select your desired layout:
-   - **Standard A4 Invoice**: Detailed multi-vendor breakdown, tax breakup (CGST/SGST/VAT), company logo, and barcodes.
-   - **Thermal POS Slip (80mm/58mm)**: Compact receipt for thermal receipt printers.
-3. Click **Print** or **Download PDF** for record keeping or attaching to the physical parcel.
+### Column reference
+
+| Column | Meaning |
+| --- | --- |
+| Checkbox | Selects the order for a bulk status change. The header checkbox selects the whole page. |
+| **Order ID** | The order number, for example **121**. |
+| **Customer** | Customer name, with email or mobile below (for example *Siddharth Patil*, 7099538938). |
+| **Seller** | Seller name and seller ID (for example *Amit Joshi*, ID - 3). For an order with items from several sellers, the first seller is shown; when you filter by a seller, that seller is shown. |
+| **Total Items** | An "N Items" link. It opens a pop-up with the order's products: image, name, variant, quantity, subtotal and item status. |
+| **Payment** | Order total and payment method (COD, Wallet, Razorpay, Stripe, Paypal and so on). |
+| **Order Date & Time** | The date (for example *16, Nov 2026*), with the part of the day (Morning, Afternoon, Evening, Night) and the time below. |
+| **Status** | Coloured status pill. |
+| **Action** | **View** (eye; opens the order detail page) and **Delete** (bin; only with the `order_delete` permission, asks for confirmation). |
+
+![Orders filters and bulk action bar](/img/detailed-documentation/orders-bulk-status.webp)
+
+### Tutorial: Filter one seller's orders for a month and export them to Excel
+
+*Scenario: the accounts team wants every October order of seller Amit Joshi in a spreadsheet.*
+
+1. Open **Orders** in the sidebar.
+2. Click **Filters**.
+3. In **Date Range**, pick 1 Oct 2026 as the start and 31 Oct 2026 as the end. The list reloads.
+4. In **Seller**, type "Amit" and pick **Amit Joshi**. Leave **Status** on *All Orders* (or pick *Delivered* for completed orders only).
+5. Check the **TOTAL** row at the bottom: it is the sum of the listed orders.
+6. Click **Export** → **Excel**.
+
+**Result:** an `.xlsx` file downloads with every order that matches the filters, from all pages, not only the 10 rows on screen.
+
+### Tutorial: Change the status of several orders at once
+
+*Scenario: the morning dispatch has packed orders 115, 120 and 121, which are all Received. You want to mark them Processed.*
+
+1. Open **Orders**. Click **Filters** and set **Status** to *Received* to see only new orders.
+2. Tick the checkbox next to orders **121**, **120** and **115**.
+3. In the bar that appears, open **Change status to…** and choose *Processed*.
+4. Click **Apply**, then confirm with **Yes, Sure** in the dialog ("Change the status of the selected orders to "Processed" (3)").
+
+**Result:** a summary shows "3 updated" (or, for example, "2 updated, 1 skipped" with the order number and the reason for each skipped order). The list reloads with the new statuses, and each customer gets the usual status notification.
+
+:::tip Tips & common mistakes
+- A bulk change runs the same checks as a single order. Orders that are *Payment Pending*, *Cancelled* or *Returned* are skipped, and so are statuses that cannot be set by hand (Payment Pending, Cancelled, Returned and the self-pickup statuses).
+- You can change up to 200 orders in one bulk action.
+- **Delete** only hides the order from the panel lists. It does not restock the products or refund the customer. To give stock and money back, cancel the items on the order detail page instead.
+- If an order is missing, check the module switcher in the header and the **Date Range** filter. Self-pickup orders are only in **Self Pickup Orders**.
+:::
 
 ### Real-World Use Cases
 
-- **Peak Delivery Rush Hours**: During lunch or evening grocery rush hours, dispatchers filter by `Ready to Ship` and batch-assign nearby orders to delivery partners clustered in the same delivery zone.
-- **Order Exception Handling**: If a customer calls customer support asking about an unexpected delay, the administrator searches by customer mobile number or Order ID to instantly see which driver has the package and view live GPS tracking.
-- **Failed Deliveries & Rescheduling**: When a delivery partner marks an order as undelivered due to customer unavailability, the admin can reschedule the delivery time slot or reassign the package for the following morning.
+- **Morning dispatch**: filter by status *Processed* and today's date, then move the packed orders to *Shipped* in one bulk action.
+- **Month-end reconciliation**: set the date range to last month, filter by seller and export to **Excel** for the accounts team.
 
 ---
 
-## 2. Self Pickup Orders (`/self_pickup_orders`)
+## 2. Order Details (`/orders/view/:id`)
+
+![Order Details](/img/detailed-documentation/order-details.webp)
+
+### Overview
+
+Click **View** on any order to open its detail page. This is where an order is processed: you move it through the statuses, choose how it is delivered (your own delivery partner or an external courier), cancel items and print the invoice. It needs **order_list**. Status changes notify the customer (push, email and SMS when those are set up) and the admins; the assigned delivery boy sees the order in the delivery boy app.
+
+### Screen layout
+
+- **Header**: **Order #id**, the status pill, a **Paid via Wallet** pill when wallet balance was used, and the **Print Order** button (downloads the invoice as a PDF). Below it: the order **Date**, **Seller** (opens the seller's page), **Payment Method** and **Delivery Type** (for example *Doorstep Delivery*).
+- **Order Progress**: a step tracker *Received → Processed → Shipped → Out For Delivery → Delivered* (with *Payment Pending* first while the payment is pending). Cancelled and Returned orders show an extra red or amber step. The order date shows under the first step.
+- **Summary tiles**: **Items** (with total quantity), **Payment Method** (and wallet used), **Delivery Time & Date** (or the delivery type) and **Payable Total**.
+- **Items Ordered**: product name and image, variant, add-ons, prescription images (click to view and download), price, quantity and total. The **Action** column has a cancel (×) button on items that are not delivered, cancelled or returned. Cancelled items show *Cancelled* and the reason.
+- **Billing Summary**: subtotal, add-ons, discount, delivery charges (or *Free*), additional charges, promo code and promo discount, wallet used and **Payable Total**.
+- **Shipping Address** (with a map button and the chosen delivery time), **Delivery Partner Details** (name and phone, once assigned) and **Customer Order Notes**.
+- **Actions** card (right column): **Order Status**, **Delivery method**, then either **Assign Delivery Partner** or **Parcel Tracking** (see the field reference).
+- **Customer Details**: customer name, join date, **Email Address** and **Phone Number**.
+
+### Field reference: Actions card
+
+| Field | Required | What it does | Example |
+| --- | --- | --- | --- |
+| **Order Status** + **Update** | Yes | Moves the whole order (and every item that is not cancelled or returned) to the chosen status after a **Yes, Sure** confirmation. Only *Received*, *Processed*, *Shipped*, *Out For Delivery* and *Delivered* can be saved here. | *Processed* |
+| **Delivery method** | — | Radio choice: **Assign Delivery Partner** or **External parcel (courier)**. Only the block for the chosen method is shown. Choosing does not save anything. | Assign Delivery Partner |
+| **Assign Delivery Partner** + **Assign** / **Change** | Yes, to assign | Search-and-select list ("Select Delivery Boy") of active delivery boys from the admin pool that serve the order's city. Each name shows their open orders in brackets. | Imran Shaikh (2) |
+| **Courier name** | No | Name of the courier company. Max 191 characters. | Blue Dart |
+| **Tracking number** | No | The courier's tracking or AWB number. Max 191 characters. | 7845123690 |
+| **Tracking link (https://...)** | No | Full link to the courier's tracking page. Must be a valid URL starting with `http://` or `https://`. After saving, a **Track parcel** link appears. | `https://www.bluedart.com/tracking` |
+
+### Field reference: Cancel item dialog
+
+| Field | Required | What it does | Example |
+| --- | --- | --- | --- |
+| **Cancellation Reason** | Yes | Saved on the item as "Cancelled by Admin: your reason" and shown with the item. **Confirm Cancel** shows "Cancellation Reason is required" while it is empty. | Out of stock |
+
+![Cancel item dialog](/img/detailed-documentation/order-cancel-item.webp)
+
+:::info Delivery partner or parcel tracking, not both
+An order is delivered either by your own delivery partner or by an external courier.
+- Once a delivery partner is assigned, the external parcel option is locked ("A delivery partner is already assigned, so external parcel tracking cannot be used."). There is no way to unassign a partner; you can only **Change** to another one.
+- Once parcel details are saved, the delivery partner option is locked. To switch back, clear the three parcel fields and click **Save**.
+- Automatic delivery-boy assignment skips orders that have parcel details (see [Delivery Boy Assignment](./delivery.mdx#6-delivery-boy-assignment-auto-assign-settings)).
+
+Parcel tracking is manual: the panel stores the courier name, number and link and returns them to the customer app. Nothing is synced with the courier automatically.
+:::
+
+### Tutorial: Process an order from Received to Delivered with a delivery partner
+
+*Scenario: order **121** from Siddharth Patil (seller Amit Joshi, paid by Razorpay) has just come in as Received. You will pack it, assign delivery boy Imran Shaikh and mark it delivered.*
+
+1. Open **Orders** and click **View** (eye) on order **121**.
+2. Check **Items Ordered** and the **Shipping Address**. If an item is out of stock, cancel it first (see the cancel tutorial below).
+3. In **Actions** → **Order Status**, choose *Processed* and click **Update**. Confirm with **Yes, Sure**. The **Order Progress** tracker moves to *Processed*.
+4. In **Delivery method**, keep **Assign Delivery Partner** selected.
+5. Open the delivery boy list, type "Imran" and pick **Imran Shaikh (2)**. The number in brackets is how many open orders he already has.
+6. Click **Assign**. A success message appears, the button changes to **Change**, and **Delivery Partner Details** shows his name and phone.
+7. When the parcel is packed, set **Order Status** to *Shipped* → **Update** → **Yes, Sure**. When he leaves the store, set *Out For Delivery* the same way.
+8. When the customer has the order, set *Delivered* → **Update** → **Yes, Sure**.
+
+**Result:** the order and all its active items are *Delivered*. The customer sees each step in the app and gets a notification. Imran Shaikh sees the order in the delivery boy app from step 6; his delivery bonus is credited when the order is delivered, and for a COD order the collected cash is added to his cash in hand ([Delivery Boy Cash](./delivery.mdx#7-delivery-boy-cash-cash_collection)). The seller's wallet is credited for the items later, after the return window, by the scheduler.
+
+![Parcel tracking fields](/img/detailed-documentation/order-parcel-tracking.webp)
+
+### Tutorial: Ship through a courier instead of a delivery boy
+
+*Scenario: order **120** (Harsh Vardhan, COD) goes to another city, so you send it with a courier.*
+
+1. Open order **120** and set **Order Status** to *Shipped* (**Update** → **Yes, Sure**).
+2. In **Actions** → **Delivery method**, select **External parcel (courier)**.
+3. Fill **Courier name** ("Blue Dart"), **Tracking number** ("7845123690") and **Tracking link** (`https://www.bluedart.com/tracking`).
+4. Click **Save**.
+
+**Result:** "Parcel tracking details updated successfully." A **Track parcel** link appears under the fields, the **Assign Delivery Partner** option is locked, and the customer sees the courier name, number and link in their order. Set the status to *Delivered* yourself when the courier confirms delivery.
+
+### Tutorial: Cancel one item of an order
+
+*Scenario: order **118** (Sneha Kulkarni, 4 items, Shipped) contains a product the seller has run out of.*
+
+1. Open order **118**. In **Items Ordered**, click the cancel (×) button in that product's row.
+2. In the **Cancel this item?** dialog, type the **Cancellation Reason**: "Out of stock".
+3. Click **Confirm Cancel** (or **Keep Item** to close without changes).
+
+**Result:** the item shows *Cancelled* with "Cancelled by Admin: Out of stock", its quantity goes back into the product variant's stock, and the **Billing Summary** is recalculated. For an order already paid online, the item's amount (minus its share of the promo discount, plus its share of refundable charges) is credited to the customer's wallet; for COD only the wallet part the customer paid is returned. If this was the last active item, the whole order becomes *Cancelled*. A cancelled item cannot be restored.
+
+:::tip Tips & common mistakes
+- The **Order Status** list can show statuses that cannot be saved here; Payment Pending and the self-pickup statuses are refused with a message. Cancel an order by cancelling its items; returns go through [Return Requests](./customer-finance.mdx#8-return-requests-return_requests).
+- A *Payment Pending* order cannot be updated or given a delivery partner until the payment is confirmed. A *Delivered* order cannot be moved back, and its delivery partner cannot be changed.
+- Only the Super Admin can move an order back to an earlier status (for example *Shipped* → *Processed*). Other admin roles can only move forward.
+- The delivery boy list only shows active delivery boys from the admin pool that serve the order's city. Sellers' own fleet drivers are assigned from the seller panel. If the list is empty, check the delivery boy's status and cities in [Manage Delivery Boys](./delivery.mdx#1-manage-delivery-boys-delivery_boys).
+- Assign the delivery partner before you mark the order *Delivered*: the partner's bonus and COD cash are recorded against the assigned partner at that moment.
+:::
+
+### Real-World Use Cases
+
+- **Item out of stock**: cancel only the missing item with a reason instead of cancelling the whole order.
+- **Long-distance orders**: ship through a courier, enter the tracking number and link, and the customer follows the parcel from the app.
+
+---
+
+## 3. Order Invoice (`/orders/invoice/:id`)
+
+![Order Invoice](/img/detailed-documentation/order-invoice.webp)
+
+### Overview
+
+The invoice page shows the order's retail invoice, built by the server, in an **Invoice #id** card. It needs **order_list**. It opens from **Generate Invoice** on a self-pickup order, or directly at `/orders/invoice/75` for any order. The breadcrumb (**View Order** → **Order Details** → **Invoice**) leads back to the order.
+
+### Screen layout
+
+- **Print** button: opens the browser print window for the invoice only (without the sidebar and header).
+- The invoice: store name and customer care number, **FROM** (store name, email, customer care), **RETAIL INVOICE** (number and date), **SHIPPING ADDRESS** (customer name, address, phone, email), **Item** count, **SOLD BY** (seller name, email, mobile), **Delivery By** (the assigned delivery boy, or *Not Assigned*) and **PRODUCT DETAILS** (Sr No., Name, Unit, Price, Tax ₹ (%), Qty, Subtotal), followed by the totals.
+- In the dark theme the invoice keeps its white paper look, the same as it prints.
+
+### Tutorial: Print or download an invoice
+
+*Scenario: the customer of order **75** (Siddharth Patil) asks for a copy of the invoice.*
+
+1. Open **Orders** and click **View** on order **75**.
+2. To get a PDF file, click **Print Order** in the header. A file named `Invoice-No:#75.pdf` downloads.
+3. To print on paper instead, open `/orders/invoice/75` and click **Print**. In the print window choose your printer (or **Save as PDF**).
+
+**Result:** you have the invoice with the store, seller, delivery boy, products with tax and the order totals, ready to email or print.
+
+:::tip Tips & common mistakes
+- The store name, **Support Email** and **Support Number** on the invoice come from **Store Settings** ([Store Settings](./settings.mdx#2-store-settings-store_settings)). Fix them there if the invoice shows the wrong details.
+- **Delivery By** shows *Not Assigned* until a delivery partner is assigned, so print after assigning if the driver's name must be on it.
+:::
+
+---
+
+## 4. Self Pickup Orders (`/self_pickup_orders`)
 
 ![Self Pickup Orders](/img/detailed-documentation/self-pickup-orders.webp)
 
-The **Self Pickup Orders** screen handles the "Click & Collect" fulfillment model, where customers place orders online and physically collect their packaged items from the seller's brick-and-mortar storefront or warehouse.
+### Overview
 
-### Key Components & Indicators
+Orders that the customer collects from the seller's store, with no delivery charge. **Self Pickup Orders** is in the sidebar below **Orders** and needs **self_pickup_order_list**. The status you set is what the customer sees in the app; *Ready for Pickup* tells them to come to the store.
 
-- **Search Bar**: Quick lookup by Order ID, customer phone number, or store name.
-- **Self Pickup Table Columns**:
-  - **O.ID**: Unique order identifier.
-  - **User**: Customer full name.
-  - **Seller**: Target store branch location where goods are staged.
-  - **Mobile**: Customer contact number for collection verification.
-  - **Total (₹)**: Base cart value.
-  - **A. Charges**: Additional store packaging or convenience charges.
-  - **Wallet Used**: Credit deducted from customer's in-app digital wallet.
-  - **F. Total (₹)**: Final payable amount settled.
-  - **P. Method**: Payment mode (`COD / Pay on Pickup`, `Wallet`, `Online Payment`).
-  - **Status**: Collection state (`Pending`, `Ready for Pickup`, `Delivered`, `Cancelled`).
-  - **Actions**: View modal and delete options.
+### Screen layout
 
-### Step-by-Step Operational Instructions
+- **Status tiles**: **Pending**, **Ready For Pickup**, **Picked Up** and **Cancelled** counts.
+- **Search**: "Search by Order ID, User or Seller".
+- **Filters** button: **Date Range**, **Seller** (default *All Sellers*) and **Status** (self-pickup statuses, default *All Orders*).
+- **Columns** dropdown: shows or hides columns. **A. Charges** (additional charges), **Wallet Used** and **F.Total** (payable total) are hidden by default.
+- **Per page** selector and page buttons at the bottom. A **Total** row sums the listed orders.
 
-#### How to Fulfill a Self Pickup Order
-1. Go to **Self Pickup Orders** in the admin sidebar.
-2. When the seller packages the order, change the order status to **Ready for Pickup**. The customer automatically receives an alert that their package is ready for collection.
-3. When the customer arrives at the store counter:
-   - The cashier or store manager asks for the customer's **Order ID** and the **Verification OTP / QR Code** displayed in their customer mobile app.
-   - Verify the OTP matches the order details record.
-4. Click **View Order**, verify the items handed over, and update the status to **Delivered / Completed**.
-5. The transaction is immediately settled to the vendor's ledger balance.
+### Column reference
+
+| Column | Meaning |
+| --- | --- |
+| **Order ID** | The order number, for example **90**. |
+| **Customer** | Name with email below (for example *Siddharth Patil*, siddharth.patil@example.com). |
+| **Seller** | The seller whose store the customer visits, with seller ID. |
+| **Total Items** | "N Items" link that opens the items pop-up. |
+| **Payment** | Order total and payment method. |
+| **Order Date & Time** | Date, part of the day and time. |
+| **Status** | *Pending*, *Ready for Pickup*, *Picked Up*, *Cancelled* or *Returned*. |
+| **Action** | **View**, and **Delete** with the `self_pickup_order_delete` permission. |
+
+### Tutorial: Find the orders waiting at the counter
+
+*Scenario: at 6 pm the store wants a list of orders customers can still collect today.*
+
+1. Open **Self Pickup Orders** in the sidebar.
+2. Click **Filters** and set **Status** to *Ready for Pickup*.
+3. The list shows, for example, order **90** (Siddharth Patil, ₹54, COD) and order **60** (Vikram Singh, ₹350.25, COD).
+4. Click **View** on an order to see its items and the pickup store.
+
+**Result:** only orders that are packed and waiting for the customer are listed, so the counter staff know what to hand over.
+
+:::tip Tips & common mistakes
+- This list has no Export menu. For self-pickup figures, open a report under **Reports** and set **Order type** to *Self Pickup* ([Reports](./reports.mdx#1-reports-reportstype)).
+- Like the Orders list, it only shows orders of the module selected in the header.
+:::
 
 ### Real-World Use Cases
 
-- **Click-and-Collect Groceries**: Customers order fresh dairy or bakery items during work hours and pick them up on their commute home without waiting in supermarket checkout queues.
-- **Express Pharmacy Pickup**: Prescription medicines are verified and pre-packaged by the licensed pharmacist ahead of customer arrival, cutting counter wait times to under 30 seconds.
-- **No Delivery Fee Incentive**: Cost-sensitive customers choose self-pickup to avoid distance-based delivery fees on small basket orders.
+- **Click and collect**: customers order during the day and collect on the way home, with no delivery charge.
+
+---
+
+## 5. Self Pickup Order Details (`/self_pickup_orders/view/:id`)
+
+![Self Pickup Order Details](/img/detailed-documentation/self-pickup-order-details.webp)
+
+### Overview
+
+The detail page of one self-pickup order (title **View Self Pickup Order**). Use it to mark the order ready and picked up, cancel items before pickup, take back items after pickup and get the invoice. It needs **self_pickup_order_list**; the **Return** button also needs **self_pickup_order_update**. Status changes notify the customer and the admins.
+
+### Screen layout
+
+- **Header**: **Order #id**, the status pill, a **Paid via Wallet** pill when used, **Download Invoice** (PDF) and **Generate Invoice** (opens the invoice page). Below it: **Order Date**, **Seller**, **Payment Method** and **Delivery Type: Self Pickup**.
+- **Order Progress**: *Pending → Ready for Pickup → Picked Up*.
+- **Summary tiles**: **Items**, **Payment Method**, **Pickup Store** (store name and timings, for example *Pune Organic Store*, 08:00 - 21:00) and **Payable Total**.
+- **Items Ordered**: product, price, quantity, total, **Status** and **Action**: **View Item Details** (eye), **Return** (undo icon) and **Cancel Item** (×).
+- **Billing Summary**, **Pickup Store** (store address and **Store Timings**) and **Customer Order Notes**.
+- **Actions** → **Order Status**: choose a self-pickup status and click **Update**.
+- **Customer Details**: name, join date, email and phone.
+
+### Field reference
+
+| Field | Required | What it does | Example |
+| --- | --- | --- | --- |
+| **Order Status** + **Update** | Yes | Moves the order to *Pending*, *Ready for Pickup* or *Picked Up* after a **Yes, Sure** confirmation. Statuses only move forward. | *Ready for Pickup* |
+| **Cancellation Reason** (cancel dialog) | Yes | Asked when you click **Cancel Item**; confirm with **Yes, Sure** or close with **No**. Items that are picked up, cancelled or returned cannot be cancelled. | Customer changed mind |
+| **Return** (item button) | — | Marks one item *Returned* after a **Return Product** / **Yes, Return** confirmation. Shown only on returnable products, after the order is *Picked Up* and within the product's return days. | Masala Chai Tea |
+
+### Tutorial: Mark a self-pickup order Ready for Pickup, then Picked Up
+
+*Scenario: order **87** (Vikram Singh, seller Suresh Kumar, COD) is Pending. The seller packs it at 4 pm and the customer collects it at 7 pm.*
+
+1. Open **Self Pickup Orders** and click **View** on order **87**.
+2. When the order is packed, choose *Ready for Pickup* in **Actions** → **Order Status** and click **Update**. Confirm with **Yes, Sure**.
+3. The customer is notified that the order is ready, and the **Order Progress** tracker moves to *Ready for Pickup*.
+4. When the customer collects the order (and pays, for COD), choose *Picked Up* and click **Update** → **Yes, Sure**.
+
+**Result:** the order and its items are *Picked Up* and the tracker is complete. The order now counts as a completed sale in the reports.
+
+### Tutorial: Take back an item after pickup
+
+*Scenario: the customer of order **37** (Rohan Mehta) brings back the Masala Chai Tea the next day.*
+
+1. Open order **37** (status *Picked Up*).
+2. In **Items Ordered**, click **Return** (undo icon) on the Masala Chai Tea row.
+3. Confirm with **Yes, Return**.
+
+**Result:** the item is *Returned*, its quantity goes back into stock and it is taken out of the order totals. This action does not credit the customer's wallet, so settle the money at the counter.
+
+:::tip Tips & common mistakes
+- Once an order is *Picked Up* its status is locked, and no self-pickup status can be moved back (not even by the Super Admin).
+- **Return** only appears on returnable products, after pickup, within the return days, and for roles with **self_pickup_order_update**. Otherwise use [Return Requests](./customer-finance.mdx#8-return-requests-return_requests).
+- A *Payment Pending* order cannot be moved to *Ready for Pickup* until the payment is confirmed.
+:::
+
+### Real-World Use Cases
+
+- **Pharmacy pickup**: the pharmacist prepares the order, marks it *Ready for Pickup*, and marks it *Picked Up* at the counter.

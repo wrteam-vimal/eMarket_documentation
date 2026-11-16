@@ -151,6 +151,7 @@ const sidebars = {
       className: "sb-icon sb-icon-detailed",
       items: [
         "detailed-documentation/intro",
+        "detailed-documentation/getting-started",
         "detailed-documentation/orders",
         "detailed-documentation/catalog",
         "detailed-documentation/sellers",
@@ -162,6 +163,7 @@ const sidebars = {
         "detailed-documentation/localization",
         "detailed-documentation/content-blogs",
         "detailed-documentation/reports",
+        "detailed-documentation/system-maintenance",
         "detailed-documentation/admin-faqs",
       ],
     },

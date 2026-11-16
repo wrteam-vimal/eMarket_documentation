@@ -1,117 +1,680 @@
 ---
 sidebar_position: 8
 title: Platform & Store Settings
-description: In-depth reference for core marketplace settings, payment gateways, additional service charges, Firebase credentials, SEO parameters, and system updater.
+description: Reference and tutorials for the Settings hub and every settings screen it opens - store settings, payment methods, additional charges, tax, Firebase, SMS, realtime, deeplinks, SEO, theme, external storage, account settings, system registration and add-ons.
 ---
 
 # Platform & Store Settings
 
-The Settings suite configures the foundation of your marketplace: branding, currencies, payment processors, delivery surcharges, security credentials, and search engine optimization.
+All configuration screens of the admin panel are reached from one place: the **Settings** entry in the sidebar, which opens the Settings hub. Every settings page shows a breadcrumb (Dashboard › Settings › page) whose **Settings** link returns to the hub; Store Settings and Payment Methods also have a **← Settings** back link above the title.
+
+:::info Demo mode
+While demo mode is on, only the **Super Admin** can save settings; every other role can open the pages, but each save is refused with a "Demo mode" toast. See [Demo Mode](./intro.mdx#6-demo-mode-read-only-panels) for the full rules.
+:::
 
 ---
 
-## 1. Store Settings (`/store_settings`)
+## 1. Settings Hub (`/system_settings`)
+
+![Settings Hub](/img/detailed-documentation/settings-hub.webp)
+
+### Overview
+The Settings hub is the single entry point for configuration: sidebar **Settings** (General section). It replaces the old "System" and "Web Settings" submenus and shows every settings page as a card, grouped by topic. Each card checks its own permission (the same rule as the sidebar), so a role only sees the cards it may open; the **Logs** card is shown to the Super Admin only.
+
+### Screen layout
+- **Title and subtitle**: "Settings – Manage your store, delivery, payments, communication and system configuration."
+- **Search settings…** box (top right): filters the cards by title and description. If nothing matches, "No settings match your search." is shown.
+- **Cards**: icon, title, a one-line description and a **Go to settings →** link.
+- **Groups**:
+
+| Group | Cards |
+| :--- | :--- |
+| **Store** | Store Setting, Address Setting, Currency Setting, Date, Time & Region |
+| **Selling** | Cart Setting, Product & Stock Setting, Payment Methods, Additional Charges, Seller Setting, Login Setting, Refer & Earn Setting |
+| **Delivery** | Delivery Settings |
+| **Apps & Website** | App Setting, Deeplink Settings, General Web Settings, SEO Settings, Social Media |
+| **Content & Policies** | Contact Us, About Us, Customer Policies, Seller Policies, Delivery Boy Policies |
+| **Communication** | SMTP Mail Setting, SMS Settings, Firebase Settings, Notification Templates, SMS Templates, Realtime Settings |
+| **Integrations** | External Storage, Third Party API Credentials |
+| **System** | System Status, Setup Checklist, Announcement Banner, Clear System Cache, Logs (Super Admin only), System Registration, System Updater |
+
+Cards such as Store Setting, Cart Setting or Login Setting open the matching section of Store Settings (`/store_settings?section=...`).
+
+### Card permissions
+
+| Card(s) | Permission needed |
+| :--- | :--- |
+| All Store Settings sections, External Storage, System Status, Setup Checklist, Clear System Cache, System Updater | `manage_store_settings` |
+| Payment Methods | `manage_payment_methods` |
+| Additional Charges | `additional_charges_list` |
+| Deeplink Settings / SEO Settings / SMS Settings / SMS Templates / Realtime Settings | `deeplink_settings` / `seo_settings_list` / `sms_settings` / `sms_templates_list` / `realtime_settings` |
+| Firebase Settings, Notification Templates | `manage_Notification_settings` |
+| System Registration | `manage_system_registration` |
+| Logs | Super Admin role |
+
+### Tutorial: Find and open a setting quickly
+*Scenario: you want to change the SMTP password but do not remember which group it is in.*
+1. Click **Settings** in the sidebar.
+2. Type `smtp` in **Search settings…**. Only the **SMTP Mail Setting** card stays.
+3. Click **Go to settings →**. Store Settings opens on the **SMTP Mail Setting** section.
+
+**Result:** you land directly on the right section; the breadcrumb **Settings** link brings you back to the hub.
+
+### Tutorial: Clear the system cache
+1. Open **Settings** and click the **Clear System Cache** card (group **System**).
+2. Confirm the "Clear cached settings, translations, config, routes and views?" dialog.
+3. A success message appears and the page reloads.
+
+**Result:** saved settings and uploaded translations show up right away. The next few page loads can be a little slower while the cache is rebuilt.
+
+:::tip Tips
+- A card you expect is missing? Your role lacks its permission (table above). Ask a Super Admin to add it in [Role & Permissions](./admin-faqs.mdx#2-role--permissions-role).
+- Clearing the cache is also the first thing to try after uploading a new language file.
+:::
+
+---
+
+## 2. Store Settings (`/store_settings`)
 
 ![Store Settings](/img/detailed-documentation/store-settings.webp)
 
-The primary administrative console for platform-wide business logic and operating defaults.
+### Overview
+Platform-wide business settings for the store, the panels and all apps (permission `manage_store_settings`). A row of pills at the top switches between sections; each section is a card with grouped fields and its own **Update** button, and each Update saves only that section. Links can open a section directly, e.g. `/store_settings?section=currency_setting`. The page title follows the open section (e.g. "Store Setting", "Login Setting").
 
-### Essential Configuration Panels
-- **Platform Identity**:
-  - **App Name**: The public platform title displayed in notifications and storefront headers.
-  - **Support Email & Helpline Phone**: Customer service contacts.
-  - **Light & Dark Logos**: Brand imagery rendered across client apps and admin consoles.
-  - **Favicon**: Browser tab bookmark icon.
-- **Currency & Localization**:
-  - **Currency Symbol** (e.g. `$`, `€`, `₹`, `£`).
-  - **Currency Code** (USD, EUR, INR, GBP).
-  - **Decimal Points**: Precision format (typically 2 decimals).
-- **Order Limits & Rules**:
-  - **Minimum Order Amount**: Minimum checkout cart threshold.
-  - **Maximum Cart Weight / Units Limit**: Safeguard against unfulfillable bulk orders.
-  - **Order Return Window**: Number of days after delivery when customers can submit return requests.
+### Sections and their fields
+
+| Section | Fields |
+| :--- | :--- |
+| **Store Setting** | *Store details*: App Name, Support Number, Support Email, Copyright Details (per language, with **Translate Empty Fields** / **Translate & Overwrite**). *Logos & images*: Logo, Dark Logo, Invoice Logo, Panel Login Background Image, Placeholder Image. |
+| **Address Setting** | *Address & location*: Address, Default City, Latitude, Longitude. *Maps*: Map Provider (Google Maps or OpenStreetMap), Place Api Key and Map Api Key (Google only). |
+| **Currency Setting** | Store Currency, Currency Code, Decimal Places. |
+| **Date, Time & Region** | System Timezone, Date Format, Time Format, Country Code. |
+| **Product & Stock Setting** | Low stock limit, Few Quantity Left Alert, Allow Products on All Category Levels, Product Rating (on/off). |
+| **Delivery Boy Setting** | *Bonus*: Bonus Settings (on/off), Bonus Type (Commission or Fixed/Salaried), Delivery Boy Bonus Percentage, Minimum / Maximum bonus amount. *Delivery confirmation*: Order Delivery OTP System. |
+| **App Setting** | *App availability*: on/off and a remark for the Customer App, Seller App and Delivery Boy App. *Store links*: Play Store Url, App Store Url. *Android / iOS version control*: version system status, required force update, current version of the app. |
+| **SMTP Mail Setting** | *Mail server*: Mailer (SMTP or Sendmail), From Email ID, Reply To Email ID, SMTP Email Password, SMTP Host, SMTP Port (TLS 587, SSL 465), SMTP Email Content Type, SMTP Encryption (TLS / SSL). *Email test*: an address and **Test Mail**. |
+| **Third Party API Credentials** | Gemini Key (AI content used to write product descriptions and translations). |
+| **Seller Setting** | One Seller Cart, Self Pickup Mode, Seller Commission (%). |
+| **Login Setting** | *Sign-in methods*, *Phone authentication*, *Panel login page*, *Demo Mode* (see below). |
+| **Cart Setting** | *Cart limits*: Maximum Items Allowed In Cart, Minimum Order Amount. *Refunds*: Is Delivery Charge Refundable?. *Cart reminders*: Cart Notification (on/off), Notification Delay After Cart Addition, Notification Interval, Notification Stop Time. |
+| **Refer & Earn Setting** | Minimum Order for Referral, Referral Credit First Order. |
+| **Announcement Banner** | Show announcement banner (on/off) and a Message per language (max 500 characters). The message scrolls at the top of the admin and seller panels. |
+
+Payment gateway currencies are not set here: PayPal, Stripe, Paystack and DPO each have their own currency code on [Payment Methods](#3-payment-methods-payment_methods).
+
+### Field reference: Store Setting, Currency Setting and Date, Time & Region
+
+| Field | Required | What it does | Example |
+| :--- | :--- | :--- | :--- |
+| App Name | Yes | Store name used in the panels, website, apps and emails. | `eMarket` |
+| Support Number | No | Contact number shown to customers. Digits only, at most 16. | `1234567890` |
+| Support Email | No | Contact address shown to customers. | `support@gmail.com` |
+| Copyright Details | Yes (default language) | Footer text of the panels, website and apps. Click the **Current year** chip to insert `{{current_year}}`, which is replaced with the current year; a **Preview** line shows the result. | `© {{current_year}} eMarket Trademarks…` |
+| Logo / Dark Logo / Invoice Logo | No | Logos for the light theme, the dark theme and printed invoices. Images only. | Your logo PNG |
+| Panel Login Background Image | No | Background of the panel login page. | A store photo |
+| Placeholder Image | No | Shown wherever an image is missing. JPEG, PNG, GIF, WEBP or SVG. | A grey box with your logo |
+| Store Currency | Yes | Symbol or code shown next to prices, max 10 characters. | `₹` |
+| Currency Code | Yes | ISO code; one option per code (e.g. "EUR - Austria, Belgium, Germany +17"). | `INR` |
+| Decimal Places | Yes | Digits after the decimal point in prices: a whole number from 0 to 6 (2 shows 10.50). | `2` |
+| System Timezone | No | Time zone used for dates and times. Search by city or offset. | `kolkata` or `+05:30` |
+| Date Format / Time Format | No | How dates and times are displayed everywhere. | — |
+| Country Code | No | Default country code for phone numbers. | India (+91) |
+
+### Login Setting and the Demo Mode Toggle
+
+![Store Settings - Login Setting](/img/detailed-documentation/store-settings-login.webp)
+
+- **Sign-in methods**: Phone Login, Google Login, Apple Login, Email Login — the sign-in options the customer app and website offer.
+- **Phone authentication**: Phone Auth OTP, Phone Auth Password, Firebase Authentication, and **Custom SMS Gateway OTP based** (shown only while Phone Auth OTP or Phone Auth Password is on; OTPs are then sent through [SMS Settings](#7-sms-settings-sms-settings)).
+- **Panel login page**: the **Seller tab** and **Delivery Boy tab** switches show or hide those tabs on the panel login page. With both off the tab bar is hidden; the seller and delivery boy login pages stay reachable by their URL.
+- **Demo Mode**: only the account with user ID 1 (the Super Admin) can change this switch; for everyone else it is disabled. When it is on, the apps pre-fill the default login credentials and the panels become read-only for every role except the Super Admin. Keep it off on a live store. Demo mode is stored in `.env` (`DEMO_MODE`), so it can also be switched off there with `DEMO_MODE=0`.
+
+### Tutorial: First-time store setup
+*Scenario: a new installation for "eMarket", an Indian grocery store.*
+1. Open **Settings → Store Setting**.
+2. Enter **App Name** `eMarket`, **Support Number** `1234567890` and **Support Email** `support@gmail.com`.
+3. In **Copyright Details** click the **Current year** chip, then type ` eMarket Trademarks and brands are the property of their respective owners.` Check the **Preview** line under the box.
+4. Under *Logos & images* drop your **Logo**, **Dark Logo**, **Invoice Logo** and a **Placeholder Image**. Click **Update**.
+5. Click the **Currency Setting** pill. Enter **Store Currency** `₹`, pick **Currency Code** `INR`, keep **Decimal Places** `2`, and click **Update**.
+   ![Store Settings - Currency Setting](/img/detailed-documentation/store-settings-currency.webp)
+
+6. Click the **Date, Time & Region** pill. Type `kolkata` in **System Timezone** and pick Asia/Kolkata; choose the **Date Format**, **Time Format** and **Country Code** (+91). Click **Update**.
+
+**Result:** the store name, logos, footer text, prices and dates use your values in the panels, website and apps. Each pill was saved separately, so an error in one section never discards another.
+
+### Tutorial: Switch demo mode off before going live
+1. Log in as the Super Admin (user ID 1).
+2. Open **Settings → Login Setting** and scroll to **Demo Mode**.
+3. Turn the **Demo Mode** switch off and click **Update**.
+
+**Result:** the "Demo mode" badge disappears from the header, all roles can save again (within their permissions) and the apps stop pre-filling demo credentials. To switch it back on, turn the same switch on.
+
+:::caution Common mistakes
+- **Support Number** accepts digits only, maximum 16; anything else is cleared with "Support Number must be maximum 16 digits numbers."
+- Decimal places above 6 are refused ("Decimal places can be at most 6.").
+- The Announcement Banner message is required in the default language while the banner is on ("Enter the message in the default language, or turn the banner off.").
+- The Demo Mode switch is greyed out for every account except user ID 1.
+:::
 
 ---
 
-## 2. Payment Gateways (`/payment_methods`)
+## 3. Payment Methods (`/payment_methods`)
 
 ![Payment Methods](/img/detailed-documentation/payment-methods.webp)
 
-Enable, disable, and configure credentials for multi-country payment processors.
+### Overview
+Turns payment gateways on or off for checkout in the customer app and website, and stores their credentials (permission `manage_payment_methods`; card in **Settings → Selling**). Changes decide which payment options customers see at checkout.
 
-### Supported Payment Engines
-- **Cash on Delivery (COD)**: Toggle COD availability, set minimum/maximum COD cart thresholds.
-- **Stripe**: Publishable Key, Secret Key, and Webhook Signing Secret for global credit card processing.
-- **Razorpay**: Key ID and Key Secret for instant UPI, net banking, and card processing in India.
-- **PayPal**: Client ID, Secret, and Live/Sandbox environment toggle.
-- **Cashfree**: App ID and Secret Key for direct settlement.
-- **Midtrans**: Server Key and Client Key for Southeast Asian payment methods.
-- **Paytm / Paystack**: Regional payment gateways.
-- **Direct Bank Transfer**: Bank account display details for manual wire confirmation.
+### Screen layout
+- **Gateway list (left)**: a counter ("1 / 10 payment methods turned on") with a progress bar, **All / On / Off** tabs with counts, and a **Search gateways…** box. Each gateway shows a green dot when on, a grey dot when off, an amber dot when it is on but **Needs setup**, and a **Live** or **Test** badge for gateways with a mode.
+- **Selected gateway (right)**: name, description and an **Enabled / Disabled** switch. While it is off, a note says "Customers can't use this payment method. You can still fill in the details now and turn it on later."
+- **Payment Mode**: **Sandbox** ("Test payments, no real money") or **Live** ("Real payments from customers"), for gateways that have a mode.
+- **Credentials**: the gateway's fields; secret keys have a show/hide eye button. Currency fields have a "supported … Learn more" link.
+- **Webhook & callback URLs**: URLs with a **Copy** button to paste into the gateway's dashboard ("Copy these into your gateway dashboard so it can tell this store when a payment succeeds.").
+- **Needs setup** alert: lists the required fields still empty while the gateway is on.
+- **Sticky save bar**: "Unsaved changes" or "All changes saved", with **Discard** and **Update**.
+
+### Field reference
+
+| Gateway | Fields |
+| :--- | :--- |
+| **Cash on Delivery** | COD Mode: Global (COD for every product) or Product wise (only products that allow COD). |
+| **PayPal** | Payment Mode\*, PayPal business email\*, Currency Code\*; Notification URL (IPN). |
+| **Razorpay** | Razorpay key ID, Secret Key. No mode choice. |
+| **Paystack** | Public key\*, Secret key\*, Currency Code\*. |
+| **Stripe** | Payment Mode\*, Stripe Publishable Key, Stripe Secret Key, Stripe Webhook Secret Key, Currency Code\*; Payment Endpoint URL. |
+| **Midtrans** | Payment Mode\*, Server key; Notification URL, Return URL. |
+| **PhonePe** | Payment Mode\*, Merchant ID, Client ID, Client version, Client secret; Payment Endpoint URL (editable). |
+| **Cashfree** | Payment Mode\*, App ID, Secret Key; Notification URL. |
+| **PayTabs** | Payment Mode\*, Profile ID, Secret Key; Notification URL. |
+| **DPO Pay** | Payment Mode\*, Company token, Service type (e.g. `3854`), Currency Code\*; Notification URL. |
+
+\* Required while the gateway is on.
+
+### Tutorial: Enable Stripe in Sandbox, then go live
+*Scenario: you want to test card payments before accepting real money.*
+1. Click **Stripe** in the gateway list.
+2. Turn the switch to **Enabled** and click **Sandbox** under **Payment Mode**.
+3. Paste the test **Stripe Publishable Key**, **Stripe Secret Key** and **Stripe Webhook Secret Key** from your Stripe dashboard, and pick the **Currency Code** (e.g. `INR`).
+4. Under **Webhook & callback URLs**, click **Copy** next to **Payment Endpoint URL** and add it as a webhook endpoint in Stripe.
+5. Click **Update**. The list shows Stripe with a green dot and a **Test** badge.
+6. Place a test order with a Stripe test card.
+7. When you are ready, open Stripe again, click **Live**, replace the three keys with your live keys, update the webhook in Stripe, and click **Update**.
+
+**Result:** customers see Stripe at checkout; the badge changes from **Test** to **Live** after step 7.
+
+### Tutorial: Turn on Razorpay
+1. Click **Razorpay** and switch it to **Enabled**.
+2. Enter the **Razorpay key ID** and **Secret Key** from your Razorpay dashboard. Razorpay has no Payment Mode on this screen: test or live depends on which key pair you paste.
+3. Click **Update**.
+
+**Result:** Razorpay (cards, UPI, wallets) is offered at checkout.
+
+:::caution Common mistakes
+- At least one gateway must stay on; saving with all gateways off is refused ("Turn on at least one payment method.").
+- If an enabled gateway is missing a required field, **Update** opens that gateway and lists the missing fields instead of saving.
+- **Discard** reverts every unsaved change on the page, not only the open gateway.
+- Switch Sandbox to **Live** (and swap the keys) before launch, or customers' payments stay test payments.
+:::
 
 ---
 
-## 3. Additional Charges (`/additional_charges`)
+## 4. Additional Charges (`/additional_charges`)
 
 ![Additional Charges](/img/detailed-documentation/additional-charges.webp)
 
-Configure automated line-item surcharges appended to customer orders.
+### Overview
+Extra charges (packaging, handling, small-cart fees, etc.) added to orders at checkout (permission `additional_charges_list`; card in **Settings → Selling**). All charges are edited on one form with a tab per language, and one **Update** saves them all. The charges applied to an order are stored on that order, so editing a charge later does not change past orders.
 
-### Surcharge Categories
-- **Store Packaging Charges**: Nominal fees covering eco-friendly containers and bags.
-- **Platform Service / Convenience Fee**: Flat or percentage-based operational fee.
-- **Rush Hour / Rain Surcharge**: Dynamic logistics fee during adverse weather or peak demand periods.
+### Field reference (per charge)
+
+| Field | Required | What it does | Example |
+| :--- | :--- | :--- | :--- |
+| Charge Title | Yes (default language) | Name shown to the customer. Other language tabs only translate it. | `Packaging Fee` |
+| Charge Type | — | **Amount** (fixed) or **Percentage**. | Amount |
+| Charge Amount / Percentage | — | The value; the label follows the type. Percentage max 100. | `10` (₹10) or `2` (2 %) |
+| Refundable | — | Yes / No: whether the charge is refunded. | No |
+| Status | — | On/off switch; switched-off charges are not applied. | On |
+| Applicable On | — | **Order** (delivery orders) and/or **Self Pickup**. | Order, Self Pickup |
+
+The demo store has **Packaging Fee** (₹10, on), **Small Cart Fee** (₹25, off) and **Platform Fee** (2 %, off).
+
+### Tutorial: Add a packaging fee
+1. Click **+ Add** under the list of charges. A new empty row appears.
+2. Enter **Charge Title** `Packaging Fee`, keep **Charge Type** `Amount` and enter `10` in **Charge Amount**.
+3. Leave **Refundable** on **No**, turn **Status** on, and tick **Order** and **Self Pickup**.
+4. Optional: open the other language tabs, or use **Translate Empty Fields**, to translate the title.
+5. Click **Update**.
+
+**Result:** new orders, delivered or picked up, include a "Packaging Fee" of ₹10.
+
+:::tip Tips
+- The trash button only removes the row from the form after you confirm; nothing is deleted until you click **Update**. Reload the page to undo.
+- To pause a charge (e.g. Small Cart Fee during a promotion), switch its **Status** off instead of deleting it.
+- The Charge Title must be filled in the default language for every row, or Update stops with "Charge Title (default language) is required for charge #N".
+:::
 
 ---
 
-## 4. Firebase Configuration (`/firebase-settings`)
+## 5. Tax Settings (`/settings/tax`)
+
+![Tax Settings](/img/detailed-documentation/tax-settings.webp)
+
+### Overview
+Tax categories (what you assign to products as **Tax Category**) and the tax rules each jurisdiction charges (permission `taxes`). Opened from sidebar **Products → Taxes**. A product is taxed by the active rule that matches its category, the country/state and the place of supply; customers see the component names (e.g. CGST, SGST, VAT) set on the rule.
+
+### Screen layout
+- **Tax Categories** tab: columns ID, Name, Code, Products (number of products using the category; a category used by products cannot be deleted), Status, Actions.
+- **Tax Rules** tab: columns Jurisdiction (country and state, or "Whole country"), Tax Category, Place of Supply, Tax Components (chips such as "CGST 9%", "SGST 9%"), Total Rate, Status, Actions. With no rules yet, a warning explains that products whose category has no matching rule are not taxed.
+- **Filters**: All Statuses / Active / Deactive; on Tax Rules also All Countries and All Categories; a search box and a refresh button.
+- **+ Add**: opens the Add Tax Category or Add Tax Rule modal for the open tab.
+
+### Field reference: Add Tax Category
+
+| Field | Required | What it does | Example |
+| :--- | :--- | :--- | :--- |
+| Name | Yes | Admin-only label. Customers see the component names from the rule. | `GST 18%` |
+| Code | Yes | Stable identifier used by imports and integrations. Letters, numbers and underscores. | `GST_18` |
+| Description | No | Internal note. | Standard-rated goods |
+| Status | — | Deactivate / Activate. | Activate |
+
+### Field reference: Add Tax Rule
+
+| Field | Required | What it does | Example |
+| :--- | :--- | :--- | :--- |
+| Country | Yes | Country the rule applies in. | India |
+| State / Province / Region | No | Leave empty for the whole country. | Gujarat |
+| Tax Category | Yes | Category the rate applies to. | GST 18% |
+| Place of Supply | Yes | **Any**, **Same region (branch and customer)** or **Different region (branch vs customer)**. | Same region (branch and customer) |
+| Tax Components | Yes | **Add Component** rows of Component Name + percentage (0.001–100). Components are added together; the **Total Rate** is shown below. | CGST 9, SGST 9 |
+| Status | — | Deactivate / Activate. | Activate |
+
+### Tutorial: Configure GST (CGST + SGST vs IGST)
+*Scenario: a seller in Gujarat sells 18 % goods; customers inside Gujarat pay CGST + SGST, customers in other states pay IGST.*
+1. On **Tax Categories** click **+ Add**, enter Name `GST 18%`, Code `GST_18`, Status **Activate**, and click **Save**.
+2. Open **Tax Rules** and click **+ Add**.
+3. Choose Country **India**, State **Gujarat**, Tax Category **GST 18%**, Place of Supply **Same region (branch and customer)**.
+4. Click **Add Component** so there are two rows: `CGST` `9` and `SGST` `9`. **Total Rate** shows 18 %. Click **Save**.
+
+   ![Add Tax Rule modal](/img/detailed-documentation/tax-rule-add.webp)
+
+5. Click **+ Add** again: India, Gujarat, GST 18%, Place of Supply **Different region (branch vs customer)**, one component `IGST` `18`. Click **Save**.
+6. Pick **GST 18%** as the **Tax Category** on the products (see [Products](./catalog.mdx#2-products)).
+
+**Result:** the Tax Rules list shows two GST 18% rows with a Total Rate of 18 % each, like the demo rows for GST 5% and GST 12%. Orders inside Gujarat are taxed CGST 9 % + SGST 9 %; orders from other states IGST 18 %.
+
+:::caution Common mistakes
+- The same-region and different-region rules of one category must total the same rate.
+- A product whose category has no matching active rule is not taxed at all.
+- Every component needs a name and a percentage greater than 0 ("Every component percentage must be greater than 0.").
+- A category used by products cannot be deleted; a "Cannot delete" dialog says why. Switch it to Deactive instead.
+:::
+
+---
+
+## 6. Firebase Settings (`/firebase-settings`)
 
 ![Firebase Settings](/img/detailed-documentation/firebase-settings.webp)
 
-Connects the eMarket web and Flutter mobile applications to Google Firebase services.
+### Overview
+Firebase project keys and the service-account file (permission `manage_Notification_settings`; card in **Settings → Communication**). They are used to send push notifications (to customers, sellers, delivery boys and admin browsers) and for Firebase phone login. Without them, [Send Notification](./communications.mdx#1-send-notification-notifications) and the template tests cannot deliver anything.
 
-### Core Credentials Required
-- **Firebase API Key** & **Project ID**
-- **Messaging Sender ID** & **App ID**
-- **FCM Server Key / Service Account JSON**: Powers instant push notifications to Android and iOS.
-- **Web VAPID Key**: Authorizes in-browser push notification subscriptions.
+### Field reference
+
+| Field | Required | What it does | Example |
+| :--- | :--- | :--- | :--- |
+| apiKey | Yes | Web API key of the Firebase project. | `AIzaSyDemo-eMarket-…` |
+| authDomain | Yes | Auth domain. | `emarket-demo.firebaseapp.com` |
+| projectId | Yes | Project ID. | `emarket-demo` |
+| storageBucket | Yes | Storage bucket. | `emarket-demo.appspot.com` |
+| messagingSenderId | Yes | Sender ID for Cloud Messaging. | `104857600123` |
+| appId | Yes | Web app ID. | `1:104857600123:web:…` |
+| measurementId | Yes | Analytics measurement ID. | `G-EMDEMO1234` |
+| Firebase Json file | — | Service-account file ("Supported formats: JSON"). The label shows **File exists** once one is saved. | `emarket-demo-firebase-adminsdk.json` |
+
+### Tutorial: Connect Firebase for push notifications
+1. In the Firebase console open **Project settings → General**, add a Web app if you have none, and copy its config values.
+2. In the panel open **Settings → Firebase Settings** and paste them into apiKey, authDomain, projectId, storageBucket, messagingSenderId, appId and measurementId.
+3. In Firebase open **Project settings → Service accounts**, generate a new private key and save the JSON file.
+4. Drop that file on the **Firebase Json file upload** box ("Drop, paste or click to upload").
+5. Click **Update**. The label now shows **File exists**.
+6. Open [Notification Templates](./communications.mdx#2-notification-templates-notification-templates) and use **Send test to me** to confirm delivery.
+
+**Result:** push notifications reach the apps and the browsers of logged-in admins.
+
+:::tip Tips
+- Upload a new JSON file only when you change the service account; leaving the drop box empty keeps the saved file.
+- The keys must belong to the same Firebase project as the one built into your mobile apps.
+:::
 
 ---
 
-## 5. SEO Settings (`/seo-settings`)
+## 7. SMS Settings (`/sms-settings`)
+
+![SMS Settings](/img/detailed-documentation/sms-settings.webp)
+
+### Overview
+Twilio credentials used to send OTP and order SMS messages (page title "SMS Gateways & Methods Settings", permission `sms_settings`; card in **Settings → Communication**). The SMS text is edited on [SMS Templates](./communications.mdx#6-sms-templates-sms-templates); which order statuses send an SMS is chosen on [Account Settings](#13-account-settings-order-mail-settings-settings).
+
+### Field reference
+
+| Field | Required | What it does | Example |
+| :--- | :--- | :--- | :--- |
+| Twilio [ Enable / Disable ] | — | Turns SMS sending on or off. The three fields below appear while it is on. | On |
+| Twilio SID | Yes (when on) | Account SID from the Twilio console. | `AC…` |
+| Twilio Auth Token | Yes (when on) | Auth token from the Twilio console. | — |
+| Twilio Phone Number | Yes (when on) | The Twilio number SMS are sent from, with country code. | `+14155550123` |
+
+### Tutorial: Configure Twilio SMS
+1. In the Twilio console copy the **Account SID**, **Auth Token** and your Twilio phone number.
+2. Open **Settings → SMS Settings** and switch **Twilio** on.
+3. Paste the **Twilio SID**, **Twilio Auth Token** and **Twilio Phone Number**.
+4. Click **Update**.
+5. Open [SMS Templates](./communications.mdx#6-sms-templates-sms-templates) and use **Send test to me** with your own number.
+
+**Result:** order-status SMS (and OTP SMS, if **Custom SMS Gateway OTP based** is on in Login Setting) are sent through Twilio.
+
+:::caution Common mistakes
+- Saving with Twilio on but any of the three fields empty is refused ("Twilio SID is required when Twilio is enabled.").
+- Twilio cannot be switched off while phone login sends OTP through the SMS gateway and Firebase OTP is off. Turn on **Firebase Authentication** in [Login Setting](#login-setting-and-the-demo-mode-toggle) first.
+- The **Update** button is shown only to roles that have both `sms_settings` and `manage_payment_methods`.
+- Twilio trial accounts can only send to verified numbers.
+:::
+
+---
+
+## 8. Realtime Settings (`/realtime-settings`)
+
+![Realtime Settings](/img/detailed-documentation/realtime-settings.webp)
+
+### Overview
+Chooses how realtime order-offer alerts reach delivery boys (used by [Delivery Boy Assignment](./delivery.mdx#6-delivery-boy-assignment-auto-assign-settings)); only the selected driver is used (permission `realtime_settings`; card in **Settings → Communication**).
+
+### Field reference
+
+| Field | Required | What it does | Example |
+| :--- | :--- | :--- | :--- |
+| Realtime Driver | Yes | **Reverb (Self Hosted)** or **Pusher (Cloud)**. The credential group below follows the choice. | Reverb (Self Hosted) |
+| Pusher: App ID, App Key, App Secret, Cluster | — | From your Pusher Channels app under "App Keys". | Cluster `ap2` |
+| Reverb: App ID, App Key, App Secret, Host, Port, Scheme | — | Your Reverb server; Scheme is `http` or `https`. Start Reverb with `php artisan reverb:start`. | Port `443`, Scheme `https` |
+
+### Tutorial: Switch to Pusher
+1. Create a Channels app at Pusher and open its **App Keys**.
+2. Click **Pusher (Cloud)** and fill **App ID**, **App Key**, **App Secret** and **Cluster**.
+3. Click **Update**.
+
+**Result:** the selected driver and its keys are saved for the order-offer alerts.
+
+:::caution
+Saving does not send anything by itself: the matching package (`laravel/reverb` for Reverb, the Pusher PHP package for Pusher) must also be installed on the server for the driver to work, and Reverb needs its own running process.
+:::
+
+---
+
+## 9. Deeplink Settings (`/deeplink-settings`)
+
+![Deeplink Settings](/img/detailed-documentation/deeplink-settings.webp)
+
+### Overview
+The deeplink scheme used by the website and the mobile apps to open in-app screens (permission `deeplink_settings`; card in **Settings → Apps & Website**). A "How deeplinks work" box explains the format.
+
+### Field reference
+
+| Field | Required | What it does | Example |
+| :--- | :--- | :--- | :--- |
+| Deeplink Schema | Yes | Custom URL prefix the apps respond to, without `://`: lowercase letters, numbers, `+`, `.` or `-`, starting with a letter. | `emarket` |
+
+### Tutorial: Set the deeplink scheme
+1. Ask your app developer which scheme is built into the apps (e.g. `emarket`).
+2. Enter it in **Deeplink Schema** and click **Update**.
+
+**Result:** links generated by the website open the matching screen in the app.
+
+:::caution
+The value must match the scheme built into the apps exactly; changing it here alone breaks app links until the apps are rebuilt with the same scheme.
+:::
+
+---
+
+## 10. SEO Settings (`/seo-settings`)
 
 ![SEO Settings](/img/detailed-documentation/seo-settings.webp)
 
-Configure metadata ensuring that your marketplace storefront and products rank at the top of Google, Bing, and social media feeds.
+### Overview
+Meta titles, keywords, schema markup, descriptions and share images for the website pages (permission `seo_settings_list`; card in **Settings → Apps & Website**). Search engines and social networks read these when they index or preview your website.
 
-### Key Fields
-- **Global Meta Title**: Homepage browser title tag.
-- **Meta Description**: Search engine snippet summary.
-- **Keywords**: Comma-separated search terms.
-- **Open Graph (OG) Image**: Preview image rendered when links are shared on WhatsApp, Facebook, or Twitter.
+### Screen layout
+- Search box, **+ Add SEO Page** and **Refresh** buttons.
+- Columns: ID, Page Type, Meta Title, Meta Keywords, Schema Markup, Meta Description (long texts have **View More / View Less**), OG Image, Actions (edit, delete).
+
+### Field reference: Add / Edit SEO Page
+
+| Field | Required | What it does | Example |
+| :--- | :--- | :--- | :--- |
+| SEO Page | Yes | Home, About us, Contact us, Faqs, Term condition, Product listing page, Privacy policy, Return exchange policy, Shipping policy, Cancellation policy or Blog Listing Page. Each page type can be added once. | Home |
+| Meta Title | Yes (default language) | Title in search results and the browser tab. | `eMarket – Fresh Groceries Delivered in 30 Minutes` |
+| Meta Keyword | Yes (default language) | Comma-separated keywords. | `online grocery, fresh vegetables, fruits, dairy` |
+| Schema Markup | Yes (default language) | JSON-LD structured data. | `{"@context":"https://schema.org", …}` |
+| Meta Description | Yes (default language) | Summary in search results. | Fresh fruit, vegetables and daily essentials delivered fast. |
+| OG Image | Yes (when adding) | Image used when the link is shared. Square, larger than 350×350 px and smaller than 550×550 px; JPEG, PNG, GIF, WEBP or SVG, max 2 MB. | 500×500 banner |
+
+### Tutorial: Enter SEO for a page
+*Scenario: the demo already has Home, About us, Product listing page, Blog Listing Page and Contact us; add the FAQ page.*
+1. Click **+ Add SEO Page**.
+2. In the default language tab choose **SEO Page**: `Faqs`.
+3. Enter **Meta Title** `eMarket FAQs – Orders, Delivery & Payments`, **Meta Keyword**, **Schema Markup** and **Meta Description**.
+4. Upload a 500×500 **OG Image**.
+5. Fill the other language tabs, or use **Translate Empty Fields** / **Translate & Overwrite**, then click **Save**.
+
+![Add SEO Page modal](/img/detailed-documentation/seo-settings-add.webp)
+
+**Result:** a new "Faqs" row appears; the website's FAQ page uses these meta tags. To change the home page SEO, click edit on the **Home** row instead.
+
+:::caution Common mistakes
+- A page type that already has a row cannot be added again ("page type already exists"); edit the existing row instead.
+- The OG image is required when adding a page and must stay within the square size limits.
+:::
 
 ---
 
-## 6. Theme & Visual Customizer (`/theme-settings`)
+## 11. Theme Settings (`/theme-settings`)
 
 ![Theme Settings](/img/detailed-documentation/theme-settings.webp)
 
-Tailor the visual aesthetic of the admin control panel and web store with custom brand colors, dark mode defaults, and typography.
+### Overview
+Brand colours for the admin panel, the website and the apps (permission `theme_settings`). Opened from **Theme Settings** in the sidebar (module section). Each colour is generated from one seed colour: every card has a colour picker, a hex field and the generated swatches, and the panel previews changes while you pick. Module colours belong to the module selected in the header (e.g. Grocery).
+
+### Screen layout
+- **Admin panel colours**: "Use each module's theme colours in the admin panel? Applies to every module." – **Yes, module colours** or **No, own colours**, with **Save**. With own colours, **Admin primary colour** and **Admin neutral colour** cards appear.
+- **Module colours**: **Primary Color** ("Used for main brand elements and actions") and **Neutral Color** ("Used for text, backgrounds, borders, and neutral elements") for the active module, with **Save**. A module without its own colours shows the default module's colours until you save.
+- **Status Colors** (default module only): **Success Color**, **Error Color**, **Warning Color**, **Info Color**, each with **Reset to default** and **Save**.
+
+### Field reference
+
+| Field | What it does | Example (demo) |
+| :--- | :--- | :--- |
+| Primary Color | Brand colour: buttons, links, active menu items. | `#20B364` |
+| Neutral Color | Text, backgrounds, borders. | `#9E9E9E` |
+| Success / Error / Warning / Info Color | Success, error, warning and information messages and badges. | `#20B364` / `#D63031` / `#F79E1B` / `#2196F3` |
+
+### Tutorial: Change the store's brand colour
+1. Pick the module in the header (e.g. **Grocery**).
+2. In **Primary Color** type a hex value such as `#1E88E5` (or use the picker). The swatch row and the panel preview update.
+3. Click **Save** under the module colours.
+
+**Result:** the website and apps of that module use the new brand colour; while **Yes, module colours** is selected, the admin panel follows it too.
+
+### Tutorial: Give the admin panel its own colours
+1. Click **No, own colours** in **Admin panel colours**.
+2. Set **Admin primary colour** and **Admin neutral colour**.
+3. Click **Save** in that card.
+
+![Theme Settings - own admin colours](/img/detailed-documentation/theme-settings-own-colours.webp)
+
+**Result:** the admin panel keeps these colours in every module; module colours still apply to the website and apps.
+
+:::caution Common mistakes
+- A neutral colour that is too light is refused ("Neutral too light — borders and dividers will be invisible in the app. Pick a colour with some depth (around #9E9E9E or darker).").
+- Status Colors are only shown while the default module is selected.
+:::
 
 ---
 
-## 7. System Tools & Updater
+## 12. External Storage (`/external-storage`)
 
-| Screen | Route | Purpose |
+![External Storage](/img/detailed-documentation/external-storage.webp)
+
+### Overview
+Stores uploaded images and files in an S3-compatible bucket instead of this server (permission `manage_store_settings`; card in **Settings → Integrations**). The header badge shows **Active** or **Inactive**. Once active, new uploads go to the bucket.
+
+### Screen layout
+- **Where to store uploads**: tabs **Local (this server)**, **Amazon S3**, **Cloudflare R2**, **DigitalOcean Spaces**, **MinIO / other**, with a one-line hint per provider.
+- **How to get these details**: buttons to the provider's pages (for S3: **Create AWS account**, **Create a bucket**, **Access keys guide**) and four numbered steps.
+- **Bucket & credentials**, **Public access**, and the **Test connection** and **Update** buttons.
+
+### Field reference
+
+| Field | Required | What it does | Example |
+| :--- | :--- | :--- | :--- |
+| Bucket | Yes | Bucket name. | `emarket-media` |
+| Region | No | Bucket region (R2 uses `auto`). | `ap-south-1` |
+| Access key | Yes | Access key ID. | `AKIA…` |
+| Secret Key | Yes (first time) | Secret access key. Once saved, the box shows "Saved. Leave blank to keep it." | — |
+| Endpoint | R2, Spaces, MinIO | Provider endpoint; not needed for Amazon S3. | `https://blr1.digitaloceanspaces.com` |
+| Public URL / CDN | No | Base address images are loaded from; blank uses the bucket address. | `https://cdn.yourstore.com` |
+| Use path-style endpoint (MinIO) | No | Path-style addressing for MinIO and similar services. | On for MinIO |
+
+### Tutorial: Set up Amazon S3
+1. Follow the four steps in **How to get these details**: create the bucket (e.g. in `ap-south-1`), allow public reads, and create an IAM user with an access key.
+2. Click the **Amazon S3** tab.
+3. Enter **Bucket**, **Region**, **Access key** and **Secret Key**.
+4. Click **Test connection** and wait for the success message.
+5. Click **Update**. The badge changes to **Active**.
+6. To copy existing files to the bucket, run `php artisan media:sync-to-external` on the server (add `--dry-run` to only list them).
+
+**Result:** new images are uploaded to S3; existing local files keep being served from this server until synced.
+
+:::caution Common mistakes
+- Saving a provider first writes and deletes a small test file; if the bucket cannot be written to, nothing is switched on and the provider's error is shown.
+- Choosing **Local (this server)** and clicking **Update** switches external storage off but keeps the bucket settings, so you can switch back without retyping them.
+- The bucket must allow public reads, or images will not load in the apps.
+:::
+
+---
+
+## 13. Account Settings: Order Mail Settings (`/settings`)
+
+![Account Settings](/img/detailed-documentation/account-settings.webp)
+
+### Overview
+Opened from the profile menu (top right) → **Settings**; the menu item is shown to the Super Admin only. The page has two cards: which order status updates send an email or SMS to customers, and the Super Admin's own username and password. It replaces the old `/notification_settings` screen.
+
+### Screen layout
+- **Order Mail Settings** ("Choose which order status updates send an email or SMS."): one row per order status (Payment Pending, Received, Processed, Shipped, Out For Delivery, Delivered, Cancelled, Returned, Pending, Ready for Pickup, Picked Up) with a **Mail** and an **SMS** switch, plus an **All Statuses** row that turns a whole column on or off. **Back** and **Save** buttons.
+- **Change Username & Password**: Username, Current Password, New Password, Confirm New Password (each password field has a show/hide button; a warning appears when the new passwords do not match). **Back** and **Save** buttons.
+
+### Tutorial: Send SMS only for key statuses
+*Scenario: SMS costs money, so you only want SMS for Shipped, Out For Delivery and Delivered.*
+1. Open the profile menu → **Settings**.
+2. In the **SMS** column turn **All Statuses** off.
+3. Turn **SMS** on for **Shipped**, **Out For Delivery** and **Delivered**. Leave the **Mail** column as it is.
+4. Click **Save** in that card.
+
+**Result:** customers still get an email for every status, but an SMS only for the three statuses you kept.
+
+### Tutorial: Change the Super Admin password
+1. In **Change Username & Password** enter the **Current Password**.
+2. Enter the **New Password** and repeat it in **Confirm New Password**.
+3. Click **Save**.
+
+**Result:** "After saving you will be taken back to the dashboard. Use your new password the next time you log in."
+
+:::tip Tips
+- The SMS column only has an effect when Twilio is set up on [SMS Settings](#7-sms-settings-sms-settings); the Mail column needs the SMTP Mail Setting section of Store Settings.
+:::
+
+---
+
+## 14. System Registration (`/purchase_code`)
+
+![System Registration](/img/detailed-documentation/purchase-code.webp)
+
+### Overview
+Registers this installation with your purchase code to unlock updates and support (page title "Purchase Code", card **System Registration** in **Settings → System**, permission `manage_system_registration`). The [System Updater](./system-maintenance.mdx#3-system-updater-system_updater) needs a valid registered code.
+
+### Field reference
+
+| Field | Required | What it does | Example |
+| :--- | :--- | :--- | :--- |
+| Enter the Purchase Code | Yes | Your purchase code: 8–64 letters, numbers and dashes. It is checked online together with this site's domain (`APP_URL`). | `1a2b3c4d-…` |
+
+### Tutorial: Register the purchase code
+1. Copy the purchase code from your marketplace downloads page.
+2. Open **Settings → System Registration** and paste it into **Enter the Purchase Code**.
+3. Click **Validate Now** (**Clear** empties the field).
+
+**Result:** "Purchase Code Verified Successfully!" is shown, the field is locked and the buttons disappear.
+
+:::caution Common mistakes
+- The stored code changes only when the licence server confirms the new code. An invalid code, or an unreachable server ("Could not reach the licence server. Nothing was changed; try again in a moment."), leaves the current registration untouched.
+- Register on the final domain: the check sends this installation's `APP_URL`.
+:::
+
+---
+
+## 15. Add-ons (`/addons`)
+
+![Add-ons](/img/detailed-documentation/addons.webp)
+
+### Overview
+Add-on groups (extra options a customer can pick with a product, e.g. toppings) created by sellers (permission `addons`). Opened from **Products → Addons** in the sidebar, which is shown only while the **Food Delivery** module is selected; opening `/addons` in another module redirects to the dashboard. Admins can view and delete add-on groups; sellers add and edit them in their own panel, so there is no Add or Edit button here. See also [Addons](./catalog.mdx#12-addons-addons) in the catalog guide.
+
+### Screen layout
+
+| Column | Meaning |
+| :--- | :--- |
+| ID | Add-on group ID. |
+| Name | Group name, with "Used in N products" and "In carts or orders" notes. |
+| Selection Type | Whether the customer picks one or several options. |
+| Options | The options in the group. |
+| Owner | Mine / Seller / Global. |
+| Status | Active or inactive. |
+| Actions | Delete. |
+
+- **Filter by seller**: All sellers, Global (admin) or one seller (only sellers who own add-on groups are listed). Search box and **Refresh** button.
+
+### Tutorial: Remove an unused add-on group
+1. Switch the header module to **Food Delivery** and open **Products → Addons**.
+2. Pick the seller in **Filter by seller**.
+3. Check that the group's Name has no "Used in N products" or "In carts or orders" note.
+4. Click delete and confirm.
+
+**Result:** the group disappears from the seller's panel and can no longer be attached to products.
+
+:::caution
+A group that is used in products, carts or orders cannot be deleted; a "Cannot delete" dialog gives the reason. Ask the seller to remove it from those products first.
+:::
+
+---
+
+## 16. Other Cards on the Settings Hub
+
+| Card | Route | Purpose |
 | :--- | :--- | :--- |
-| **Contact Us & About Us** | `/contact_us`, `/about_us` | Manage company background, leadership bios, office addresses, and contact forms. |
-| **System Registration** | `/purchase_code` | Validates your Envato / CodeCanyon purchase code to unlock updates and licensing. |
-| **System Updater** | `/system_updater` | Upload official zip update packages to automatically upgrade database migrations and frontend bundles. |
+| **Delivery Settings** | `/delivery_settings` | Delivery time slots (see [Delivery Settings](./delivery.mdx#5-delivery-settings-delivery_settings)). |
+| **General Web Settings** | `/general_settings` | Website header, footer, app download section and other web content (see [General Web Settings](./content-blogs.mdx#1-general-web-settings-general_settings)). |
+| **Social Media** | `/social_media` | Social media links shown in the website footer. |
+| **Contact Us / About Us** | `/contact_us`, `/about_us` | Contact Us and About Us page content, per language. |
+| **Customer / Seller / Delivery Boy Policies** | `/privacy_policy`, `/privacy_policy_seller`, `/privacy_policy_delivery_boy` | Policies shown in the apps and website, per language. |
+| **System Status** | `/system_status` | Health of the scheduler, queue, storage, disk, mail, SMS, Firebase and server settings. |
+| **Setup Checklist** | `/setup_checklist` | Minimum settings and data each module needs before sellers, delivery boys and customers can start. |
+| **Logs** | `/logs` | Application logs by date, and how many days of logs to keep (Super Admin only). |
+| **System Updater** | `/system_updater` | Review the changes in this release, then update the system. |
 
 ---
 
 ## Real-World Settings Use Cases
 
-- **Enabling Instant Holiday Payments**: Ahead of Black Friday, administrators activate **Stripe** and **Razorpay** while disabling COD to accelerate order dispatch and reduce courier delivery failures.
-- **Optimizing Google Search Traffic**: Utilizing **SEO Settings** with tailored keywords ("Organic Grocery Delivery Mumbai", "Online Pharmacy Bhuj") ensures maximum local organic search customer acquisition.
-- **Updating Corporate Contact Details**: When moving headquarters or expanding customer support phone lines, the team updates **Store Settings** once, instantly reflecting new phone numbers across mobile apps and invoice headers.
+- **Going live after testing**: switch each gateway on Payment Methods from **Sandbox** to **Live** with live keys, turn **Demo Mode** off in Store Settings → Login Setting, register the purchase code, and check that System Status shows no warnings.
+- **Moving images to the cloud**: pick Amazon S3 on External Storage, fill in the bucket details, click **Test connection**, save, then run `php artisan media:sync-to-external` to copy existing files.
+- **Different GST rates by region**: create a "GST 18%" tax category, then two tax rules for the same state – one for the same region (CGST 9% + SGST 9%) and one for a different region (IGST 18%).

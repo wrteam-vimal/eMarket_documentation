@@ -1,12 +1,14 @@
 ---
 sidebar_position: 3
 title: Seller & Vendor Management
-description: Comprehensive operational guide for merchant onboarding, KYC verification, store permissions, commissions, and seller wallet ledgers in eMarket.
+description: How to add, approve, edit, deactivate and delete sellers in eMarket, settle seller earnings, read a seller's wallet ledger, and manage the seller policies and seller custom fields.
 ---
 
 # Seller & Vendor Management
 
-eMarket is built from the ground up as a multi-vendor marketplace platform. The Seller Management suite enables platform owners to scale their vendor ecosystem, verify merchant identities, enforce commission structures, and maintain transparent financial settlements.
+eMarket is a multi-vendor marketplace. Everything about sellers lives under **Sellers** in the admin sidebar: **Add Seller**, **Seller Requests**, **Manage Sellers**, **Seller Wallet Transactions** and **Seller Policies**. Extra seller fields (bank and tax details, documents) are set up in **Custom Fields**. Payouts that sellers ask for are handled in [Withdrawal Requests](./customer-finance.mdx#9-withdrawal-requests-withdrawal_requests).
+
+The panel-wide rules for demo mode and the Export menu are explained once in the introduction: [Demo mode](./intro.mdx#6-demo-mode-read-only-panels) and [Export menu](./intro.mdx#7-export-menu-csv-excel-pdf-print-copy).
 
 ---
 
@@ -14,83 +16,339 @@ eMarket is built from the ground up as a multi-vendor marketplace platform. The 
 
 ![Manage Sellers](/img/detailed-documentation/sellers-manage.webp)
 
-The central directory of all active and suspended vendor storefronts on the platform.
+### Overview
+The list of every seller on the platform, opened from **Sellers → Manage Sellers** (permission `seller_list`). This is where you pause, approve or remove a store. A seller's status decides whether the store and its products are visible in the customer app and website, and whether the seller can sign in to the seller panel and seller app. The page has two tabs: **Sellers** (all sellers that are not deleted) and **Deleted sellers**.
 
-### Key Table Columns & Controls
-- **Store Name & Logo**: The merchant's branding as seen by shoppers.
-- **Owner Name & Contact**: Primary business contact person, email, and verified phone number.
-- **Commission Rate (%)**: Platform commission deducted automatically on completed orders.
-- **Wallet Balance**: Real-time unsettled vendor earnings available for withdrawal.
-- **Product Approval Requirement**: Toggle determining whether the seller's new products require manual admin review before publishing.
-- **Store Status Switch**: Instant toggle to suspend or activate a merchant's storefront.
-- **Actions**: Edit store settings, view store analytics, view product catalog, or remove vendor.
+### Screen layout
+- **Toolbar**: search box, **Filters** (Status: All, Approve, Not-Approved, Deactivate, Blocked), a grid / list view switch, **Export**, **Refresh** and **Add Seller**.
+- **Grid view** (as in the screenshot): one card per seller with logo or initials, name, store name, email, mobile, an ID chip (for example `#9`), **Balance**, **Commission**, a **Categories** chip (hover the info icon to see the seller's categories) and **Require Products Approval?**. The status badge sits in the top-right corner; the card footer holds the availability switch and the View / Edit / Delete icons.
+- **Bulk actions**: tick sellers (or **Select all**) to show a bar with **Approve** and **Deactivate**. The result lists which sellers were changed and which were skipped.
+
+| Column (list view) | Meaning |
+| --- | --- |
+| ID | Seller ID, also shown as **Seller ID** in Seller Wallet Transactions. |
+| Name / Store Name | The person and the shop name shown to customers. |
+| Email / Mobile | The seller's login email and phone. |
+| Balance | Current seller wallet balance (earnings not yet paid out). |
+| Logo | Store logo. |
+| Commission | Admin commission in % taken from this seller's sales. |
+| Categories | Categories the seller may sell in (hover the info icon). |
+| Status | Approved, Not-Approved, Deactive or Blocked. |
+| Availability | Switches between Approved and Deactive after an "Are you sure?" confirmation. |
+| Require Products Approval? | Yes = new products from this seller wait for admin approval. |
+| Actions | View (Seller Details), Edit and Delete. |
+
+### Deleting a seller
+
+![Delete seller dialog](/img/detailed-documentation/seller-delete-preview.webp)
+
+1. Click **Delete** (trash icon) on the seller's row or card. A preview dialog, **Delete this seller?**, shows how many products, variants and images the seller has (in the screenshot, deleting **Kolkata Daily Bazaar** removes 5 Products, 8 Variants and 8 Images).
+2. Read the warnings. All the seller's products are deleted with their variants and images (from the server and external storage). Any amount in the seller's wallet is lost and cannot be withdrawn.
+3. If the seller has products, tick **I agree to delete this seller and all their products, with every variant and image.** The **Delete** button stays disabled until the box is ticked.
+4. Click **Delete**. The seller is soft-deleted: hidden from **Sellers**, login switched off and the email released, so the same email can register again. Orders, payouts and commissions are kept.
+
+### Deleted sellers tab
+
+![Deleted sellers](/img/detailed-documentation/sellers-deleted.webp)
+
+Deleted sellers are listed here with search, the grid / list views and **Export** (in the screenshot: Rekha Pillai, Pradeep Sinha, Leela Menon and Vinod Thakur). There is **no restore** action: a deleted seller cannot be brought back from the panel. The only action is **Delete permanently**:
+- The dialog, **Delete this seller permanently?**, lists the Media library files, seller files (logo, documents, attribute images), products and images that will be removed.
+- Tick **I agree to delete this seller permanently, with all their media and images. This cannot be undone.** and click **Delete permanently**.
+- Orders, payouts and commissions are still kept.
+
+### Tutorial: Pause a seller, then close the store safely
+Scenario: **Neha Gupta** (**Delhi Grocery Point**, balance ₹947.7) is closing her shop. You pause her first, settle her balance, and only then delete.
+
+1. Open **Sellers → Manage Sellers** and type `Delhi Grocery` in the search box.
+2. On her card, switch the availability toggle off and confirm with **Yes, sure**. Her status becomes **Deactive**: the store disappears from the customer app and website, but nothing is deleted.
+3. Pay out the remaining wallet balance (see the tutorial in [Seller Wallet Transactions](#5-seller-wallet-transactions-seller_wallet_transactions)). Deleting a seller with money in the wallet loses that amount.
+4. When the balance is 0, click the trash icon. Read the counts in **Delete this seller?**, tick the agreement box and click **Delete**.
+5. Open the **Deleted sellers** tab. Neha Gupta is listed there. Click **Delete permanently** only when her logo, documents and media files should also be removed.
+
+**Result:** the store is gone from all apps, her email can register again, and her old orders, payouts and commissions still appear in orders and reports.
+
+:::caution Tips & common mistakes
+- Deleting is not a way to pause a store. Use the availability toggle or the bulk **Deactivate** action; both can be switched back.
+- **Delete** removes every product of the seller immediately and permanently. Only the seller account itself is "soft" deleted, and it cannot be restored from the panel.
+- Settle the wallet before deleting; the dialog warns that the balance is lost.
+- Bulk **Approve** / **Deactivate** skips sellers that cannot be changed and lists them; read the result before assuming every seller was updated.
+:::
 
 ---
 
-## 2. Add / Onboard Seller (`/sellers/create`)
+## 2. Seller Details (`/sellers/view/:id`)
+
+![Seller Details](/img/detailed-documentation/seller-details.webp)
+
+### Overview
+Opened with **View** (eye icon) on a seller's row or card (permission `seller_list`). One page with everything about a seller: profile, documents, sales, wallet, payouts, returns and ratings. Use it before approving a payout, changing a commission or answering a seller's question about an order.
+
+### Screen layout
+- **Header buttons**: **View Store** (opens the seller's store page on the website in a new tab), **Edit** and **Back**.
+- **Profile card**: store name with status and module badges (for example **Kolkata Daily Bazaar**, Active, Grocery), the seller's name, phone, email and address, the "Joined" date and ID, an **Active** switch, **Commission** (for example 10%), **Delivery Fleet** (**Shared pool** when the admin's delivery boys deliver, own fleet when the seller uses their own) and buttons for the uploaded documents (**National Identity Card**, **Address Proof**).
+- **Figure cards**: **Wallet Balance**, **Total Sales**, **Admin Commission**, **Pending Withdrawals**, **Total Orders**, **Delivered Orders**, **Products** (Active / Total) and **Store Rating** (with the number of ratings).
+- **Tabs** with counts: **Orders**, **Products**, **Wallet Transactions**, **Withdrawal Requests**, **Return Requests**, **Ratings & Reviews**, **Delivery Fleet** (only when the seller uses their own fleet or has fleet drivers) and **Analytics**. Each list tab has its own search and **Export**.
+
+| Orders tab column | Meaning |
+| --- | --- |
+| Order ID | Order number (for example EM001113); click to open the order. |
+| Customer | Customer name and number of items. |
+| Items | Product names in the order. |
+| Seller Amount | This seller's share of the order. |
+| Payment Method | For example Razorpay or COD. |
+| Status | Current order status (Shipped, Processed, ...). |
+| Date | Order date. |
+
+### Tutorial: Check a seller before approving a payout
+Scenario: **Sourav Das** (Kolkata Daily Bazaar) asked to withdraw money and you want to check that the amount is covered.
+
+1. Open **Sellers → Manage Sellers** and click the eye icon on Sourav Das.
+2. Compare **Wallet Balance** (₹9212.34) with **Pending Withdrawals** (₹2386.80). The pending amount must not be more than the balance.
+3. Open the **Wallet Transactions** tab to see which delivered orders were credited and which payouts were debited.
+4. Open the **Withdrawal Requests** tab to see the open request and earlier payouts.
+5. Approve the request in **Withdrawal Requests** in the sidebar (see [Withdrawal Requests](./customer-finance.mdx#9-withdrawal-requests-withdrawal_requests)).
+
+**Result:** you only approve amounts that the wallet ledger supports.
+
+:::tip Tips
+- **Admin Commission** is your income from this seller; **Total Sales** is the seller's gross sales.
+- The **Active** switch in the header does the same as the availability toggle in Manage Sellers.
+:::
+
+---
+
+## 3. Add / Edit Seller (`/sellers/create`, `/sellers/edit/:id`)
 
 ![Add Seller](/img/detailed-documentation/sellers-add.webp)
 
-Allows administrators to directly onboard and configure a merchant's store profile, operational zones, and banking information.
+### Overview
+The same form is used to add a seller (**Sellers → Add Seller** or **Add Seller** on the list, permission `seller_create`) and to edit one (**Edit** on the list or on Seller Details). A seller added here by an admin is saved as **Approved** straight away and can sign in to the seller panel and seller app with the email and password you set; a status email is sent when mail is configured. The **Manage Seller** button at the top right goes back to the list.
 
-### Step-by-Step Onboarding Workflow
+If more than one language is active, the form has a tab per language: the name, store name and store description can be filled in each language, and **Translate Empty Fields** / **Translate & Overwrite** fill the other languages automatically. All other fields are on the default-language tab.
 
-1. **Basic Store Information**:
-   - Enter **Store Name**, **Seller Name**, **Email Address**, and secure **Password** (for seller panel access).
-   - Enter primary **Mobile Number**.
-2. **Category & Module Assignment**:
-   - Assign the **Module** (e.g., Grocery, Pharmacy, eCommerce).
-   - Select the **Permitted Categories** that this vendor is authorized to sell under.
-3. **Commission & Approvals Policy**:
-   - Set **Admin Commission (%)** (e.g., 10% or 15% platform fee).
-   - Configure **Require Product Approval** (Yes/No).
-4. **Physical Location & Service Radius**:
-   - Enter street address, city, and state.
-   - Use the interactive Google Map pin to define the store's exact latitude and longitude for distance-based delivery calculations.
-5. **Bank & Tax Details**:
-   - Enter Bank Name, Account Holder Name, Account Number, and IFSC / Swift Code for automated payout transfers.
-   - Enter Tax / GST / VAT Registration number and National Identity documentation.
-6. Click **Save Seller** to activate their account and dispatch their seller panel credentials.
+### Field reference
+
+| Field | Required | What it does | Example |
+| --- | --- | --- | --- |
+| Name | Yes | Seller's personal name (per language). | Sourav Das |
+| Email | Yes | Login email; must not belong to another panel login. | seller9@test.com |
+| Mobile | Yes | Digits only, at most 16. | 8130964299 |
+| Password / Confirm Password | Yes when adding | At least 6 characters; both must match. Leave empty when editing to keep the current password. | |
+| Store Name | Yes | Shop name shown to customers (per language). | Kolkata Daily Bazaar |
+| Select Module | Yes | Module the store belongs to. Locked after the seller is saved. | Grocery |
+| Category IDs | Yes | Categories this seller may sell in (multi-select). | Personal Care, Household Cleaning, Fruits |
+| Product Status | No | Active / Deactive switch next to the categories. | Active |
+| Logo | Yes when adding | Store logo: jpeg, jpg, png, gif or webp. | |
+| Commission | Yes | Admin commission in %, from 0 to 100. **How seller commission works?** opens the formula. | 10 |
+| Store Description | No | Rich-text description (per language). | |
+| Select or Search City, State, Street | City: yes | Store address. | Kolkata, West Bengal, Main Market |
+| Search Location, Latitude, Longitude | Yes | Search the address, then drag the marker onto the shop. Used for distance-based delivery charges and to rank the nearest delivery boys. | |
+| Require Product's Approval | No | Yes = this seller's new products wait for admin approval. | No |
+| Door Step Mode / Self Pickup Mode | No | At least one of the two must stay on; switching both off is refused. | Yes / No |
+| Who Delivers Their Orders | No | **Admin's Delivery Boys** (shared pool) or **Own Delivery Boys**. Only an admin can change this. | Admin's Delivery Boys |
+| Pickup Store Address, Latitude, Longitude, Opening Time, Closing Time | Yes when Self Pickup Mode is on | Where and when customers collect self-pickup orders. | |
+| Custom Fields | As set per field | Fields from [Seller Custom Fields](#7-seller-custom-fields-custom_fieldsseller). By default: Tax Name, Tax Number, PAN Number, NID (National ID), Address Proof, Bank Name, Bank A/C No., Bank IFSC, A/C Name. | |
+
+**How the commission works** (from the panel's help dialog): admin commission = sub total (without delivery charge) / 100 × commission %. Example: a sub total of 1378 at 20% gives 275.6 commission, so 1102.4 is credited to the seller's wallet. A seller is only credited for delivered items. The commission is taken from the seller's **current** setting at the moment the item is credited.
+
+### Editing a seller
+
+![Edit Seller](/img/detailed-documentation/sellers-edit.webp)
+
+On the edit page the admin also gets a **Status** choice: Registered, Approved, Not-Approved, Deactive or Block. For Not-Approved, Deactive and Block a **Remark**\* is required; the seller sees this remark. Click **Update** to save.
+
+### Tutorial: Onboard a new seller manually
+Scenario: a shop owner signs a contract at your office and you set up **Patel Fresh Mart** in the Grocery module, with an 8% commission and their bank details.
+
+1. Open **Sellers → Add Seller**.
+2. **Seller Information**: enter **Name** `Rajesh Patel`, **Email**, **Mobile** and a **Password** of at least 6 characters in both password fields.
+3. **Store Information**: **Store Name** `Patel Fresh Mart`, **Select Module** `Grocery`, and pick `Fruits` and `Vegetables` in **Category IDs**. Upload the **Logo** and enter **Commission** `8`.
+4. **Store Location Information**: choose the city in **Select or Search City**, fill **State** and **Street**, type the shop address in **Search Location** and drag the marker onto the shop. Check that **Latitude** and **Longitude** are filled.
+5. **Other Setting**: set **Require Product's Approval** to `Yes` for a seller you do not know yet. Keep **Door Step Mode** on `Yes`. Leave **Who Delivers Their Orders** on `Admin's Delivery Boys` unless the shop has its own riders.
+6. **Custom Fields**: fill **Bank Name**, **Bank A/C No.**, **Bank IFSC** and **A/C Name** (needed for payouts) and upload the **NID (National ID)** and **Address Proof** files.
+7. Click **Save**.
+
+**Result:** Patel Fresh Mart appears in **Manage Sellers** as **Approved** with Commission 8. The seller can sign in to the seller panel and seller app, and their products (after your approval) appear in the Grocery module of the customer app and website.
+
+### Tutorial: Change a seller's commission and categories
+1. In **Manage Sellers**, click **Edit** on **Sourav Das**.
+2. In **Category IDs**, remove `Household Cleaning` with its × and add another category.
+3. Change **Commission** from `10` to `8`.
+4. Leave **Status** on **Approved** and click **Update**.
+
+**Result:** every order item of this seller that is not credited yet (including delivered items still inside their return window) is credited with the new 8% commission. Items already credited are not recalculated.
+
+:::caution Tips & common mistakes
+- **Select Module** is locked after saving. A seller who should sell in two modules needs two seller accounts.
+- The add form keeps an unsaved draft in your browser for about 2 minutes, so a quick reload does not lose your typing. **Clear** empties the form.
+- An email address that already belongs to any panel login (admin, seller or delivery boy) is refused.
+- A Not-Approved, Deactive or Block status cannot be saved without a **Remark**.
+- Wrong map coordinates mean wrong delivery charges and far-away delivery boys being offered the order. Always drag the marker onto the real shop.
+:::
 
 ---
 
-## 3. Seller Registration Requests (`/registered_sellers`)
+## 4. Seller Requests (`/registered_sellers`)
 
 ![Seller Requests](/img/detailed-documentation/seller-requests.webp)
 
-When prospective merchants apply to join the marketplace via the public seller registration portal or partner app, their applications land here for compliance and KYC vetting.
+### Overview
+Sellers who registered themselves (seller registration page or seller app) and are still in **Registered** status. Sidebar: **Sellers → Seller Requests** (permission `seller_requests`); a dot on the menu shows that requests are waiting. A registered seller cannot sell until approved.
 
-### How Administrators Review Applications
-1. Click **View Application** to examine the vendor's submitted business registration, store photos, address proofs, and tax certifications.
-2. If verified and compliant, click **Approve** and assign an initial commission tier.
-3. If documentation is incomplete, click **Reject** with a clear explanation so the merchant can re-submit the required documents.
+### Screen layout
+- Search, grid / list view and **Refresh**.
+- **Grid cards**: name, store name, email, mobile, city, the **Registered** badge, ID and **Commission** chips, the info chips **Category**, **Seller Info**, **Store Information** and **Other Info**, the registration date, and the **Approve** / **Reject** buttons.
+
+| Column (list view) | Meaning |
+| --- | --- |
+| ID | Seller ID. |
+| Seller Info | Hover the info icon: name, email, mobile. |
+| Store Information | Hover: store name and description. |
+| Category | Categories the seller asked for. |
+| City | City of the store. |
+| Logo | Store logo. |
+| Other Info | Hover: Tax Name, Tax No, PAN No, National Identity Card and Address Proof. |
+| Commission | Commission that applies once approved. |
+| Date | Registration date. |
+| Status / Actions | Registered; **Approve** and **Reject**. |
+
+### Tutorial: Approve or reject a seller registration
+
+![Reject a seller request with remarks](/img/detailed-documentation/seller-request-reject.webp)
+Scenario: four shops registered this week. **Abdul Rehman** (Rehman General Store, Hyderabad) uploaded all documents; **Gopal Iyer** (Iyer Provision Stores) did not upload an address proof.
+
+1. Open **Sellers → Seller Requests**.
+2. On Abdul Rehman's card, hover **Other Info** and check the tax numbers, **National Identity Card** and **Address Proof**. Hover **Category** to see what he wants to sell.
+3. Click **Approve** and confirm. He moves to **Manage Sellers** as Approved.
+4. On Gopal Iyer's card, click **Reject**. In the **Remarks** box type `Address proof missing. Please upload it and register again.` and confirm.
+5. If needed, open **Manage Sellers → Edit** on Abdul Rehman to change his **Commission** or set **Require Product's Approval** before he starts listing.
+
+**Result:** Abdul Rehman can sign in and sell; Gopal Iyer's status becomes Not-Approved with your remark. Each seller is emailed about the status change when mail is configured.
+
+:::caution Tips & common mistakes
+- **Approve** and **Reject** are only shown to admins whose role has the `seller_delete` permission. If the buttons are missing, check the role in **Role**.
+- A rejection is only saved when a remark is entered; an empty remark cancels it.
+- Rejected sellers leave this list (they are Not-Approved). To approve one later, filter **Manage Sellers** by **Not-Approved** and use **Edit → Status → Approved**.
+:::
 
 ---
 
-## 4. Seller Wallet Transactions (`/seller_wallet_transactions`)
+## 5. Seller Wallet Transactions (`/seller_wallet_transactions`)
 
 ![Seller Wallet Transactions](/img/detailed-documentation/seller-wallet.webp)
 
-An auditable double-entry accounting ledger tracking all financial movements for every vendor across the marketplace.
+### Overview
+The ledger of every credit and debit on seller wallets. Sidebar: **Sellers → Seller Wallet Transactions** (permission `seller_wallet_transactions`). Sellers see their own entries in the seller panel and seller app, and the **Balance** in Manage Sellers moves with every entry.
 
-### Transaction Types Recorded
-- **Order Credit**: Net earnings credited to the seller upon successful order delivery (Order Total minus Platform Commission).
-- **Admin Debit**: Manual adjustments or chargebacks for customer disputes.
-- **Withdrawal Payout**: Deductions when a seller's payout withdrawal request is fulfilled.
-- **Subscription Fee**: Automated monthly or yearly fee deductions for marketplace subscription tiers.
+### Screen layout
+- Search, **Refresh** and **Add Transactions** (shown only to the Super Admin and Admin roles).
+- **View** expands a row into **Transaction Details** (ID, order, seller, module, product, amount, type, status and message).
+
+| Column | Meaning |
+| --- | --- |
+| ID | Transaction ID. |
+| Seller ID / Seller Name | The seller (for example 9, Sourav Das). |
+| Module | Module of the entry (for example Grocery). |
+| Order ID / Order Item ID | Filled for order earnings; empty for payouts and manual entries. |
+| Product Name | Product of the credited order item (for example Multigrain Cookies). |
+| Type | **Credit** (money in) or **Debit** (money out). |
+| Amount | Amount of the entry. |
+| Status | Entry status (Active). |
+| Date | When the entry was made. |
+
+### Where the entries come from
+- **Order earnings** (Credit, with order and product): each delivered order item is credited minus the admin commission. For a returnable product this happens once the product's return days (counted from the order date) have passed; a non-returnable product is credited at the next run after delivery.
+- **Withdrawals** (Debit): when a seller's withdrawal request is approved, the amount is debited with the message `Approve Withdraw Request ID : <id>` (see [Withdrawal Requests](./customer-finance.mdx#9-withdrawal-requests-withdrawal_requests)).
+- **Manual entries** added with **Add Transactions**.
+
+### Field reference: Add Transactions
+
+| Field | Required | What it does | Example |
+| --- | --- | --- | --- |
+| Seller | Yes | Seller to credit or debit; the form shows the current balance, ID and module. | Sourav Das |
+| Type | Yes | Credit or Debit. | Debit |
+| Amount | Yes | Greater than 0. A debit cannot be more than the seller's balance. | 5000 |
+| Message | No | Reason, visible in the ledger. | Bank transfer 12 Oct, ref. UTR 4471 |
+
+![Add Transactions form for a seller](/img/detailed-documentation/seller-wallet-add.webp)
+
+### Tutorial: Settle a seller's earnings
+Scenario: you pay sellers once a month. **Sourav Das** has a balance of ₹9212.34 and has not sent a withdrawal request; you pay ₹5000 by bank transfer.
+
+1. Open **Seller Details** for Sourav Das and check **Wallet Balance** and the **Wallet Transactions** tab.
+2. Pay ₹5000 outside eMarket to the bank account from his custom fields (**Bank Name**, **Bank A/C No.**, **Bank IFSC**).
+3. Open **Sellers → Seller Wallet Transactions** and click **Add Transactions**.
+4. Select **Seller** `Sourav Das`, **Type** `Debit`, **Amount** `5000`, and put the bank reference in **Message**.
+5. Click **Save**.
+
+**Result:** a Debit row of 5000 appears at the top of the ledger and his balance drops to ₹4212.34 in Manage Sellers and in the seller app.
+
+If the seller sends a withdrawal request instead, do not add a manual debit: approve the request in **Withdrawal Requests** with the bank receipt and eMarket adds the debit itself. Doing both would take the money twice.
+
+:::warning Scheduler required
+Seller earnings are credited by the scheduled command `sellers:credit-earnings`, which runs every 15 minutes. The server cron `* * * * * php artisan schedule:run` must be running; without it sellers are not credited. Opening the Dashboard does not trigger the crediting.
+:::
+
+:::tip Tips & common mistakes
+- Earnings appear only after delivery **and** after the return days, so a seller asking "where is today's order?" usually just has to wait.
+- The ledger has no edit or delete. Correct a mistake with an opposite entry (a Credit for a wrong Debit) and explain it in **Message**.
+:::
 
 ---
 
-## 5. Seller Policies & Guidelines (`/privacy_policy_seller`)
+## 6. Seller Policies (`/privacy_policy_seller`)
 
 ![Seller Policies](/img/detailed-documentation/seller-policies.webp)
 
-A rich-text policy editor where marketplace operators establish legal terms of service, packaging guidelines, hygiene protocols, and SLA requirements that sellers must accept during onboarding.
+### Overview
+The **Seller Privacy Policy And Terms & Conditions** page ("Privacy policy and terms that sellers accept, per language"). Sidebar: **Sellers → Seller Policies** (permission `manage_privacy_policy_seller_app`). The seller registration page and the seller app show these texts to sellers.
+
+### Screen layout
+- One tab per active language, with **Translate Empty Fields** / **Translate & Overwrite** when more than one language is active.
+- **Update Privacy Policy**: the **Privacy Policy**\* rich-text editor (headings, fonts, lists, links, images, tables). The eye icon previews the text.
+- **Update Terms Conditions**: the **Terms & Conditions**\* editor with its own preview.
+- **Update** saves both.
+
+### Tutorial: Publish a seller privacy policy
+1. Open **Sellers → Seller Policies**.
+2. In **Privacy Policy**, choose **Heading 2** and type `Seller Privacy Policy`. Below it, say what you collect, for example "eMarket collects your business details, KYC documents, bank account information and store location to verify your store and pay your settlements."
+3. Add a bulleted list of how the data is used and a contact address such as sellers@example.com.
+4. Fill **Terms & Conditions** the same way (commission, payouts, returns).
+5. Preview both with the eye icons, then click **Update**.
+
+**Result:** sellers see the new texts when they register and in the seller app.
+
+:::tip Tips
+- Both editors are required; an empty Terms & Conditions cannot be saved.
+- Fill the default language first, then use **Translate Empty Fields** for the other languages and review the result.
+:::
 
 ---
 
-## Real-World Multi-Vendor Use Cases
+## 7. Seller Custom Fields (`/custom_fields/seller`)
 
-- **Dynamic Merchant Commission Tiers**: A marketplace operator charges a standard 15% commission to general vendors, but offers a preferential 8% commission to a high-volume anchor supermarket using the **Manage Sellers** settings.
-- **Enforcing Food Safety Compliance**: For perishable grocery and restaurant vendors, administrators review food safety certifications in **Seller Requests** before granting permission to publish food listings.
-- **Vendor Dispute Resolution**: When an item arrives damaged and the customer receives a refund, the administrator uses **Seller Wallet Transactions** to debit the corresponding reimbursement amount from the responsible vendor's balance.
+![Custom Fields](/img/detailed-documentation/custom-fields.webp)
+
+### Overview
+Extra fields on the seller form, such as bank and tax details or documents. Open **Custom Fields** in the sidebar (permission `custom_field_list`); the **Sellers** tab is selected by default. Seller fields belong to the module selected in the panel header (the tab's info icon says these fields are specific to the currently selected module). They appear in the **Custom Fields** card of Add / Edit Seller.
+
+The screenshot shows the default seller fields: Tax Name, Tax Number and PAN Number (Text), NID (National ID) and Address Proof (File), Bank Name, Bank A/C No., Bank IFSC and A/C Name (Text), all with **Required** set to No.
+
+### Tutorial: Add an FSSAI licence number for grocery sellers
+1. Select the **Grocery** module in the panel header, then open **Custom Fields** (Sellers tab).
+2. Click **Add Field**.
+3. Enter **Field Name** `FSSAI Lic. No.`, choose **Field Type** `Text`, set **Required** to `Yes` and keep **Active** on.
+4. Click **Save**.
+
+**Result:** the field appears in the Custom Fields card of the seller form in the Grocery module and must be filled when a Grocery seller is saved. Sellers of other modules do not get it.
+
+See [Custom Fields](./customer-finance.mdx#10-custom-fields-custom_fieldsmodule) for all tabs, every field type and what happens when a field that already holds values is edited or deleted.
+
+---
+
+## Real-World Use Cases
+
+- **Different commission per seller**: most sellers pay 10%, a large supermarket gets 8% on its edit page.
+- **Checking documents before approval**: staff look at the NID and Address Proof under **Other Info** in **Seller Requests**, then approve, or reject with a remark that tells the seller what is missing.
+- **Pausing a seller**: the availability toggle (or bulk **Deactivate**) stops a seller for a while without deleting anything; switching back restores the seller.
+- **Monthly settlement**: finance compares Wallet Balance and Pending Withdrawals on Seller Details, then approves the seller's withdrawal request with the bank receipt attached.

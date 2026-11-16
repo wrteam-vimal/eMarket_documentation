@@ -1,66 +1,304 @@
 ---
 sidebar_position: 11
 title: Reports & Business Intelligence
-description: In-depth guide to sales reports, product-level turnover analysis, vendor commission auditing, and financial reporting exports in eMarket.
+description: Guide to the eMarket admin reports - the seller-wise report pages (sales, orders, payment, products, category, inventory, customers, delivery boys, returns, promo codes, tax) and the sales, product sales, commission and POS reports, with tutorials.
 ---
 
 # Reports & Business Intelligence
 
-Data-driven decision making separates high-performing marketplace operators from the competition. eMarket's reporting suite delivers deep analytics across revenue streams, product velocities, and commission margins.
+All reports are in the sidebar **Reports** menu. Each report is its own menu entry, grouped by topic:
+
+| Group | Reports |
+| --- | --- |
+| Sales | Sales Report, Orders Report, Payment Report |
+| Catalog | Product Performance, Category Report, Inventory Report |
+| People | Customer Report, Delivery Boy Report, Returns & Refunds |
+| Marketing | Promo / Coupons Report |
+| Tax | Tax Report, Order-wise Tax Report |
+
+Below them the menu keeps the older **Product Sales Report**, **Sales Reports** and **Commission Reports** pages. The **POS Reports** page is not in the menu; open it at `/pos_reports`.
+
+:::info Permission
+The report pages at `/reports/...` need the **sales_reports** permission. Give it (in **Role**) to any admin role that should see reports. In the menu, **Product Sales Report**, **Sales Reports** and **Commission Reports** follow the **product_sales_reports**, **sales_reports** and **commission_reports** permissions; the pages themselves (and **POS Reports**) also need **order_list**.
+:::
+
+All reports only count orders of the module selected in the header switcher (for example **Grocery**). The **Export** options are explained in [Export Menu](./intro.mdx#7-export-menu-csv-excel-pdf-print-copy).
 
 ---
 
-## 1. Overall Sales Reports (`/sales_reports`)
+## 1. Reports (`/reports/:type`)
+
+![Sales Report](/img/detailed-documentation/reports-hub-sales.webp)
+
+### Overview
+
+`/reports` opens the **Sales Report** (`/reports/sales`). Every report in the groups above uses this same page; only the KPIs, chart and columns change. The figures are built from each seller's own order lines, so a seller's figures add up to the *All Sellers* total. Use these pages for the questions "how much did we sell", "what sold best", "who are our best customers" and "how much tax do we owe". Sellers see the same reports in the seller panel, locked to their own store.
+
+### Screen layout
+
+- **Period chips**: **Today**, **Yesterday**, **Last 7 days**, **Last 30 days** (the default), **This Month**, **Last Month**, **This Year**, **All time**, plus a **Custom range** date picker (no future dates).
+- **Seller**: *All Sellers* or one seller (searchable when there are many sellers).
+- **Order type** (on the Sales, Orders, Payment, Delivery Boy, Returns, Promo and Tax reports): **All order types**, **Home delivery**, **Quick delivery** or **Self Pickup**.
+- **Scope pills**: show the selected seller and date range (for example *All Sellers* and *1 Oct 2026 – 31 Oct 2026*).
+- **Refresh** button and **Export** menu: **CSV** and **PDF** are files made by the server (PDF in report layout); **Excel**, **Print** and **Copy** are built from the same rows. The export contains the report rows for the selected period and filters, and is disabled while the report has no rows.
+- **KPI tiles**: the main figures for the period. **Total revenue** and **Completed orders** (Sales Report) and **Total orders** (Orders Report) also show the change in % **vs previous period**.
+- **Order type cards** (Sales Report only): revenue and orders for **Home Delivery**, **Quick Delivery** and **Self Pickup**.
+- **Chart**: an area, bar or donut chart of the main figure (for example **Revenue over time**). It shows days for ranges up to about two months, and months for longer ranges.
+- **Details** table with its own search box. Product, customer, delivery boy and order names are links that open that record.
+
+### The reports
+
+| Report | KPIs | Table columns |
+| --- | --- | --- |
+| **Sales Report** | Total revenue, Completed orders, Average order value, Units sold, Tax collected, Gross profit, Refunds (plus Delivery charges and Discount given). Revenue cards per order type: Home delivery, Quick delivery, Self Pickup. | Period, Orders, Revenue, Average order value |
+| **Orders Report** | Total orders, Total items, Delivered items, In progress, Cancelled, Returned, Fulfilment rate | Status, Orders, Items, Share |
+| **Payment Report** | Total orders, Total collected, COD orders, COD value, Online value (and wallet used) | Payment method, Orders, Revenue, Share |
+| **Product Performance** | Products sold, Units sold, Product revenue, Gross profit, Margin | Product, Seller, Units sold, Orders, Revenue, Cost, Profit, Margin |
+| **Category Report** | Categories sold, Total revenue, Units sold, Top category | Category, Orders, Units sold, Products, Revenue, Profit, Share |
+| **Inventory Report** | Total stock items, In stock, Low stock, Out of stock, Stock value | Product, Seller, Stock, Low stock limit, Status, Price, Stock value |
+| **Customer Report** | Customers, Total spent, Average order value, Orders per customer, New customers | Customer, Mobile, Orders, Total spent, Average order value, Last order |
+| **Delivery Boy Report** | Delivery staff, Orders assigned, Orders delivered, Success rate, Total earnings, Cash collected | Delivery boy, Mobile, Assigned, Delivered, Success rate, Returns, Earnings, Cash collected, Cash in hand |
+| **Returns & Refunds** | Total returns, Pending, Approved, Rejected, Refund amount, Return rate | ID, Order ID, Customer, Product, Quantity, Reason, Status, Refund amount, Date |
+| **Promo / Coupons Report** | Coupons used, Total redemptions, Total discount, Average discount, Orders with coupon | Promo code, Title, Discount type, Redemptions, Customers, Total discount, Average discount, Order value, Status |
+| **Tax Report** | Taxable value, Tax collected, Tax reversed, Net tax payable, Orders with tax, Effective tax rate | Tax head, Rate, Taxable value, Tax collected, Tax reversed, Net tax payable, Orders |
+| **Order-wise Tax Report** | Orders with tax, Taxable value, Tax collected, Tax reversed, Net tax payable | Order ID, Date, Customer, Order type, Tax components, Taxable value, Tax collected, Tax reversed, Total, Status |
+
+### How the main figures are counted
+
+| Figure | Meaning |
+| --- | --- |
+| **Total revenue** | Sum of the item totals of **completed** order lines (Delivered or Picked Up) placed in the period. Orders still in progress, cancelled or returned are not counted. |
+| **Completed orders** | Number of orders with at least one completed line in the period. |
+| **Average order value** | Total revenue ÷ completed orders. |
+| **Gross profit** | (selling price − the variant's purchase price) × quantity, for completed lines. |
+| **Refunds** | Refund amounts recorded on order lines in the period. |
+| **Delivery charges**, **Discount given** | Whole-order amounts of completed orders. Shown only for *All Sellers*, because one order can contain several sellers' items. |
+| **vs previous period** | The same figure for the same number of days just before the selected range. *Last Month* (31 days in October) is compared with 31 Aug – 30 Sep. *All time* has no previous period, so no trend is shown. |
+| **Tax collected** / **Tax reversed** | Tax of completed lines / tax of returned lines. **Net tax payable** = collected − reversed. |
+
+The period is always matched against the **order date**, not the delivery date.
+
+The **Inventory Report** shows live stock, so it has no period filter ("Live stock — shows stock as it is right now"). Instead it has a **Stock status** filter: All, In stock, Low stock, Out of stock or Unlimited, each with its count.
+
+![Inventory Report](/img/detailed-documentation/reports-inventory.webp)
+
+### Tutorial: Read last month's Sales Report and compare it with the month before
+
+*Scenario: it is 16 November 2026 and the owner wants to know how October went.*
+
+1. Open **Reports** → **Sales Report** in the sidebar.
+2. Click the **Last Month** chip. The scope pill shows *1 Oct 2026 – 31 Oct 2026* and everything reloads.
+3. Read the **Total revenue** tile. Below it, a green ↑ or red ↓ arrow shows the change "vs previous period" (31 Aug – 30 Sep, the same number of days just before).
+4. Do the same for **Completed orders**. If revenue went up but orders did not, customers spent more per order: check **Average order value**.
+5. Look at the three order type cards to see whether **Home Delivery**, **Quick Delivery** or **Self Pickup** brought the revenue.
+6. Scroll to **Revenue over time** and the table to find the best and weakest days.
+7. Optional: pick one seller in **Seller** (for example *Rajesh Patel*) to see the same figures for that store only.
+8. Click **Export** → **PDF** to download a report-layout PDF for the owner.
+
+**Result:** you know October's completed revenue, orders and average order value, how they compare with the 31 days before, and which order type and days drove them.
+
+![Sales Report for last month](/img/detailed-documentation/reports-sales-last-month.webp)
+
+### Tutorial: Find which products sold the most
+
+1. Open **Reports** → **Product Performance**.
+2. Choose the period, for example **Last 30 days**.
+3. The **Top products by revenue** chart shows the 10 best products. The table is sorted by **Revenue**; click the **Units sold** column header to sort by quantity instead.
+4. Check **Margin**: a product that sells a lot with a low margin may need a price review.
+5. Click a product name to open the product.
+
+**Result:** a ranked list of best sellers (by product variant) with units, orders, revenue, cost, profit and margin for the period.
+
+### Tutorial: Use the Tax Report for a monthly filing
+
+*Scenario: the accountant needs October's tax figures by rate.*
+
+1. Open **Reports** → **Tax Report**.
+2. Click **Last Month**. Leave **Seller** on *All Sellers* and **Order type** on *All order types*.
+3. Read the KPIs: **Taxable value**, **Tax collected**, **Tax reversed** (on returned items) and **Net tax payable**.
+4. In the table, each row is one tax head and rate (for example *GST* at 5%). **Net tax payable** per row is what goes in the return.
+5. To check the orders behind a rate, click the tax head in the first column (it has an arrow). The **Order-wise Tax Report** opens filtered to that tax head and rate, for the same period and seller. A pill shows the filter; click **×** on it to clear it.
+6. Back on the **Tax Report**, click **Export** → **PDF** (for the accountant) or **Excel** (to work with the numbers).
+
+**Result:** the tax collected per tax head and rate for October, minus the tax on returned items, with the orders behind each figure.
+
+![Tax Report](/img/detailed-documentation/reports-tax.webp)
+
+:::tip Tips & common mistakes
+- The reports open on **Last 30 days**. If a figure looks too small or too large, check the period chip first.
+- Only completed lines (Delivered or Picked Up) count as sales and tax. An order delivered in November but placed on 31 October is counted in October; an order still *Out For Delivery* is not counted yet.
+- **Gross profit** and **Margin** use the purchase price of each product variant. Variants without a purchase price count as cost 0, which makes the profit look too high. Fill in the purchase price on the products.
+- The chosen period, seller and order type are kept in the page address. Bookmark or share the address to open the same report again.
+- Tax heads come from the tax breakdown saved on each order line at the time of the order. Changing a tax rate later does not change old reports ([Taxes](./catalog.mdx#9-taxes-taxes)).
+:::
+
+### Real-World Use Cases
+
+- **Tax filing**: run the **Tax Report** for last month, export to **PDF** for the accountant, and drill into a rate to check the orders behind it.
+- **Restocking**: open the **Inventory Report**, filter by **Low stock** and send the list to the sellers.
+- **Delivery staff review**: compare success rate and cash in hand in the **Delivery Boy Report** before the weekly cash settlement.
+
+---
+
+## 2. Sales Reports (`/sales_reports`)
 
 ![Sales Reports](/img/detailed-documentation/reports-sales.webp)
 
-A comprehensive macroeconomic view of total platform sales turnover across any chosen timeframe.
+### Overview
 
-### Key Metrics & Visualizations
-- **Gross Merchandise Value (GMV)**: Total gross sales generated across all categories.
-- **Net Revenue**: Revenue retained by the platform after deducting vendor payouts and coupons.
-- **Total Tax Collected**: Breakdown of GST / VAT collected across regional jurisdictions.
-- **Total Delivery Fees & Surcharges**: Aggregate logistics revenues.
-- **Export Capabilities**: Download full datasets in CSV, Excel, or printable PDF formats for accountant reconciliation.
+An order-item-level sales list with cost and margin: one row per sold item. It is the older **Sales Reports** page in the **Reports** menu. Use it when you need item-level detail (who bought what, at what margin) or filters the newer reports do not have: **Category**, **Delivery Boy** and **Payment Type**. Only items of completed orders (Delivered or Picked Up) are listed.
+
+### Screen layout
+
+- **KPI cards**: **Total Amount**, **Total Revenue**, **Total Cost**, **Total Margin (Profit)** and **Overall Margin %** (total margin ÷ total revenue).
+- **Search**, **Filters**, **Refresh** and **Export** (CSV, Excel, PDF, Print, Copy).
+- **Filters**: **Date Range**, **Select Seller**, **Select Category**, **Select Delivery Boys**, **Payment Type** (COD or Online) and **Clear**.
+
+### Column reference
+
+| Column | Meaning |
+| --- | --- |
+| **Order Item ID** | The order line number, for example **261**. |
+| **User** | Customer name (for example *Tanvi Hegde*). |
+| **Product** | Product name (for example *Multigrain Cookies*). |
+| **Mobile** | Customer mobile number. |
+| **Quantity** | Units on this line. |
+| **Revenue (₹)** | Line total paid for the item (for example 103.95). |
+| **Cost Price (₹)** | Purchase price of the variant. |
+| **Cost Total (₹)** | Cost price × quantity. |
+| **Margin (Profit) (₹)** | (selling price − cost price) × quantity, shown in green. |
+| **Margin %** | Margin as a share of the selling price. |
+| **Date** | Date of the order line. |
+
+### Tutorial: Check margins for one category last month
+
+*Scenario: you suspect Fruits & Vegetables are sold at a thin margin.*
+
+1. Open **Reports** → **Sales Reports**.
+2. Click **Filters**. Set **Date Range** to 1–31 October 2026 and **Select Category** to the category.
+3. Read **Total Margin (Profit)** and **Overall Margin %** in the KPI cards.
+4. Click the **Margin %** column header to sort, and look at the lowest rows.
+5. Click **Export** → **Excel** to share the list with the category manager. Click **Clear** to reset the filters.
+
+**Result:** the margin for that category and the items that pull it down.
+
+:::tip Tips & common mistakes
+- Items without a cost price on the variant show a margin equal to the full price. Fill in the purchase price on the product for real margins.
+- **Payment Type** *Online* means every method other than COD (wallet, Razorpay, Stripe and so on).
+:::
 
 ---
 
-## 2. Product Sales Reports (`/product_sales_reports`)
+## 3. Product Sales Reports (`/product_sales_reports`)
 
 ![Product Sales Reports](/img/detailed-documentation/reports-product-sales.webp)
 
-SKU-level performance analytics showing which items are moving fast and which are underperforming.
+### Overview
 
-### Report Columns
-- **Product Name & SKU ID**: Product identity.
-- **Vendor / Seller**: Store offering the item.
-- **Units Sold**: Volume velocity across the selected date range.
-- **Gross Revenue (₹)**: Total turnover generated by the SKU.
-- **Average Selling Price**: Effective realization after discounts.
+Units sold and sales per product variant. The menu entry is called **Product Sales Report** and follows the **product_sales_reports** permission. It lists variants that were sold in completed orders (Delivered or Picked Up).
 
-### Operational Actions
-- Identify hero products to feature in **Home Sliders** and **Featured Sections**.
-- Identify slow-moving items to advise vendors on clearance price markdowns.
+### Screen layout
+
+- **Search**, **Filters** (**Date Range**, marked required), **Refresh** and **Export** (CSV, Excel, PDF, Print, Copy; disabled while the list is empty).
+- **Per page** selector and page buttons at the bottom (for example "Showing Result 1–10 of 59 Items").
+
+### Column reference
+
+| Column | Meaning |
+| --- | --- |
+| **Product Name** | For example *Green Capsicum*. |
+| **Seller Name** / **Seller ID** | The seller of the product, for example *Rajesh Patel*, 1. |
+| **Product Variant ID** | Each variant has its own row (500 g and 250 g Green Capsicum are two rows). |
+| **Unit of Measure** | The variant size, for example *500 g*. |
+| **Total Units Sold** | Units of this variant in delivered or picked-up items. |
+| **Total Sales** | Sum of the line totals of this variant. |
+
+### Tutorial: Pick best sellers for the home page
+
+1. Open **Reports** → **Product Sales Report**.
+2. Click **Filters** and choose a **Date Range** (for example the last 30 days).
+3. Click the **Total Units Sold** header to sort from highest to lowest.
+4. Note the top products, then add them to a home page section in [Home Builder](./promotions.mdx#1-home-builder-home_builder).
+
+**Result:** a list of the variants that sell the most units.
+
+:::caution Lifetime totals
+The date range only decides **which variants are listed** (those sold in the range). **Total Units Sold** and **Total Sales** are the variant's totals over all time, and **Total Sales** also includes cancelled lines. For sales within a period, use **Product Performance** (section 1).
+:::
 
 ---
 
-## 3. Commission Reports (`/commission_reports`)
+## 4. Commission Reports (`/commission_reports`)
 
 ![Commission Reports](/img/detailed-documentation/reports-commission.webp)
 
-An auditable breakdown of all platform commission revenues collected from marketplace vendors.
+### Overview
 
-### Financial Breakdown
-- **Seller Name & ID**: Vendor reference.
-- **Total Orders Fulfilled**: Number of successful customer deliveries.
-- **Gross Order Value (₹)**: Base order total.
-- **Agreed Commission Rate (%)**: Contractual fee (e.g. 10%, 15%).
-- **Platform Commission Earned (₹)**: Net marketplace fee retained by the platform owner.
+The commission the platform earns on each order item. The menu entry follows the **commission_reports** permission. Use it before paying sellers or to check the platform's income for a period. A row is added when the seller's earnings for a delivered item are credited to the seller's wallet (see [Seller Wallet Transactions](./sellers.mdx#5-seller-wallet-transactions-seller_wallet_transactions)).
+
+### Screen layout
+
+- **Total Commission** KPI card (for example ₹ 4352.21): the total of all matching rows, not only the visible page.
+- **Search**, **Filters** (**Date Range**, **Select Seller**, **Clear**), **Refresh** and **Export** (CSV, Excel, PDF, Print, Copy).
+
+### Column reference
+
+| Column | Meaning |
+| --- | --- |
+| **Order ID** / **Order Item ID** | The order and the line the commission was taken from (for example 116 / 261). |
+| **Seller** | For example *Kavya Rao*. |
+| **Order Item Amount (₹)** | Line total, for example 103.95. |
+| **Commission (%)** | The seller's commission rate, for example 10. |
+| **Commission Amount (₹)** | The platform's share, for example 10.4. |
+| **Date** | When the commission was recorded (when the seller was credited), not the order date. |
+
+### Tutorial: Check one seller's commission for a month
+
+*Scenario: you are paying Rajesh Patel for October and want to confirm the commission kept.*
+
+1. Open **Reports** → **Commission Reports**.
+2. Click **Filters**. Set **Date Range** to 1–31 October 2026 and **Select Seller** to *Rajesh Patel*.
+3. Read **Total Commission**. Each row shows the item amount, the rate and the commission.
+4. Click **Export** → **Excel** and attach it to the payout record.
+
+**Result:** the commission kept from that seller's items credited in October.
+
+:::tip Tips & common mistakes
+- Commission rows are created by the `sellers:credit-earnings` scheduled task, for delivered items whose return window has passed. Without a running scheduler the report stays empty ([The Scheduler Requirement](./system-maintenance.mdx#5-the-scheduler-requirement)).
+- Because the date is the credit date, an order delivered at the end of a month can appear in the next month.
+:::
 
 ---
 
-## Real-World Analytics Use Cases
+## 5. POS Reports (`/pos_reports`)
 
-- **Quarterly Tax Filing**: Accountants use the **Sales Reports** date filter to export all orders for Q1, obtaining exact tax totals for government VAT/GST submissions.
-- **Vendor Performance Reviews**: During annual merchant contract renewals, marketplace managers review the **Commission Reports** to evaluate the seller's total turnover and renegotiate commission tiers.
-- **Inventory Demand Forecasting**: Evaluating the 30-day **Product Sales Report** allows warehouse managers to accurately forecast demand and restock inventory before popular items run dry.
+![POS Orders Report](/img/detailed-documentation/reports-pos.webp)
+
+### Overview
+
+Orders placed through the sellers' POS (point of sale) screens, for all stores. The page title is **POS Orders Report**. It is not in the sidebar; open it at `/pos_reports`. Use it to check counter sales of the sellers' physical shops.
+
+### Screen layout
+
+- **Total Amount** KPI card.
+- **Search**, **Filters**, **Refresh** and **Export** (CSV, Excel, PDF, Print, Copy).
+- **Filters**: **From & To Date**, **Store** (default *All Stores*) and **Payment Method** (*All Payment Methods*, Cash, UPI or Card).
+- **Table** columns: **Order ID**, **Store**, **Customer**, **Mobile Number**, **Date**, **Total Amount**, **Payment Method** and **Invoice**. A **Total** row sums the listed orders. When nothing matches, the table shows "No records found".
+- **Invoice** button: opens the POS invoice in a pop-up through a signed link that is valid for 10 minutes.
+
+### Tutorial: Check today's cash sales of one store
+
+1. Open `/pos_reports`.
+2. Click **Filters**. Set **From & To Date** to today, **Store** to the store and **Payment Method** to *Cash*.
+3. Read **Total Amount** and compare it with the cash in the drawer.
+4. Click **Invoice** on a row to see a single bill.
+
+**Result:** the total cash taken at that store's counter today, bill by bill.
+
+:::tip Tips & common mistakes
+- An **Invoice** pop-up left open for more than 10 minutes stops working. Close it and click **Invoice** again.
+:::
+
+### Real-World Use Cases
+
+- **Counter sales check**: filter one store by **Cash** for today and compare the total with the cash in the drawer.

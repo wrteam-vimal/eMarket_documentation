@@ -1,30 +1,81 @@
 ---
 sidebar_position: 9
 title: Localization & Geographical Zones
-description: Guide to managing multi-language translations, supported countries, serviceable cities, and delivery zone boundaries in eMarket.
+description: Reference and tutorials for adding and translating languages, managing countries, and defining the cities, delivery areas and delivery charges eMarket serves.
 ---
 
 # Localization & Geographical Zones
 
-eMarket supports cross-border and multi-regional commerce. This section covers configuring multi-language translations (including RTL support) and defining deliverable geographical zones down to the city and pincode level.
+This section covers the languages of the admin panel, website and apps, the countries list, and the cities (with their delivery areas and delivery charges) where your marketplace delivers.
 
 ---
 
-## 1. Multi-Language System
+## 1. Languages
 
-eMarket features a dynamic internationalization (i18n) engine supporting English, Arabic, Spanish, French, Hindi, and any custom language.
+English is the only built-in language: it ships as `resources/lang/en.json` and is the base for every other language. Any other language (Arabic, Hindi, Spanish…) exists only after an admin adds it on Manage Languages by downloading the sample JSON files, translating them and uploading them. Missing keys fall back to English.
+
+Every language is used by four **system types**, each with its own JSON file:
+
+| System type | Sample file | Used by |
+| :--- | :--- | :--- |
+| Customer App | `customer.json` | Customer app |
+| Partner App (Seller and delivery boy App) | `partner.json` | Seller app and delivery boy app |
+| Website | `web.json` | Customer website |
+| Admin Panel | `panel.json` | Admin, seller and delivery boy panels (every panel key) |
+
+:::note Upgrading from an older version
+Older versions shipped bundled language files (e.g. Arabic, Hindi). These are no longer included. If your store used one, add it again from Manage Languages (download `panel.json` and the other sample files, translate, upload), then clear the cache (**Settings → Clear System Cache** or `php artisan cache:clear`).
+:::
 
 ### 1.1 Manage Languages (`/languages`)
 
 ![Manage Languages](/img/detailed-documentation/languages-manage.webp)
 
-Lists all active languages installed across the website and applications.
+#### Overview
+Sidebar **Languages → Manage Languages** (permission `language_list`). Lists the languages your store offers and lets you download the files to translate, edit translations and choose the default language. The default language is also the language whose fields are required in every translatable form (product names, charge titles, SEO texts…).
 
-#### Key Actions & Fields
-- **Language Name & Code**: e.g., English (`en`), Arabic (`ar`), Spanish (`es`).
-- **Direction Toggle**: Switch between **LTR** (Left-to-Right) and **RTL** (Right-to-Left) for Arabic/Hebrew script rendering.
-- **Default Language**: Sets the platform fallback language.
-- **Status Switch**: Enable or disable user-facing language selection.
+#### Screen layout
+- **Download Sample Files** bar: **Customer App**, **Partner App**, **Website** and **Admin Panel** buttons download the English key files to translate.
+- Search box, **Supported Languages List** (a searchable list of every language you can add, with its ID, name, code and direction type LTR / RTL), **Refresh** and **+ Add Language** buttons.
+
+| Column | Meaning |
+| :--- | :--- |
+| Language | Display name, e.g. English. |
+| Code | Language code, e.g. EN. |
+| Default | **Yes** for the default language, otherwise No. |
+| Status | **Active** or Inactive. |
+| Actions | Edit, delete. |
+
+#### Field reference: Edit Language modal
+
+| Field | Required | What it does | Example |
+| :--- | :--- | :--- | :--- |
+| Supported Language | — | Read-only; cannot be changed after adding. | Arabic |
+| Display Name | Yes | Name shown in language pickers. | `العربية` |
+| Set as a default language | No | Makes this the default language; the previous default is switched off. | Ticked |
+| Status | — | Deactivate / Activate. A default language is always active. | Activate |
+| Edit JSON Data for System Types | No | Per system type an **Edit …** button (opens the JSON in an editor that checks it is valid JSON) and a drop box to upload a new JSON file. | Edit Admin panel |
+
+Uploaded files are applied when you click **Save**. They are merged over the existing translations: values in the file are updated and keys the file lacks are kept, so a partial file never drops keys.
+
+#### Tutorial: Fix a few panel labels
+*Scenario: two Arabic labels in the admin panel read wrong.*
+1. Click edit on the **Arabic** row.
+2. Under **Edit JSON Data for System Types** click **Edit Admin panel**.
+
+   ![Edit Language modal](/img/detailed-documentation/languages-edit.webp)
+
+3. Find the keys, correct the values, check that the editor shows **Valid JSON Format**, and click **Save** in the editor (it saves that file straight away).
+4. Close the Edit Language modal and clear the cache from **Settings → Clear System Cache**.
+
+**Result:** the corrected labels show the next time the panel loads in Arabic; all other translations stay as they were.
+
+:::caution Common mistakes
+- The default language cannot be deleted ("Cannot delete the default language. Please set another language as default first and fill data for it."), and the last remaining language cannot be deleted either.
+- Deleting a language removes it and its `resources/lang/{code}.json` file; English (`en.json`) is never removed.
+- A default language must stay active; deactivating it is refused.
+- Translate only the values in the JSON files; changing a key breaks that label.
+:::
 
 ---
 
@@ -32,44 +83,168 @@ Lists all active languages installed across the website and applications.
 
 ![Add Language](/img/detailed-documentation/languages-add.webp)
 
-#### Step-by-Step Instructions
-1. Navigate to **Languages > Add Language**.
-2. Enter the **Language Name** (e.g. `Arabic`).
-3. Enter the standard **ISO Language Code** (e.g. `ar`).
-4. Select text direction (**RTL** or **LTR**).
-5. Upload a flag icon.
-6. Click **Save Language** to auto-generate the translation key dictionary for that language.
+#### Overview
+There is no separate create page: **Languages → Add Language** in the sidebar (`/languages/create`, permission `language_create`) and the **+ Add Language** button both open the **Add Language** modal on top of Manage Languages.
+
+#### Field reference
+
+| Field | Required | What it does | Example |
+| :--- | :--- | :--- | :--- |
+| Supported Language | Yes | Language to add; its code and text direction (LTR / RTL) come from the supported list. Each language can be added once. | Arabic (RTL) |
+| Display Name | Yes | Name shown to users. | `العربية` |
+| Json File - Customer App | Yes | Translated `customer.json`. | `ar-customer.json` |
+| Json File - Seller and delivery boy App | Yes | Translated `partner.json`. | `ar-partner.json` |
+| Json File - Website | Yes | Translated `web.json`. | `ar-web.json` |
+| Json File - Admin panel | Yes | Translated `panel.json`. | `ar-panel.json` |
+| Set as a default language | No | Make it the default right away. | — |
+| Status | — | Deactivate / Activate. | Activate |
+
+Each drop box accepts a dropped, pasted or clicked file ("Drop, paste or click to upload"), and the file's content is shown below it after upload.
+
+#### Tutorial: Add a new language and make it default
+*Scenario: launch the store in Arabic.*
+1. On Manage Languages click **Customer App**, **Partner App**, **Website** and **Admin Panel** under **Download Sample Files**.
+2. Translate the values in each file (keep every key unchanged) and save them as UTF-8 JSON.
+3. Click **+ Add Language**.
+4. Pick **Supported Language** `Arabic`. The direction (RTL) comes with it.
+5. Enter **Display Name** `العربية`.
+6. Upload the four files into **Json File - Customer App**, **Json File - Seller and delivery boy App**, **Json File - Website** and **Json File - Admin panel**.
+7. Keep **Status** on **Activate**; tick **Set as a default language** only if Arabic should be the default.
+8. Click **Save**, then clear the cache from **Settings → Clear System Cache**.
+
+**Result:** Arabic appears in the list (Default **Yes** if you ticked it, Status **Active**) and can be picked in the language menus. If it is now the default, the default-language tab of every translatable form is Arabic, so fill the Arabic texts of your products, categories and settings.
+
+:::caution Common mistakes
+- All four JSON files are required when adding ("Please upload JSON files for all system types. Missing: …").
+- "This language already exists" means it was added before; edit that row instead.
+- A language cannot be set as default while it is inactive.
+:::
 
 ---
 
-## 2. Countries Management (`/countries`)
+## 2. Countries (`/countries`)
 
-![Countries](/img/detailed-documentation/countries.webp)
+![Manage Countries](/img/detailed-documentation/countries.webp)
 
-Defines the nations where your platform operates, establishing default international telephone calling codes and currency conventions.
+### Overview
+Sidebar **Countries → Manage Countries** (permission `country_list`). The countries list (name, dial code, ISO code and logo) used by the apps, the website and [tax rules](./settings.mdx#5-tax-settings-settingstax).
 
-### Parameters Configured
-- **Country Name** (e.g., India, United States, United Arab Emirates).
-- **Dialing Calling Code** (e.g., `+91`, `+1`, `+971`).
-- **Country ISO Code** (`IN`, `US`, `AE`).
+### Screen layout
+- **Items Background Colors** bar ("Card colour behind each item in the apps"): **Global / Item Wise** switch, **Light** and **Dark** colour chips with a hex field and a **Transparent** toggle, and **Save**. In Global mode one background colour is used behind every country logo; in Item Wise mode each country sets its own.
+- Search box, **Refresh** and **+ Add Country** buttons. **Countries → Add Country** in the sidebar (`/countries/create`, permission `country_create`) opens the same modal.
+
+| Column | Meaning |
+| :--- | :--- |
+| ID | Country ID. |
+| Name | Country name, e.g. India. |
+| Dial Code | Phone prefix, e.g. +91. |
+| Code | ISO code, e.g. IN. |
+| Logo | Flag or logo image. |
+| Status | Active / Deactive. |
+| Actions | Edit, delete. |
+
+### Field reference: Add / Edit Country modal
+
+| Field | Required | What it does | Example |
+| :--- | :--- | :--- | :--- |
+| Name | Yes (default language) | Country name, a tab per language with **Translate Empty Fields** / **Translate & Overwrite**. | `United Arab Emirates` |
+| Dial Code | Yes | Phone prefix. | `+971` |
+| Code | Yes | ISO code; must be unique. | `AE` |
+| Logo | Yes (when adding) | Flag image: JPEG, JPG, PNG, GIF or WEBP. | UAE flag |
+| Status | — | Deactive / Active. | Active |
+| Background Color For Light Theme / Dark Theme | No | Only in Item Wise mode. | `#ffffff` / `#000000` |
+
+### Tutorial: Activate a country for a new market
+*Scenario: you start selling in the UAE (ID 4, currently Deactive).*
+1. Click edit on the **United Arab Emirates** row.
+2. Check **Dial Code** `+971` and **Code** `AE`, set **Status** to **Active**.
+
+   ![Edit Country modal](/img/detailed-documentation/countries-edit.webp)
+
+3. Click **Save**.
+
+**Result:** "Country Saved Successfully!" and the row shows **Active**; the UAE can now be used in the apps and in tax rules.
+
+:::caution Common mistakes
+- Deleting a country deletes it and its logo permanently, from this server, external storage and the Media library. Prefer **Deactive** if you may need it again.
+- A duplicate **Code** is refused.
+:::
 
 ---
 
-## 3. Serviceable Cities & Zones (`/cities`)
+## 3. Cities and Delivery Areas
 
-![Cities](/img/detailed-documentation/cities.webp)
+### 3.1 Manage Cities (`/cities`)
 
-Controls the exact geographic boundaries where vendors are permitted to sell and delivery partners fulfill orders.
+![Manage Cities](/img/detailed-documentation/cities.webp)
 
-### City & Boundary Configuration
-- **City Name**: Urban center or municipal region.
-- **Geofenced Coordinates**: Map coordinates (latitude, longitude) and radius polygon defining delivery coverage.
-- **Associated Pincodes / Postal Codes**: Customer delivery addresses must fall within these active pincodes to complete checkout.
+#### Overview
+Sidebar **Location → Manage Cities** (permission `city_list`; page title "Manage City's Center Points (Latitude & Longitude)"). The cities (delivery zones) where orders can be delivered. A customer's location is checked against each city's drawn delivery area to decide whether, and from where, it can be served.
+
+#### Screen layout
+- Search box, **Refresh** and **+ Add New City** buttons. Edit opens `/cities/edit/{id}`.
+
+| Column | Meaning |
+| :--- | :--- |
+| ID | City ID. |
+| Name | City name, e.g. Ahmedabad. |
+| Zone | Zone name customers see, e.g. Ahmedabad Central. |
+| State | State, e.g. Gujarat. |
+| Latitude / Longitude | City centre point, e.g. 23.0225 / 72.5714. |
+| Geolocation Type | `polygon` or `circle` — the shape of the delivery area. |
+| Actions | Edit, delete. |
+
+:::caution
+Deleting a city is immediate and there is no check whether sellers or delivery boys still use it. Edit the delivery area instead when you only want to shrink it.
+:::
+
+---
+
+### 3.2 Add / Edit City (`/cities/create`)
+
+![Add City](/img/detailed-documentation/cities-add.webp)
+
+#### Overview
+Sidebar **Location → Add City** (permission `city_create`; page title "Manage City", breadcrumb "Create City"). "Find the city, draw where you deliver, then set its delivery charges." The page has four numbered steps, a tab per language for the names, and a sticky bar at the bottom that counts the finished steps ("0 / 4 steps complete") with **Clear** and **Save**.
+
+#### Field reference
+
+| Step / Field | Required | What it does | Example |
+| :--- | :--- | :--- | :--- |
+| 1 · **Search City on map** | — | Finds the city on Google Maps or OpenStreetMap (the map provider set in Store Settings → Address Setting). | `Ahmedabad` |
+| City Name, State Name | Yes | Filled from the search ("Filled from the search"); read-only. | Ahmedabad, Gujarat |
+| Latitude, Longitude | Yes | Filled from the search. | 23.0225, 72.5714 |
+| 2 · **Draw Polygon** / **Draw Circle** | — | The delivery area. The badge changes from "Not drawn yet" to the shape drawn. Correct it with **Remove Newly Added Line**, **Clear Map** or **Restore Old Map**. | Polygon around the west side |
+| 3 · Zone Name | Yes (default language) | Zone name customers see. | `Ahmedabad West` |
+| Time to travel 1 (km) | Yes | Minutes a delivery boy needs per km (min / km). | `3` |
+| 4 · Delivery charge method | Yes | **Fixed Delivery Charges** (one price for every order), **Per KM Delivery Charges** (price per km) or **Range Wise Delivery Charges** (a price per distance band). | Fixed Delivery Charges |
+| Fixed / Per KM Delivery Charges | Yes for that method | The price. | `30` |
+| Range Wise rows | Yes for that method | **Add Row** for each From range (km) / To range (km) / Price. Do not repeat a range value (e.g. 1-3, 4-6). | 0-3 km ₹20, 4-6 km ₹35 |
+| Minimum Amount for Free Delivery | Yes | Orders at or above this amount are delivered free. | `499` |
+
+#### Tutorial: Add a serviceable city with a delivery polygon
+*Scenario: start delivering in the western part of Ahmedabad.*
+1. Click **Location → Add City**.
+2. **Find the city**: type `Ahmedabad` in **Search City on map** and pick the suggestion. City Name, State Name, Latitude and Longitude fill in.
+3. **Draw the delivery area**: click **Draw Polygon**, then click point by point around the neighbourhoods you serve. The badge shows the polygon and its number of points. Use **Remove Newly Added Line** to undo the last line.
+4. **Zone & delivery time**: enter **Zone Name** `Ahmedabad West` and **Time to travel 1 (km)** `3`. Fill the zone name in the other language tabs, or use **Translate Empty Fields**.
+5. **Delivery charges**: click **Fixed Delivery Charges**, enter `30`, and set **Minimum Amount for Free Delivery** to `499`.
+6. Check that the bar shows "4 / 4 steps complete" and click **Save**.
+
+![City with a drawn delivery polygon](/img/detailed-documentation/cities-edit.webp)
+
+**Result:** "City Saved Successfully!" and the city appears on Manage Cities with Geolocation Type `polygon`. Customers inside the shape can order; orders of ₹499 or more are delivered free, others pay ₹30.
+
+:::tip Tips
+- Sellers and delivery boys cannot register while no city exists, so add at least one city before inviting them.
+- Draw only the area your delivery boys can really reach; a customer location outside every drawn area does not match any city.
+- **Clear** empties the whole form; use **Clear Map** to redraw only the area.
+:::
 
 ---
 
 ## Real-World Localization & Territory Use Cases
 
-- **Right-to-Left (RTL) Arabic Commerce**: When deploying in the Middle East, activating Arabic with the **RTL** flag automatically mirrors the entire mobile app layout, navigation drawers, and typography for native Arabic users.
-- **Staged Geographic City Expansion**: A marketplace launching in a new metropolitan area creates a new **City** record with designated launch pincodes, allowing them to onboard local vendors ahead of marketing launch.
-- **Blocking Deliveries Outside Service Radii**: If a shopper enters an address outside the defined **Cities** boundary, the app gracefully notifies them that doorstep delivery is not yet available in their neighborhood.
+- **Launching in Arabic**: download the four sample files, have them translated, add Arabic from the supported languages with the four uploads. Its direction type in the supported languages list is RTL.
+- **Fixing a few panel labels**: open the language's Edit modal, click **Edit Admin panel**, change the values and save – no need to upload the whole file again.
+- **Opening a new delivery zone**: add the city, draw only the neighbourhoods you can serve, set a fixed charge with free delivery above a minimum amount.

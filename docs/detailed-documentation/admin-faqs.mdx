@@ -1,12 +1,16 @@
 ---
 sidebar_position: 12
 title: Administration, Roles & FAQs
-description: Comprehensive operational guide for managing system users, configuring granular role-based permissions, and maintaining customer help FAQs.
+description: Managing admin staff accounts, building roles with the permission matrix, and maintaining the customer FAQs.
 ---
 
 # Administration, Roles & FAQs
 
-Securing administrative access and delegating responsibilities across departmental staff is paramount for enterprise marketplaces. This section details user roles, permission matrices, and platform FAQs.
+This section covers who can sign in to the admin panel (**System Users**), what each of them may do (**Role** and its permission matrix), and the customer **FAQs**. System Users and Role appear in the sidebar (**GENERAL** group) for the **Super Admin** only.
+
+:::tip Typical order of work
+Create the **role** first, then the **system user** who gets that role. A system user cannot be saved without a role.
+:::
 
 ---
 
@@ -14,48 +18,198 @@ Securing administrative access and delegating responsibilities across department
 
 ![System Users](/img/detailed-documentation/system-users.webp)
 
-Manages internal staff accounts with access to the admin panel (e.g. Customer Support Executives, Catalog Moderators, Delivery Coordinators, Accountants).
+### Overview
 
-### Creating a System User
-1. Click **Add System User**.
-2. Enter the staff member's **Full Name**, **Email Address**, and secure **Password**.
-3. Assign a specific **Role** (e.g., `Order Manager`, `Support Agent`, `Product Moderator`).
-4. Toggle status to `Active` and click **Save**.
+Admin staff accounts that can log in to the admin panel — for example an order manager, a content manager or an accountant. Only the **Super Admin** sees this page in the sidebar. Each account logs in on the normal admin login page and sees only the menu entries and buttons its role allows. Seller and delivery boy accounts are not listed or editable here; they are managed under Sellers and Delivery Boys.
+
+### Key Components
+
+- **Search** box, **Refresh** button, and **Add New**.
+- **Per page** selector and pagination ("Showing Result 1–6 of 6 Items").
+- Each row has **Edit** (pencil) and **Delete** (bin) buttons. Rows with the **Super Admin** role show a **Protected** label instead of buttons.
+
+| Column | Meaning |
+| :--- | :--- |
+| **ID** | Account number (e.g. 42). The main admin account is ID 1. |
+| **Username** | Display name of the staff member (e.g. Pallavi Kulkarni). |
+| **Email** | Login email (e.g. pallavi.k@example.com). |
+| **Role** | The role badge (e.g. **Order Manager**, **Finance Manager**, **Super Admin**). |
+| **Actions** | **Edit**, **Delete**, or **Protected**. |
+
+### Field Reference: Create / Edit System User
+
+| Field | Required | What it does | Example |
+| :--- | :--- | :--- | :--- |
+| **Username** | Yes | Name shown in the header ("Hello, *username*!") and in the list. | Pallavi Kulkarni |
+| **Email** | Yes | Login email. Must be a valid email and unique among admin accounts. | pallavi.k@example.com |
+| **Role** | Yes | Decides every permission of the account. Chosen from the roles on the Role page. | Order Manager |
+| **Password** | When creating | At least 6 characters. Eye button shows/hides it. When editing, leave blank to keep the current password. | `Orders@2026` |
+| **Confirm Password** | When creating | Must match **Password**. | `Orders@2026` |
+
+### Protection Rules
+
+- Only a Super Admin can give someone the Super Admin role or edit a Super Admin account.
+- Only the main admin (ID 1) can edit the main admin account, and the main admin account cannot be deleted.
+- Nobody can change their own role or delete their own account.
+- Delete asks "Are you sure?" before removing the account.
+
+### Tutorial: Add an Order Manager
+
+*Scenario:* Mohit Verma joins the dispatch team. He must process orders but must not see payouts or settings. The **Order Manager** role already exists (see [section 2](#tutorial-create-an-order-manager-role)).
+
+1. Open **System Users** in the sidebar and click **Add New**.
+2. Enter **Username** `Mohit Verma` and **Email** `mohit.verma@example.com`.
+3. In **Role**, pick **Order Manager**.
+4. Enter a **Password** of at least 6 characters and the same value in **Confirm Password**.
+5. Click **Save**.
+6. Give Mohit the email and password. He logs in on the same admin login page.
+
+**Result:** Mohit appears in the list with the **Order Manager** badge. When he logs in, the sidebar shows only the entries his role allows (for example Dashboard, Orders, Self Pickup Orders, Abandoned Carts, Return Requests and Customers), and pages such as Settings, Reports or System Users are not in his menu. Opening a page's address directly without the permission shows the Unauthorized page.
+
+### Tutorial: Reset a Staff Member's Password
+
+1. Click **Edit** on the row (e.g. Gaurav Saxena).
+2. Type the new password in **Password** and **Confirm Password**. Leave the other fields as they are.
+3. Click **Save**.
+
+**Result:** the old password stops working at the next login. If you leave both password fields empty, the password does not change.
+
+:::caution Tips & common mistakes
+- The email must be unique among admin accounts — re-using a former employee's email fails until that account is deleted or changed.
+- To move a user to another role, edit the user here; you cannot change your **own** role.
+- Deleting a system user removes the login only; orders and other data they handled stay.
+- A changed role or password takes effect when the user next loads the panel or logs in.
+:::
 
 ---
 
-## 2. Roles & Permissions Matrix (`/role`)
+## 2. Role & Permissions (`/role`)
 
 ![Role & Permissions](/img/detailed-documentation/role.webp)
 
-eMarket provides an enterprise-grade Role-Based Access Control (RBAC) permission engine. Platform owners can create tailored roles with granular read, create, edit, and delete permissions.
+### Overview
 
-### Granular Permission Categories
-- **Dashboard**: View high-level metrics vs restrict to operational screens.
-- **Orders**: `order_list`, `order_update`, `order_delete`, `assign_delivery_boy`.
-- **Products**: `product_list`, `product_create`, `product_update`, `product_delete`, `approve_requests`.
-- **Sellers**: `seller_list`, `seller_create`, `seller_update`, `seller_delete`, `seller_requests`.
-- **Financials**: `manage_customer_wallet`, `manage_seller_wallet`, `withdrawal_requests`.
-- **Settings**: Restrict critical payment gateway keys and database settings exclusively to Super Admins.
+A role is a named set of permissions. Every system user has exactly one role, and the sidebar, pages and buttons a user sees follow that role's permissions. Only the **Super Admin** sees this page in the sidebar. Changing a role affects every system user who has it.
+
+### Key Components
+
+- **Search**, **Refresh** and **Add New**; **Per page** and pagination.
+- **Columns**: **ID**, **Name**, **Actions** (**Edit**, **Delete**).
+- The built-in **Super Admin**, **Seller** and **Delivery Boy** roles carry a **System** badge and a dash instead of buttons; they cannot be edited or deleted here. The demo list also shows **Admin**, **Order Manager**, **Content Manager** and **Finance Manager**, which can be edited.
+- A role that is still assigned to users cannot be deleted — move those users to another role first.
+
+### The Permission Matrix (Add / Edit modal)
+
+![Role permission matrix](/img/detailed-documentation/role-permissions.webp)
+
+| Field | Required | What it does | Example |
+| :--- | :--- | :--- | :--- |
+| **Title** | Yes | The role name. Must be unique. | Order Manager |
+| **Permission Access** | No (but a role without permissions sees nothing) | Tick the permissions the role gets. The toolbar shows the running "*N* selected" count, **Select All** and **Expand all / Collapse all**. | 9 selected |
+
+Below the title, one collapsible card per permission group. Each card has its own select-all checkbox and a selected/total counter (e.g. `4/6`). Permissions are shown with readable names such as **Order List** or **Order Update**. The groups are:
+
+| Group | Examples of permissions inside |
+| :--- | :--- |
+| Dashboard | Manage Dashboard |
+| Order | order list / update / delete, self pickup order list / update / delete |
+| Category | category list / create / update / delete, manage categories order |
+| Product | product list / create / update / delete, manage media, bulk upload, product order, approve requests, … |
+| Seller | seller list / create / update / delete, seller requests, seller wallet transactions, seller policies, custom fields, … |
+| Home Builder | home builder list / create / update / delete / publish |
+| Page Builder | page builder list / create / update / delete / publish |
+| Promo Code | promo code list / create / update / delete |
+| Return Request, Withdrawal Request | list / update / delete |
+| Delivery Boy | delivery boy list / create / update / delete, fund transfers, cash collection, … |
+| Send Notification | notification list, send notification, notification delete |
+| Email Template | email templates (create / update / delete), manage emails, send / delete sent email |
+| System | time slots, manage store settings, payment methods, additional charges, … |
+| Web Settings | general settings, social media list / create / update / delete |
+| Blogs | blog category and blog list / create / update / delete |
+| Subscriptions | subscription and subscription FAQ list / create / update / delete |
+| Location | city list / create / update / delete |
+| Customer | customer list / update, wishlists, transactions, customer wallet, product requests, … |
+| Report | product sales reports, sales reports, commission reports |
+| FAQ | faq list / create / update / delete |
+| Languages, Countries, Module | list / create / update / delete |
+
+:::tip How permissions work
+"List" permissions control whether the menu entry and page appear at all; "create / update / delete" permissions control the **Add**, **Edit** and **Delete** buttons on that page. A role with only `faq_list`, for example, can read the FAQs but sees no Add, Edit or Delete buttons.
+:::
+
+### Tutorial: Create an Order Manager Role
+
+*Scenario:* the dispatch team should see and update orders, returns and customers — but not delete orders, change settings or see reports.
+
+1. Open **Role** and click **Add New**.
+2. Enter the **Title** `Order Manager`.
+3. Click **Expand all** to open every group.
+4. In **Dashboard**, tick **Manage Dashboard**.
+5. In **Order**, tick **Order List**, **Order Update**, **Self Pickup Order List** and **Self Pickup Order Update**. Leave the delete permissions unticked.
+6. In **Return Request**, tick **Return Request List** and **Return Request Update**.
+7. In **Customer**, tick **Customer List** only.
+8. Check the "*N* selected" count, then click **Save**.
+9. Open **System Users** and give the role to the dispatch staff ([tutorial above](#tutorial-add-an-order-manager)).
+
+**Result:** the role appears in the list. Its users see Dashboard, Orders, Self Pickup Orders, Abandoned Carts, Return Requests and Customers in the sidebar; on the Orders page they can open orders and change their status, but have no delete button.
+
+:::caution Tips & common mistakes
+- Ticking a create/update/delete permission without the matching **list** permission is useless — the user cannot reach the page.
+- Role names must be unique ("Role Already Exist!").
+- Deleting a role fails while users still have it; the error lists them. Move them first.
+- Be careful with **System → manage store settings** and payment permissions: they open the Settings hub to that role.
+:::
 
 ---
 
-## 3. Platform FAQs (`/faqs`)
+## 3. FAQs (`/faqs`)
 
 ![FAQs](/img/detailed-documentation/faqs.webp)
 
-A knowledge base management tool for creating customer and seller FAQs displayed on mobile apps and websites.
+### Overview
 
-### Setup Steps
-1. Navigate to **FAQs > Add FAQ**.
-2. Enter the **Question** (e.g. "What is your return policy?").
-3. Compose the **Answer** with clear instructions.
-4. Set status to `Active` to publish immediately across all customer apps.
+The **Frequently Asked Questions** shown to customers in the apps and on the website. The page is in the sidebar (**GENERAL → FAQs**) and needs `faq_list`; Add / Edit / Delete need `faq_create`, `faq_update` and `faq_delete`. FAQs are shared by all modules. (Questions shown next to subscription plans are kept separately under [Subscription FAQs](./content-blogs.mdx#10-subscription-faqs-subscriptions_faqs).)
+
+### Key Components
+
+- **Search**, **Refresh** and **Add**.
+- **Columns**: **Frequently Asked Questions** (question in bold with its answer below; long answers are cut short with **View More / View Less**) and **Actions** (**Edit**, **Delete**).
+- **Add / Edit modal**, one tab per language, with **Translate Empty Fields** / **Translate & Overwrite** buttons when more than one language exists.
+
+There is no status switch or sort order: every saved FAQ is shown.
+
+### Field Reference: Add / Edit FAQ
+
+| Field | Required | What it does | Example |
+| :--- | :--- | :--- | :--- |
+| **Query** | Yes (default language) | The question as customers see it. | When will I get my refund? |
+| **Answer** | Yes (default language) | The answer text. | Refunds for prepaid orders are credited to your eMarket Wallet instantly, or to the original payment method within 5-7 business days. |
+
+Other language tabs are optional.
+
+### Tutorial: Add FAQs Before Launch
+
+*Scenario:* before going live, support wants answers for the five questions they hear most (delivery charges, refunds, cancellations, payment methods, self pickup).
+
+1. Open **FAQs** and click **Add**.
+2. In the default-language tab (e.g. **English**), enter **Query** `What are the delivery charges?` and **Answer** `Delivery is free on orders above ₹499. A small delivery fee of ₹40 applies to orders below that amount.`
+3. If you have more languages, click **Translate Empty Fields** and review the other tabs.
+4. Click **Save**.
+5. Repeat for each question, then use **Search** (e.g. `refund`) to check one.
+
+**Result:** each FAQ appears at the top of the list and in the FAQ screen of the customer app and website.
+
+:::tip Tips & common mistakes
+- Write answers that match your real settings (free-delivery amount, return window, payment methods). When you change those settings, update the FAQs too.
+- **Translate & Overwrite** replaces translations you edited by hand; use **Translate Empty Fields** to keep them.
+- Delete cannot be undone; there is no "hide" option, so edit the text instead if the answer is only temporarily wrong.
+:::
 
 ---
 
-## Real-World Administration Use Cases
+## Real-World Use Cases
 
-- **Restricting Support Agents to Read-Only Orders**: Prevent accidental order cancellations or financial tampering by assigning support agents a custom role that grants `order_list` and `order_view` without giving `order_delete` or `payment_methods` access.
-- **Dedicated Catalog Moderation Team**: Create an intern or contractor role strictly with `approve_requests` and `manage_products` access to review seller listings without seeing financial revenue data.
-- **Proactive Customer Self-Service via FAQs**: Populating the **FAQs** with clear answers regarding delivery time slots, payment methods, and refund turnaround times reduces incoming customer support tickets by up to 40%.
+- **Read-only support desk**: a `Support Agent` role gets `order_list`, `customer_list` and `faq_list` only. Agents can look up orders and customers but have no buttons to change or delete them.
+- **Catalog moderation team**: a role with the Product group's list/update permissions plus `approve_requests` reviews seller listings without seeing reports or wallets.
+- **Content team**: a `Content Manager` role gets the Blogs, Page Builder and FAQ permissions only.
+- **Fewer support tickets**: clear FAQs about delivery times, payment methods and refunds answer the most common questions before customers contact support.

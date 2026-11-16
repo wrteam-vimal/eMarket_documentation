@@ -1,92 +1,305 @@
 ---
 sidebar_position: 7
 title: Communications & Messaging
-description: Operational manual for broadcast push notifications, automated transactional notification templates, email notifications, and SMS gateway configuration.
+description: Reference and tutorials for sending push notifications and emails, the admin notification panel, and the push, email and SMS templates in eMarket.
 ---
 
 # Communications & Notifications
 
-Multi-channel communication ensures customers, sellers, and delivery partners stay informed about order status changes, time-sensitive offers, and account security alerts. eMarket includes native engines for Push Notifications, Transactional Emails, and SMS alerts.
+eMarket reaches customers, sellers and delivery boys through push notifications (Firebase), emails (SMTP) and SMS (Twilio). This page covers the screens for sending messages yourself and for editing the automatic messages the system sends on order events. The gateway credentials are set on the settings pages: [Firebase Settings](./settings.mdx#6-firebase-settings-firebase-settings), [SMS Settings](./settings.mdx#7-sms-settings-sms-settings) and the SMTP Mail Setting section of [Store Settings](./settings.mdx#2-store-settings-store_settings). Which order statuses send an email or SMS is chosen on [Account Settings](./settings.mdx#13-account-settings-order-mail-settings-settings).
+
+| What you want to do | Screen |
+| :--- | :--- |
+| Send a one-off push notification | Send Notification (`/notifications`) |
+| Change the text of automatic push notifications | Notification Templates (`/notification-templates`) |
+| See the admin's own alerts (new orders…) | Notification Panel (`/notification_panel`) |
+| Send a promotional email | Send Email (`/emails`), using Email Templates (`/email_templates`) |
+| Change the text of automatic SMS | SMS Templates (`/sms-templates`) |
 
 ---
 
-## 1. Send Push Notifications (`/notifications/create`)
+## 1. Send Notification (`/notifications`)
 
-![Send Notifications](/img/detailed-documentation/notifications-send.webp)
+![Send Notification](/img/detailed-documentation/notifications-manage.webp)
 
-A broadcast messaging console for creating and sending real-time Firebase Cloud Messaging (FCM) push notifications directly to user smartphones.
+### Overview
+Lists every push notification sent from the panel (page title "Send Notification"; sidebar **Notifications → Manage Notifications**, permission `notification_list`). Notifications are pushed through Firebase to the customer app, or to the seller and delivery boy apps, depending on the type.
 
-### Step-by-Step Campaign Broadcast
-1. Select the **Target Audience**:
-   - **All Registered Customers**: Sitewide promotional announcements.
-   - **Specific Customer Segment**: Target active buyers or users in specific cities.
-   - **All Sellers** or **Delivery Partners**: Operational platform announcements.
-2. Enter the **Notification Title** (short, compelling hook).
-3. Compose the **Notification Message** body.
-4. Upload an optional high-resolution **Notification Banner Image** to render as an expanded rich push notification on Android and iOS lock screens.
-5. Set the **Target Redirection**:
-   - Open specific Category, Product, or Promo Code page when tapped.
-6. Click **Send Notification**. Delivery is instant across all registered FCM device tokens.
+### Screen layout
 
----
+| Column | Meaning |
+| :--- | :--- |
+| ID | Notification ID (newest first). |
+| Title | Title shown on the device, e.g. "Weekend Sale: 15% Off". |
+| Message | Body text (shortened in the list). |
+| Type | Default, Category, Product, User (the Customer type), Seller, Delivery_boy or Url. |
+| Type ID | The linked category or product ID, or the recipient IDs; "—" for Default and Url. |
+| Link | The URL of a Url notification, e.g. `https://example.com/blog/store-vegetables`. |
+| Image | The attached image, if any. |
+| Actions | Delete. |
 
-## 2. Notification History & Logs (`/notifications`)
-
-![Manage Notifications](/img/detailed-documentation/notifications-manage.webp)
-
-A historical audit log tracking all previously dispatched broadcasts, including transmission timestamps, recipient counts, and engagement status.
+- Search box, **Refresh** and **+ Send Notification** buttons.
+- Deleting a notification removes it from this list only (it was already delivered). Its image is deleted from this server, external storage and the Media library, unless another notification still uses the file.
 
 ---
 
-## 3. Automated Notification Templates (`/notification-templates`)
+### 1.1 Send Notification Modal (`/notifications/create`)
+
+![Send Notification Modal](/img/detailed-documentation/notifications-send.webp)
+
+There is no separate create page: **Notifications → Send Notifications** in the sidebar (`/notifications/create`, permission `send_notification`) and the **+ Send Notification** button both open the **Add Notification** modal on top of the list.
+
+#### Field reference
+
+| Field | Required | What it does | Example |
+| :--- | :--- | :--- | :--- |
+| Type | Yes | Who receives it and what tapping it opens: **Default** (all customers), **Category** / **Product** (all customers, opens that category or product), **Customer** / **Seller** / **Delivery Boy** (the people you pick), **URL** (all customers, opens a link). | Category |
+| Title | Yes | Notification title. | `Snack Time!` |
+| Categories | Yes for Category | One category to open. | Snacks |
+| Products | Yes for Product | One product (searchable). | Roasted Makhana |
+| Customer / Seller / Delivery Boys | Yes for those types | One or more recipients (multi-select). | Priya Nair |
+| Type Link | Yes for URL | A full URL. | `https://example.com/blog/store-vegetables` |
+| Message | Yes | Body text. | `Roasted makhana and multigrain cookies - …` |
+| Include image | No | Tick to show an upload box. JPEG, JPG, PNG, GIF or WEBP. | A banner image |
+
+#### Tutorial: Send a push notification to a category
+*Scenario: promote the Snacks category to every customer, with a banner.*
+1. Click **+ Send Notification**.
+2. Choose **Type: Category** and pick the category in **Categories**.
+3. Enter **Title** `Snack Time!` and the **Message**.
+4. Tick **Include image** and upload a banner.
+5. Click **Save**.
+
+![Add Notification with Type Category](/img/detailed-documentation/notifications-send-category.webp)
+
+**Result:** every customer with the app installed and notifications allowed receives the push; tapping it opens the category. A new row with Type **Category** and the category ID in **Type ID** appears at the top of the list.
+
+:::caution Common mistakes
+- Firebase must be set up first ([Firebase Settings](./settings.mdx#6-firebase-settings-firebase-settings)).
+- If none of the chosen recipients has a device token (e.g. they never logged in to the app), the notification is still saved but a **Warning** in the modal says "No FCM tokens found for the selected … They may not have logged in from the app yet."
+- Notifications cannot be edited or recalled once sent; check the text before clicking **Save**.
+:::
+
+---
+
+## 2. Notification Templates (`/notification-templates`)
 
 ![Notification Templates](/img/detailed-documentation/notification-templates.webp)
 
-Define the automated system notifications triggered during order lifecycle events.
+### Overview
+The title and message of the push notifications the system sends automatically for each event (permission `manage_Notification_settings`). Reached from **Settings → Communication → Notification Templates**. Changes apply to the next notification of that event, in the customer, seller and delivery boy apps.
 
-### Built-In Dynamic Event Triggers
-- `Order Received`: Dispatched to customer and vendor upon checkout.
-- `Order Processed`: Informs the customer that packaging is underway.
-- `Order Shipped / Out for Delivery`: Alerts customer with assigned courier details.
-- `Order Delivered`: Confirmation alert with delivery timestamp.
-- `Order Cancelled / Refunded`: Transparent notification of cancellation and refund credit.
-- **Dynamic Placeholders**: Use tags like `{order_id}`, `{customer_name}`, and `{total_amount}` to auto-personalize every message.
+### Screen layout
+- Search box and **Refresh** button. The list has 15 templates over two pages.
+- **Columns**: ID, Type (the event key), Placeholders (the variables you can use), Actions (**edit** and **Send test to me**, the paper-plane button).
+
+| Type | Sent when / to | Placeholders |
+| :--- | :--- | :--- |
+| `order_status_customer` | Order status changes – customer | order_id, status_name, created_at, app_name, currency, final_total |
+| `order_status_seller_new` | New order – seller | status_name, order_id |
+| `order_status_seller` / `order_status_delivery_boy` | Order status changes – seller / delivery boy | order_id, status_name |
+| `assign_order_delivery_boy` | Order assigned – delivery boy | order_id |
+| `assign_order_customer` | Delivery partner assigned – customer | order_id, delivery_boy_name |
+| `return_request_customer` | Return request updated – customer | return_request_id, order_id, status_name, app_name |
+| `return_request_seller` / `return_request_delivery_boy` | Return request updated – seller / delivery boy | return_request_id, order_id, status_name |
+| `low_stock_single_product` / `low_stock_multiple_products` | Low stock alert | product_name, current_stock, low_stock_limit / product_count |
+| `product_request_accepted` / `product_request_rejected` | Seller's product request decided | product_name / none |
+| `cart_reminder_first` / `cart_reminder_interval` | Abandoned-cart reminders – customer | product_name / product_name, measurement |
+
+### Field reference: Edit modal ("Edit - *type*")
+
+| Field | Required | What it does | Example |
+| :--- | :--- | :--- | :--- |
+| Placeholders | — | Buttons for the template's variables; click one to insert it at the cursor, e.g. `{{order_id}}`. | `{{status_name}}` |
+| Title | Yes (default language) | Notification title, per language tab. | `Your order #{{order_id}} has been {{status_name}}` |
+| Message | Yes (default language) | Notification body, per language tab. | `Thank you for shopping with {{app_name}}.` |
+
+The default language tab also has **Translate Empty Fields** and **Translate & Overwrite**.
+
+### Field reference: Send test to me
+
+| Field | Required | What it does |
+| :--- | :--- | :--- |
+| My registered devices | — | Sends to the browsers/devices where you allowed notifications for this panel. |
+| A specific FCM token | — | Sends to one device token you paste ("Paste the device FCM token"). |
+
+The test uses the saved template in the default language, fills the placeholders with sample values (e.g. order `1001`, status `Delivered`) and adds **[TEST]** to the title. Nothing is sent to customers.
+
+### Tutorial: Edit a notification template and send a test
+*Scenario: make the order-status push friendlier and check it on your phone.*
+1. Click edit on the `order_status_customer` row.
+2. In **Title** type `Order #`, click the `order_id` placeholder button, type ` is now `, click `status_name`.
+3. In **Message** write a short text and insert `{{app_name}}` where the store name should go.
+4. Fill the other language tabs, or click **Translate Empty Fields**. Click **Save**.
+5. Click the paper-plane button on the same row. Choose **My registered devices** (or paste an FCM token from your phone) and click **Send test**.
+
+![Edit notification template](/img/detailed-documentation/notification-templates-edit.webp)
+
+**Result:** "Test notification sent to N device(s)" appears and your device shows "[TEST] Order #1001 is now Delivered". Real customers get the new text from the next status change.
+
+:::caution Common mistakes
+- **Save** before testing: the test sends the saved version, not unsaved edits.
+- Only the placeholders listed for a template are filled in; others stay as typed.
+- "No device to send to" means you have not allowed notifications for this panel in the browser; allow them or paste an FCM token.
+- "Push notifications are not set up yet" means Firebase keys and the service-account file are missing.
+:::
 
 ---
 
-## 4. Email Management & Templates
+## 3. Notification Panel (`/notification_panel`)
 
-### 4.1 Transactional Email Templates (`/email_templates`)
+![Notification Panel](/img/detailed-documentation/notification-panel.webp)
+
+### Overview
+The admin's own in-panel notifications, such as "Order #114 Processed" (page title "Notification"). Opened from the bell icon in the header → **See all notifications**. These alerts are for admins only; customers never see them.
+
+### Screen layout
+
+| Column | Meaning |
+| :--- | :--- |
+| Title | Bell icon and the notification text. Unread rows are highlighted and show an "Unread" dot. |
+| Date | Date and time of the event, e.g. 11/16/2026, 12:21:19 PM. |
+
+- Search box and **Refresh** button. The bell dropdown in the header also has **Read all notifications**.
+
+### Tutorial: Work through new order alerts
+1. Click the bell in the header, then **See all notifications**.
+2. Click the first unread row, e.g. "Order #114 Processed".
+3. The order detail page opens; handle the order there.
+4. Go back; the row is no longer highlighted.
+
+**Result:** each alert you open is marked as read. Use **Read all notifications** in the bell dropdown to clear the rest at once.
+
+---
+
+## 4. Email Templates (`/email_templates`)
 
 ![Email Templates](/img/detailed-documentation/emails-templates.webp)
 
-Design and edit responsive HTML email layouts for critical business correspondence:
-- **Customer Order Confirmation & Invoice Attachment**
-- **Welcome Onboarding Email**
-- **Password Reset Verifications**
-- **Vendor Monthly Earnings Summaries**
+### Overview
+Reusable email texts that you drop into the **Send Email** form with one click (sidebar **Email → Email Templates**, permission `email_templates`). They are not sent automatically.
+
+### Screen layout
+- **Columns**: ID, Type (template name), Message (eye icon shows a preview), Last Updated, Actions (edit, delete).
+- Search box, **Refresh** and **+ Create Email Templates** buttons.
+
+### Field reference: Add / Edit Email Template
+
+| Field | Required | What it does | Example |
+| :--- | :--- | :--- | :--- |
+| Type | Yes | Template name; shown as a button on the Send Email form. | `Exclusive Discount Offer` |
+| Title | Yes | Template title. | `A special discount just for you` |
+| Message | Yes | Email body in a rich text editor. Use `[Customer Name]` to greet each customer by name. | `Hi [Customer Name], use WEEKEND15 …` |
+
+### Tutorial: Create a reusable offer email
+1. Click **+ Create Email Templates**.
+2. Enter **Type** `Exclusive Discount Offer` and a **Title**.
+3. Write the **Message**, starting with `Hi [Customer Name],`.
+4. Click **Save**.
+
+**Result:** the template appears in the list (Last Updated shows today) and as a button on the Send Email form.
 
 ---
 
-### 4.2 Sent Emails Log (`/emails`)
+## 5. Send Email (`/emails`)
 
-![Manage Emails](/img/detailed-documentation/emails-manage.webp)
+![Send Email](/img/detailed-documentation/emails-manage.webp)
 
-Monitors outgoing SMTP mail delivery status, allowing support teams to verify whether confirmation emails reached customer inboxes.
+### Overview
+Lists the emails sent from the panel and sends new promotional emails to customers (page title "Send Email"; sidebar **Email → Manage Emails**, permission `manage_emails`). Emails go out through the SMTP server set in Store Settings.
+
+### Screen layout
+
+| Column | Meaning |
+| :--- | :--- |
+| ID | Email ID. |
+| Title | Subject line, e.g. "Weekend Grocery Offers Just for You". |
+| Message | Eye icon shows the sent message. |
+| Type | `default` (all email customers) or `user` (selected customers). |
+| Type ID | IDs of the selected customers, e.g. `14,13,12,11,10,9,8,7`. |
+| Image | The attachment, if any. |
+| Actions | Delete. |
+
+- Search box, **Refresh** and **+ Send Email** buttons.
+- Deleting an email removes the record, its attachment and the images uploaded into its message (from this server, external storage and the Media library) unless another record still uses them. The delete dialog says so. Already-sent emails stay in the customers' inboxes.
+
+### Field reference: Send Email modal
+
+| Field | Required | What it does | Example |
+| :--- | :--- | :--- | :--- |
+| Type | Yes | **Default**: every customer who signed up with email, Google or Apple. **Customer**: only the customers you pick. | Customer |
+| Title | Yes | Email subject. | `Weekend Grocery Offers Just for You` |
+| Customer | Yes for Customer | One or more customers (multi-select). | Priya Nair |
+| Template buttons | No | One button per email template; clicking one replaces the **Message** with that template. | Exclusive Discount Offer |
+| Message | Yes | Rich text body. `[Customer Name]` is replaced with each recipient's name. | — |
+| Include image | No | Tick to attach an image or a PDF. | `weekend-offers.pdf` |
+
+### Tutorial: Send a promotional email to selected customers
+*Scenario: send the weekend offer to a few loyal customers.*
+1. Click **+ Send Email**.
+2. Choose **Type: Customer** and pick the customers, e.g. **Priya Nair**.
+3. Enter the **Title** `Weekend Grocery Offers Just for You`.
+4. Click the **Exclusive Discount Offer** button above the editor to load the template, then adjust the text.
+5. Optional: tick **Include image** and attach a flyer.
+6. Click **Save**.
+
+![Send Email modal](/img/detailed-documentation/emails-send.webp)
+
+**Result:** each selected customer receives the email with their own name in place of `[Customer Name]`; a new row with Type `user` and their IDs appears in the list.
+
+:::caution Common mistakes
+- Set up the SMTP Mail Setting section of Store Settings first; without a From address and host, emails are skipped and a warning is written to the log.
+- The template button replaces the whole **Message**; load the template before you write your own changes.
+- **Default** sends to every email/Google/Apple customer at once and the page waits while it sends; test with **Customer** and your own account first.
+:::
 
 ---
 
-## 5. SMS Gateway & Templates
+## 6. SMS Templates (`/sms-templates`)
 
-| Screen | Route | Description |
+![SMS Templates](/img/detailed-documentation/sms-templates.webp)
+
+### Overview
+The text of the SMS messages sent to customers on order events (page title "Manage SMS Templates", permission `sms_templates_list`). Opened from **Settings → Communication → SMS Templates**. Which order statuses actually send an SMS is chosen on [Account Settings → Order Mail Settings](./settings.mdx#13-account-settings-order-mail-settings-settings); SMS needs Twilio on [SMS Settings](./settings.mdx#7-sms-settings-sms-settings).
+
+### Screen layout
+- **Columns**: ID, Type, Message, Last Updated, Actions (**edit** and **Send test to me**). Search box and **Refresh**.
+- **Types** (11): `customer_place_order`, `customer_order_payment_pending`, `customer_order_received`, `customer_order_processed`, `customer_order_shipped`, `customer_order_out_for_delivery`, `customer_order_delivered`, `customer_order_cancelled`, `customer_order_return_request`, `customer_order_confirm_return_request`, `customer_order_reject_return_request`.
+
+### Field reference: Edit SMS Template
+
+| Field | Required | What it does | Example |
+| :--- | :--- | :--- | :--- |
+| Title | Yes | Template title. | `Your Order Has Been Shipped - Order #{order.id}` |
+| Message | Yes | The SMS text. Placeholders are written in square brackets, e.g. `[Customer Name]`, `[Order ID]`, `[Store Name]`, `[Product Name]`, `[Support Contact]`. | `Dear [Customer Name], your order [Order ID] has been shipped. Thank you for choosing [Store Name]!` |
+
+### Field reference: Send test to me
+
+| Field | Required | What it does |
 | :--- | :--- | :--- |
-| **SMS Settings** | `/sms-settings` | Configure Twilio or custom SMS HTTP gateway credentials, authentication tokens, and Sender IDs. |
-| **SMS Templates** | `/sms-templates` | Manage short-code SMS templates for instant OTP logins, phone verifications, and delivery arrival alerts. |
+| Phone number with country code | Yes | Number that receives the test, e.g. `+919876543210`. |
+
+The test sends the saved message with sample values and **[TEST]** in front.
+
+### Tutorial: Edit an SMS template and send a test
+*Scenario: shorten the "shipped" SMS.*
+1. Click edit on the `customer_order_shipped` row.
+2. Change the **Message** to `Hi [Customer Name], order [Order ID] is on its way. – [Store Name]` and click **Save**.
+3. Click the paper-plane button on the same row, enter your number with country code and click **Send test**.
+
+**Result:** "Test SMS sent to +91…" appears and your phone receives "[TEST] Hi Test Customer, order 1001 is on its way. – eMarket". Customers get the new text from the next shipment.
+
+:::caution Common mistakes
+- "SMS is not set up yet" means the Twilio SID, auth token or phone number is missing on SMS Settings.
+- "Twilio did not accept the message" usually means a wrong number format or a Twilio trial account sending to an unverified number.
+- Keep the bracket placeholders spelled exactly as in the original text.
+:::
 
 ---
 
 ## Real-World Communication Use Cases
 
-- **Flash Sale App Push Notification**: At 11:00 AM on Sunday, the marketing team dispatches a rich push notification with an appetizing photo announcing "Free Delivery for the Next 2 Hours", producing an immediate 35% surge in app traffic.
-- **Transactional Delivery Updates**: A customer at work receives an automated SMS and push notification the moment their order transitions to `Out for Delivery`, giving them time to prepare for courier handover.
-- **Critical Vendor Stock Alerts**: Automated emails notify store managers whenever best-selling inventory drops below 5 units, prompting timely supplier re-stocking.
+- **Weekend sale push**: send a **Category** notification with an image so customers who tap it land straight on the sale category.
+- **Checking a template before launch**: edit the `order_status_customer` notification template, save, then use **Send test to me** to see the real notification on your own device before customers get it.
+- **Win-back email**: save an "Exclusive Discount Offer" email template once, then on Send Email pick inactive customers, click the template button and send.
+- **Lower SMS costs**: keep SMS only for Shipped, Out For Delivery and Delivered on Account Settings, and shorten those three SMS templates.

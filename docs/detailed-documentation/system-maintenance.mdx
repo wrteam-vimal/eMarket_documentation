@@ -1,0 +1,215 @@
+---
+sidebar_position: 11.5
+title: System Status, Logs & Updates
+description: Health checks, application logs and log retention, the system updater, the Laravel scheduler requirement, and clearing the system cache in eMarket.
+---
+
+# System Status, Logs & Updates
+
+These screens keep the installation healthy. All of them are cards in **Settings → System** (`/system_settings`): **System Status**, **Setup Checklist** (see the [overview page](./intro.mdx#2-setup-checklist-setup_checklist)), **Clear System Cache**, **Logs**, **System Registration** and **System Updater**.
+
+---
+
+## 1. System Status (`/system_status`)
+
+![System Status](/img/detailed-documentation/system-status.webp)
+
+### Overview
+
+A health check of the server and the integrations, reached from **Settings → System → System Status** (or the header button). Needs `manage_store_settings`. It only reads the server's state and never changes anything. While any check has a warning or an error, a **System Status** button also appears in the admin header, so problems are visible on every page.
+
+### Key Components
+
+- **Summary bar**: counts of **OK**, **Warnings** and **Errors** (e.g. "14 OK · 0 Warnings · 0 Errors"), the **Last checked** time (e.g. 2026-11-16 16:52:34), and a **Refresh** button.
+- On a local machine a note explains "Running locally: checks marked Local are fine here and need attention before going live", with the number of such checks (e.g. **(5)**). Those cards carry a **LOCAL** badge.
+- **One card per check**, each with an OK / warning / error state and a plain explanation. No secret values are shown. Where the fix is a setting, a **Fix** link opens the right page.
+
+| Check | What it looks at |
+| :--- | :--- |
+| **Scheduler** | When the scheduler last ran. OK within 5 minutes, a warning after that, an error when no run was ever recorded. |
+| **Queue** | Queue driver, pending jobs and failed jobs. |
+| **Storage link** | Whether `public/storage` points to `storage/app/public` (needed for uploaded images). |
+| **Free disk space** | Free space and percentage on the server disk. |
+| **Writable folders** | Whether `storage` and `bootstrap/cache` are writable. |
+| **Mail (SMTP)** | Whether a mail server is set up (Fix → Store Settings → SMTP). |
+| **SMS** | Whether SMS sending is set up (Fix → SMS Settings). |
+| **Firebase** | Whether the Firebase keys and service-account file are set (Fix → Firebase Settings). |
+| **PHP version**, **Laravel version** | The versions running on the server. |
+| **Environment** | `APP_ENV` and `APP_DEBUG` — debug mode should be off on a live server. |
+| **App URL** | Whether `APP_URL` matches the address the panel runs on (wrong values break image links). |
+| **Cache driver** | The cache store in use. |
+| **Time zone** | The store time zone (Fix → Store Settings → Regional). |
+
+### Tutorial: Check System Status Before Going Live
+
+*Scenario:* the store was set up on a laptop (where five checks show **LOCAL**) and has just been copied to the live server.
+
+1. On the live server, open **Settings → System → System Status**.
+2. Read the summary bar. Work through every **Errors** card first, then the **Warnings**.
+3. For setting-related cards (**Mail (SMTP)**, **SMS**, **Firebase**, **Time zone**), click **Fix**, complete the setting, save and come back.
+4. For server-side cards, fix them on the server or ask your hosting provider:
+   - **Scheduler** — add the cron entry from [section 5](#5-the-scheduler-requirement).
+   - **Storage link** — run `php artisan storage:link`.
+   - **Writable folders** — make `storage` and `bootstrap/cache` writable by the web server.
+   - **Environment** — set `APP_ENV=production` and `APP_DEBUG=false` in `.env`.
+   - **App URL** — set `APP_URL` to the real domain (e.g. `https://admin.example.com`).
+5. Click **Refresh**. Wait a minute after adding the cron entry and refresh again; **Scheduler** should show a recent run.
+
+**Result:** the summary shows **0 Errors**, no **LOCAL** badges remain, and the **System Status** button disappears from the header.
+
+:::caution Tips & common mistakes
+- A wrong `APP_URL` is the most common reason for missing images on a new server.
+- `APP_DEBUG=true` on a live server can show internal details to visitors when an error happens.
+- The **Scheduler** card needs a real cron entry; opening pages in the panel does not count as a scheduler run.
+- The checks run when you open the page or click **Refresh** — fix something, then refresh.
+:::
+
+---
+
+## 2. Logs (`/logs`)
+
+![Logs](/img/detailed-documentation/logs.webp)
+
+### Overview
+
+The application logs — the technical diary of the system (payments, notifications, scheduler runs, errors). Viewable in the panel by a logged-in **Super Admin only**; the **Logs** card in **Settings → System** is hidden for every other role. Laravel writes one file per day (`storage/logs/laravel-YYYY-MM-DD.log`). Nothing here changes store data; deleting a day only removes that log file.
+
+### Key Components
+
+- A **← Settings** link back to the Settings hub.
+- **Keep logs for** card ("Older days are deleted automatically, every day and whenever you save").
+- **Days** card ("Pick a day to see its log entries"): every day that has a log file, with its size (e.g. **Mon, Nov 16, 2026 · 1.2 KB**).
+- **Entries** of the selected day:
+  - Day title and entry count (e.g. "12 entries"), **Download** (the whole day's file) and **Delete** (that day, after confirmation).
+  - Level chips — **All** plus one chip per level found, with counts (e.g. **All 12**, **Info 7**, **Warning 3**, **Error 2**).
+  - **Search in this day…** box.
+  - Each entry shows a level badge, the time and the message (e.g. `ERROR 16:05:51 SMS not sent for order #EM001116: Twilio credentials are missing.`). Click it to expand the full message and stack trace; very long details are shortened ("download the day to see everything").
+  - Previous / next page buttons.
+
+### Field Reference: Keep Logs For
+
+| Field | Required | What it does | Example |
+| :--- | :--- | :--- | :--- |
+| **Number of days** | Yes | How many days of log files to keep, today included. Whole number from 1 to 365; default 7. With 5, only today and the 4 days before it are kept. | 10 |
+
+### Tutorial: Read and Download the Log of a Failed SMS
+
+*Scenario:* a customer says order #EM001116 did not get its confirmation SMS today.
+
+1. Open **Settings → System → Logs** (you must be logged in as Super Admin).
+2. In **Days**, click today's date.
+3. Click the **Error** chip to show errors only — here you find `SMS not sent for order #EM001116: Twilio credentials are missing.`
+4. Or type `EM001116` in **Search in this day…** to see every entry that mentions that order.
+5. Click the entry to expand its full details.
+6. Click **Download** to save the whole day's file and send it to your developer or the SMS provider.
+
+**Result:** you know the cause (here: missing SMS credentials — fix them in SMS Settings) and have the file for support.
+
+### Tutorial: Change Log Retention
+
+1. In **Keep logs for**, type the number of days, e.g. `30`.
+2. Click **Update**.
+
+**Result:** from now on 30 days of logs are kept. Lowering the number deletes the older days immediately when you save.
+
+:::caution Tips & common mistakes
+- Lowering **Number of days** deletes older files at once — download a day first if you still need it.
+- Decimals, negatives and values above 365 are refused.
+- Automatic daily cleanup needs the scheduler (`logs:prune`); without it, old days are removed only when you save or open this page.
+- Logs can contain customer emails and order details; share downloaded files only with people who need them.
+:::
+
+:::info `logs:prune`
+Old logs are removed daily by the `logs:prune` command (scheduled `daily`). It keeps the number of days set in **Keep logs for**. It only runs when the Laravel scheduler is running (see [section 5](#5-the-scheduler-requirement)); you can also run it by hand with `php artisan logs:prune`.
+:::
+
+---
+
+## 3. System Updater (`/system_updater`)
+
+![System Updater](/img/detailed-documentation/system-updater.webp)
+
+### Overview
+
+Updates the installation to a new eMarket release. Reached from **Settings → System → System Updater**; needs `manage_store_settings`. The update check only runs on a registered installation — register your purchase code first under **Settings → System → System Registration** (`/purchase_code`). An update replaces program files and updates the database, so it affects the admin panel, the website and the APIs used by every app.
+
+### Key Components
+
+- When an update exists: **Change Logs of eMarket v - *x.y.z*** with the release notes, a **New Update Available** badge, and the **Update The System** button.
+- When there is none: **System is up to date** ("You are running the latest version. New updates will appear here.") and "eMarket current version is **v - 4.0.4**". The same version number is shown in the footer of every page.
+
+### Tutorial: Run a System Update Safely
+
+*Scenario:* the System Updater shows **New Update Available**.
+
+1. Pick a quiet time (few orders) — the panel and website may be slow or briefly unavailable during the update.
+2. Back up first:
+   - Click **Download Database** under the sidebar menu and keep the file.
+   - Ask your host for (or make) a copy of the application files, especially `.env`, `config/firebase.json` and `storage/app/public` (uploaded images).
+3. Open **Settings → System → System Updater** and read the change log.
+4. Click **Update The System** and confirm ("You won't be able to revert this"). The button shows "System is updating..." while it runs. Do not close the tab.
+5. After the files are updated the page reloads by itself and runs the database update; a "Database updated successfully" message confirms it. If the update request is cut off (for example a server timeout), the panel still finishes the database step.
+6. Read the release's upgrade notes — for example running `npm run build` or making sure the scheduler runs.
+7. Open [System Status](#1-system-status-system_status) and click **Refresh**; then clear the cache ([section 4](#4-clearing-the-system-cache)) if pages look outdated.
+
+**Result:** the page shows **System is up to date** with the new version, and the footer shows the same number.
+
+:::danger
+An update cannot be undone from the panel. Your database backup and file copy are the only way back if something goes wrong.
+:::
+
+---
+
+## 4. Clearing the System Cache
+
+![Clear System Cache](/img/detailed-documentation/clear-system-cache.webp)
+
+### Overview
+
+Saved settings, translations, config, routes and views are cached to keep the panel fast. If a saved change does not show up (new translations, a changed setting, a fresh update), clear the cache. The **Clear System Cache** card is in **Settings → System**; only a **Super Admin** can actually run it. Clearing the cache does not delete any store data, orders or uploaded images.
+
+### Tutorial: Clear the System Cache
+
+1. Open **Settings → System** and click the **Clear System Cache** card (or press <kbd>Ctrl</kbd> + <kbd>K</kbd> and type `clear cache`).
+2. The dialog asks "Clear cached settings, translations, config, routes and views? The next page loads may be a little slower."
+3. Click **Clear Cache** (or **Cancel** to stop).
+
+**Result:** the panel runs `cache:clear`, `config:clear`, `route:clear` and `view:clear`, shows "Cache cleared successfully!" and reloads. The next few page loads may be a little slower while the cache is rebuilt.
+
+:::tip
+On the server you can do the same with `php artisan optimize:clear`. If a change still does not show after clearing, the browser may be showing an old copy — reload with <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>R</kbd>.
+:::
+
+---
+
+## 5. The Scheduler Requirement
+
+Several features depend on the Laravel scheduler, which must run **every minute** on the live server. Add this cron entry (adjust the path):
+
+```bash
+* * * * * cd /path/to/emarket && php artisan schedule:run >> /dev/null 2>&1
+```
+
+Locally you can run `php artisan schedule:work` instead.
+
+| Scheduled task | How often | What breaks without it |
+| :--- | :--- | :--- |
+| Scheduler heartbeat | every minute | System Status reports the scheduler as not running. |
+| `cart:notification` | every minute | Abandoned-cart reminders are not sent. |
+| `sellers:credit-earnings` | every 15 minutes | Seller wallets are not credited after the return window; ended customer subscriptions are not expired. |
+| `popup:update-status` | every minute | Popup offers do not switch on/off at their scheduled times. |
+| `home-layout:run-schedule` | every minute | Scheduled home pages (Home Builder) do not go live or close on time. |
+| `auto-assign:sweep-timeouts` | every minute | Delivery boy auto-assignment offers that time out are not passed on. |
+| `logs:prune` | daily | Old log files are not deleted. |
+| `queue:work --stop-when-empty` | every minute (only when a non-sync queue driver is used) | Queued jobs wait in the queue. |
+
+Use **System Status → Scheduler** to confirm the cron entry works: it should show the last run as less than a few minutes ago.
+
+---
+
+## Real-World Use Cases
+
+- **Go-live check**: before launch, the developer opens System Status and fixes every error (scheduler cron, storage link, `APP_DEBUG=false`, mail set up).
+- **"My settings didn't change"**: after editing translations, the admin clears the system cache and the new texts show up.
+- **Payment failure report**: a customer reports a failed payment; the Super Admin opens Logs for that day, filters on **Error**, searches the order number and downloads the file for the payment gateway's support team.
+- **Release update**: the store owner backs up the database, runs the System Updater and checks System Status afterwards.

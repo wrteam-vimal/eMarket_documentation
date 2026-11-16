@@ -1,76 +1,171 @@
 ---
 sidebar_position: 2
 title: Catalog & Products
-description: In-depth guide to managing categories, products, inventory, attributes, media, bulk uploads, and tax rules in eMarket.
+description: Guide to categories, products, approvals, product requests, ratings, media, bulk upload and update, taxes, brands, attributes, add-ons and stock in the eMarket admin panel, with field references and step-by-step tutorials.
 ---
 
 # Catalog & Product Management
 
-The Catalog system in eMarket powers product discovery, categorization, stock tracking, and pricing across multi-vendor stores. It provides both high-level governance for marketplace administrators and granular catalog control for individual sellers.
+The catalog screens live under **Categories**, **Products** and **Stock Management** in the admin sidebar (**Product Requests** sits under **Customers**). Categories, products and brands belong to the module selected in the panel header (for example **Grocery**): switch the module first if you want to work on another store type.
+
+Most lists share the same tools: a search box, a **Refresh** button, a **Grid view / List view** switch and, where you have the permission, add, edit and delete actions. Two page-wide behaviours are explained once in the introduction: [Demo mode](./intro.mdx#6-demo-mode-read-only-panels) (only the Super Admin can save or delete) and the [Export menu](./intro.mdx#7-export-menu-csv-excel-pdf-print-copy).
+
+**Recommended set-up order** for a new store: [Attributes](#11-attributes-attributes) → [Brands](#10-brands-brands) → tax categories ([Taxes](#9-taxes-taxes)) → [Categories](#12-add--edit-category-manage_categoriescreate) (tick their attributes) → [Products](#22-add-product-manage_productscreate). Each step uses what the previous one created.
 
 ---
 
-## 1. Category Management
-
-Categories structure your store catalog into intuitive, navigable hierarchies that make it easy for shoppers to discover items on mobile apps and the web store.
+## 1. Categories
 
 ### 1.1 Manage Categories (`/manage_categories`)
 
 ![Manage Categories](/img/detailed-documentation/categories-manage.webp)
 
-Displays the complete hierarchical tree of main categories and nested sub-categories.
+#### Overview
+The list of every category of the current module, from top-level departments (for example **Household Cleaning**, **Rice & Grains**) down to nested sub-categories. Open it from **Categories → Manage Categories**; you need the `category_list` permission to see it, and `category_create`, `category_update` or `category_delete` for the matching buttons. Categories drive the category screens of the customer app and website, the category picker in the product form, the attributes offered in the **Variant Matrix**, and the category tabs of a category wise home page in the [Home Builder](./promotions.mdx#1-home-builder-home_builder).
 
-#### Key Features & Elements
-- **Category Tree Table**: Displays Category Name, Sub-category count, Thumbnail image, Banner image, Status (`Active` / `Inactive`), and Actions.
-- **Search & Filter**: Search by category title or filter by parent category.
-- **Quick Status Toggle**: Instantly activate or deactivate entire product taxonomies with a single switch.
+#### Screen layout
+- **Items Background Colors** card (top of the page; needs `category_update`): the card colour shown behind category images in the apps.
+  - **Global**: one colour for every category, with separate **Light** and **Dark** values (for example `#ffffff00`) and a **Transparent** button for each. Click **Save** on the card to apply it.
+  - **Item Wise**: each category uses the colours set in its own form (the form then shows two extra colour fields).
+- **Search** box: filters the list by any column.
+- **Enable drag and drop** switch (grid and list view): shows drag handles so you can reorder categories. The order is saved as soon as you drop a card or row.
+- **Three views** (icon buttons next to the switch):
+  - **Grid view**: a card per category with image, name, subtitle (for example "Fresh Rice & Grains at best prices"), ID (`#7`), parent category and an **Active** / **Deactive** badge.
+  - **List view**: a table (see the column reference below).
+  - **Tree View**: the full hierarchy with **Expand All** / **Collapse All**, a count of root categories and sub-categories, and an **Add Subcategory** (+) button on each node.
+- **Refresh** and **Add Category** buttons.
+- **Actions** on each category: **Edit** (pencil) and **Delete** (bin).
+
+#### Column reference (List view)
+| Column | Meaning |
+| --- | --- |
+| **ID** | Category ID. Bulk upload files and other screens refer to categories by this number. |
+| **Parent Id** | ID of the parent category, or `-` for a top-level category. |
+| **Name** / **Subtitle** | Name and the short line shown under it in the apps. |
+| **Image** | Category image. |
+| **Status** | **Active** (visible to customers) or **Deactive**. |
+| **Actions** | Edit, Delete. |
+
+#### Tutorial: Show categories in a custom order
+Scenario: you want **Vegetables** to appear before **Snacks** in the apps.
+1. Open **Categories → Manage Categories** and stay in **Grid view** (or **List view**).
+2. Turn on **Enable drag and drop**. Drag handles appear on every card.
+3. Drag **Vegetables** in front of **Snacks** and drop it. The new order is saved immediately; there is no Save button.
+4. Turn **Enable drag and drop** off again so cards can't be moved by accident.
+
+**Result:** the category list in the customer app and website follows the new order.
+
+:::tip Tips
+- Drag and drop is offered in grid and list view only, not in **Tree View**.
+- The **Items Background Colors** card only changes the colour behind images. If cards look wrong in the dark app theme, set the **Dark** colour as well as **Light**.
+:::
 
 ---
 
-### 1.2 Add Category (`/manage_categories/create`)
+### 1.2 Add / Edit Category (`/manage_categories/create`)
 
 ![Add Category](/img/detailed-documentation/categories-add.webp)
 
-The form used to create top-level departments or nested child categories.
+#### Overview
+**Add Category** (the button, **Categories → Add Category** in the sidebar, or the + button on a node in **Tree View**) opens the category form in a pop-up over the list. Opening `/manage_categories/create` directly opens the same pop-up. **Edit** opens the same form with the category's data filled in. Needs `category_create` (add) or `category_update` (edit).
 
-#### Step-by-Step Instructions
-1. Navigate to **Categories > Add Category**.
-2. Select **Parent Category** (leave empty for a main department, or select an existing parent to create a subcategory).
-3. Enter the **Category Name** in the default platform language and any secondary languages configured.
-4. Upload a high-resolution square **Category Image** (used on app home screens and grid icons).
-5. Upload a wide **Category Banner** (displayed at the top of category product listing pages).
-6. Toggle **Status** to `Active` and click **Save**.
+#### Field reference
+| Field | Required | What it does | Example |
+| --- | --- | --- | --- |
+| **Parent Category** | No | Leave on **Select Category** for a top-level category, or pick a category to make this a sub-category. | Rice & Grains |
+| **Category Name** | Yes (default language) | Name shown in the apps and website. One tab per language. | Basmati Rice |
+| **Slug** | Yes | Web address part. Filled in from the name; a new slug must not already be used by another category in this module. | `basmati-rice` |
+| **Category Subtitle** | Yes (default language) | Short line under the name. | Long-grain aromatic rice |
+| **Image** | Yes | Square image, larger than 350 × 350 px and smaller than 550 × 550 px, up to 2 MB. JPG, PNG, GIF, WebP or SVG. Drop, paste or click to upload. | basmati.png |
+| **Background Color (Light Theme)** / **(Dark Theme)** | No | Only shown when the Items Background Colors card is set to **Item Wise**. Each has a **Transparent** button. | `#FFF8E1` / `#3E2723` |
+| **Meta Title**, **Meta Keywords**, **Schema Merkup**, **Meta Description** | No | SEO fields for the category page on the website. | Buy Basmati Rice Online |
+| **Attributes** | No | Tick the attributes (for example **Weight / Volume**) that products in this category use for variants. **Select All** / **Clear**; if none exist, an **Add Attribute** button is shown. Sellers can assign their own attributes later. | Weight / Volume |
+| **Status** | — | Edit only: **Activate** / **Deactivate**. | Activate |
+
+**Translate Empty Fields** and **Translate & Overwrite** (default language tab) fill the other language tabs automatically.
+
+#### Tutorial: Add a category with a sub-category
+Scenario: you want a new top-level category **Dry Fruits & Nuts** with a sub-category **Almonds**.
+1. Click **Add Category**.
+2. Leave **Parent Category** on **Select Category**.
+3. Type **Category Name** "Dry Fruits & Nuts" and check the **Slug** that is filled in.
+4. Type **Category Subtitle** "Fresh Dry Fruits & Nuts at best prices".
+5. Drop a square 500 × 500 px PNG into **Image**.
+6. Under **Attributes**, tick **Weight / Volume** so products can have 250 g / 500 g / 1 kg variants.
+7. Click **Save**. The category appears in the list.
+8. Switch to **Tree View**, find **Dry Fruits & Nuts** and click its **Add Subcategory** (+) button. The form opens with **Parent Category** already set.
+9. Enter **Almonds**, a subtitle and an image, tick **Weight / Volume** again, and click **Save**.
+
+**Result:** **Almonds** shows under **Dry Fruits & Nuts** in **Tree View** (in list view its **Parent Id** column shows the parent's ID). Customers see the new categories in the app and website, and sellers who have them assigned can pick them in the product form.
+
+:::caution Common mistakes
+- **Image rejected**: it must be square, between 350 × 350 and 550 × 550 px, and no bigger than 2 MB.
+- **Slug already taken**: another category in this module uses the same slug; change it before saving.
+- **No variants offered in the product form**: the category has no attributes ticked. Edit the category and tick them under **Attributes**.
+- When the store allows only last-level categories, products can't be added to a category that has sub-categories, so put products in **Almonds**, not in **Dry Fruits & Nuts**.
+:::
 
 ---
 
-### 1.3 Categories Order (`/categories_order`)
+### 1.3 Category Order
 
-![Categories Order](/img/detailed-documentation/categories-order.webp)
-
-Allows administrators to define the visual display sequence of categories on the customer mobile app home screen and navigation menus.
-
-#### Operational Instructions
-- Drag and drop category rows up or down to set their display priority.
-- Categories at the top of this list appear first in customer apps and website mega-menus.
+The separate `/categories_order` page has been removed; that address now opens **Manage Categories**. To change the order in which categories appear in the apps and on the website, follow the tutorial in [1.1 Manage Categories](#11-manage-categories-manage_categories): turn on **Enable drag and drop** in grid or list view and drag the categories. Each change is saved right away.
 
 ---
 
-## 2. Product Management
+### 1.4 Deleting a Category
+
+Deleting a category is permanent and removes **everything below it**:
+- A category with no sub-categories and no products is deleted straight away (after the usual confirmation).
+- Otherwise a **Delete this category?** dialog lists what will be removed: the number of **Sub-categories**, **Products**, **Variants** and **Images**. Every product goes with its variants, and all category, product and variant images are removed from the server and from external storage. Past orders keep their details.
+- The **Delete permanently** button stays disabled until you tick **I agree to delete this category, its nested categories and all products that belong to them.**
+
+:::warning
+To hide a category for a while, edit it and set **Status** to **Deactivate** instead of deleting it; its products and images are kept. Sellers can delete only categories that hold nothing of another seller. If another seller has products in the category (or one below it) or uses it, the seller sees a **Cannot delete** message.
+:::
+
+---
+
+## 2. Products
 
 ### 2.1 Manage Products (`/manage_products`)
 
 ![Manage Products](/img/detailed-documentation/products-manage.webp)
 
-The primary inventory repository listing all active, draft, and out-of-stock products across all sellers.
+#### Overview
+All products of the current module, one card or row per variant, across all sellers (for example **Dishwash Liquid 500 ml** by Manish Agarwal, **Floor Cleaner 1 L** by Sourav Das). Open it from **Products → Manage Products**; it needs `product_list`. This is where you find, check, edit, clone, switch on/off and delete products; changes show up in the customer app, website and the seller's own panel.
 
-#### Key Table Fields
-- **Product ID & Image**: Visual thumbnail with SKU identifier.
-- **Name & Category**: Product title linked to its catalog category.
-- **Seller**: The vendor offering the product.
-- **Price & Discount**: Base price, special discounted offer price, and active margin.
-- **Stock Status**: In-Stock indicator or low-stock warning alert.
-- **Status Switch**: Fast toggle to show or hide the product on storefronts.
-- **Actions**: Edit, duplicate/clone product, view public page, or delete.
+#### Screen layout
+- **Search** box, **Filters**, **Bulk Delete**, **Select All** (grid view), **Grid view / List view**, **Export**, **Refresh**, **Columns** (list view) and **Add Product**.
+- **Filters** panel: **Category** (All Categories or one), **Status** (All Statuses, **Approved**, **Not-Approved**) and **Seller** (All Sellers or one).
+- **Export** menu: exports all rows that match the current filters, not only the visible page (see the [Export menu](./intro.mdx#7-export-menu-csv-excel-pdf-print-copy)).
+- **Grid view** cards: image, approval badge, name, seller, `ID: #146 · Product ID: #82`, the price with the original price struck through when discounted (₹189, ₹210 struck through), and **Return** / **Cancellation** chips.
+- **Actions** on each product: **View** (eye), **Edit** (pencil), **View Ratings** (star), **Clone Product** (copy) and **Delete** (bin).
+- **Bulk actions**: tick products and a bar appears with **Set active** and **Set inactive**. Each product goes through the normal status change; any that are skipped are listed with the reason. **Bulk Delete** deletes the ticked products.
+- Clicking a product image opens it full size.
+
+#### Column reference (List view)
+| Column | Meaning |
+| --- | --- |
+| **ID** | Variant ID (each variant has its own row). Stock Management uses this number. |
+| **Product ID** | The product the variant belongs to. Variants of one product share it. |
+| **Seller Name** | Seller who owns the product. |
+| **Name** / **Image** | Product name and main image. |
+| **Price** / **Discounted Price** | Selling price and offer price of this variant. |
+| **Is Approved?** | **Approved** (visible to customers) or **Not-Approved**. |
+| **Tax ID**, **Return**, **Cancellation** | Hidden by default; turn them on from **Columns**. |
+| **Actions** | View, Edit, View Ratings, Clone Product, Delete. |
+
+#### Tutorial: Find one seller's unapproved products and export them
+1. Click **Filters**.
+2. Set **Seller** to "Manish Agarwal" and **Status** to **Not-Approved**.
+3. Open **Export** and choose **Excel**.
+
+**Result:** the file contains every not-approved product of that seller, not only the page on screen. Clear the filters again to see the full list.
+
+:::warning Deleting products
+Deleting a product removes it permanently, with all its variants and every product and variant image (on the server and in external storage), plus its cart lines and favourites. Past orders keep their own details. To take a product off sale for a while, use **Set inactive** instead.
+:::
 
 ---
 
@@ -78,114 +173,513 @@ The primary inventory repository listing all active, draft, and out-of-stock pro
 
 ![Add Product](/img/detailed-documentation/products-add.webp)
 
-A comprehensive multi-tab product wizard enabling rich product specifications, variant combinations, media assets, and SEO metadata.
+#### Overview
+A full-page form for creating a product (sidebar **Products → Add Product**; needs `product_create`). The **Seller** you pick owns the product; the **Category** decides which attributes, and therefore which variants, are offered. A **Single page | Stepper** switch next to the title changes the layout:
+- **Single page** (the default the first time): all sections on one page, with a section list on the left (**Seller & category**, **Basics**, **Product settings**, **Variants & pricing**, **Custom Fields**, **SEO Settings**) that follows the scroll.
+- **Stepper**: one section at a time with **Back** / **Next**, and **Save** on the last step.
 
-#### Step-by-Step Product Creation Workflow
-1. **General Information**:
-   - Select **Store / Seller** and choose the primary **Category**.
-   - Fill in **Product Name**, **Short Description**, and rich HTML **Full Description**.
-   - Set **Brand** and assign applicable **Tax Rules**.
-2. **Product Type & Variants**:
-   - Choose between **Simple Product** (single SKU) or **Variable Product** (multiple sizes, colors, weights).
-   - For variable products, add attributes (e.g., Weight: 500g, 1kg) to auto-generate variant rows with independent pricing and stock numbers.
-3. **Pricing & Inventory**:
-   - Define **Standard Price**, **Discounted Price**, and **Stock Quantity**.
-   - Set **Minimum Order Quantity** and **Maximum Allowed Quantity per Order**.
-4. **Media & Gallery**:
-   - Upload the main thumbnail and gallery photos via the Media Manager.
-5. **SEO & Additional Flags**:
-   - Enter Meta Title and Meta Description for search engine indexing.
-   - Toggle flags: `Is Returnable`, `Is Cancelable`, and `COD Allowed`.
-6. Click **Submit Product** to publish or submit for admin approval.
+The browser remembers your choice. While you fill in a new product, the form also keeps an unsaved copy in this browser, so you can leave and come back; **Clear** empties the form.
+
+#### Field reference
+| Section | Field | Required | What it does | Example |
+| --- | --- | --- | --- | --- |
+| Seller & category | **Seller** | Yes | Owner of the product. Pick it first: the category list then shows that seller's categories. | Manish Agarwal |
+| Seller & category | **Category** | Yes | Where the product is listed. **+ Category** creates one in a pop-up; **+ Attribute** creates an attribute for the chosen category. | Rice & Grains |
+| Basics | **Product Name** | Yes | Name in the apps. Max 191 characters and unique per seller. One tab per language. | Sona Masoori Rice |
+| Basics | **Slug** | Yes | Filled in from the name. | `sona-masoori-rice` |
+| Basics | **Tax Category** | No | Tax category applied to the product. | GST 5% |
+| Basics | **Brands** | No | Brand shown on the product and used by brand filters. | Green Harvest |
+| Basics | **Addons** | No | Only shown when add-on groups exist (food module). | — |
+| Basics | **Tags** | No | Search words. Pick a tag or type a new one and press Enter. | rice, staples |
+| Basics | **Description** | Yes (default language) | Product description. **Generate Description with AI** writes one; tick **Use Custom Prompt** to steer it. | Aged, light rice for daily meals. |
+| Product settings | **Product Status** | — | **Approved** / **Not-Approved** (admin only). See the tip about new products below. | Approved |
+| Product settings | **Manufacturer**, **Made In**, **Barcode** | No | Product facts shown on the product page. The barcode accepts letters, numbers and `-` only. | Green Harvest Foods · India · `B123C456` |
+| Product settings | **Total allowed quantity** | No | Maximum quantity per order. Leave blank for no limit. | 5 |
+| Product settings | **Is Returnable?** + **Max Return Days** | No | With **Yes**, customers can ask for a return within the given days. | Yes · 7 |
+| Product settings | **Is cancel-able?** + **Till which status?** | No | With **Yes**, the order can be cancelled until it reaches the chosen status. | Yes · Shipped |
+| Product settings | **Is COD allowed?** | No | Allows cash on delivery for this product. | Yes |
+| Product settings | **Require Prescription** | No | Pharmacy module only. | No |
+| Variants & pricing | **Stock Limit** | Yes | **Limited** (stock is counted) or **Unlimited**. | Limited |
+| Variants & pricing | **Images** | Yes | **Global Images** (one **Main Image** plus **Other Images of the Product**) or **Variant-wise Images**. Square, larger than 350 × 350 px and smaller than 550 × 550 px, up to 2 MB; JPG, PNG, GIF or WebP. | rice-1kg.png |
+| Variants & pricing | **Variant Matrix** | Yes | Values of each category attribute. Every combination becomes a variant. | 500 g, 1 kg |
+| Variant | **Price** | Yes | Selling price. | 75 |
+| Variant | **Purchase Price** | No | Your cost price; used in reports. | 60 |
+| Variant | **Discounted Price** | No | Offer price; cannot be higher than **Price**. | 69 |
+| Variant | **Stock** | Yes when Limited | Units available. Must be above 0 while the status is Available. | 40 |
+| Variant | **Status** | Yes | **Available** or **Sold Out**. | Available |
+| Variant | **Variant Images** | No | Images for this variant. | — |
+| Custom Fields | (your fields) | Per field | Only when product custom fields exist; shown in the product specification on the app and website. | — |
+| SEO Settings | **Meta Title**, **Meta Keywords**, **Schema Markup**, **Meta Description** | No | SEO for the product page on the website. | — |
+
+#### Tutorial: Add a product with 500 g and 1 kg variants
+Scenario: Manish Agarwal will sell **Coriander Powder** in 500 g and 1 kg packs. The category **Spices & Masala** has the **Weight / Volume** attribute ticked (if it doesn't, tick it first in the category form).
+1. Go to **Products → Add Product** and keep **Single page**.
+2. **Seller & category**: pick **Seller** "Manish Agarwal", then **Category** "Spices & Masala".
+3. **Basics**: type **Product Name** "Coriander Powder" (the **Slug** fills in), set **Tax Category** "GST 5%" and **Brands** "Green Harvest" (see [Brands](#10-brands-brands)), add the tags "masala" and "spices", and write the **Description** (or click **Generate Description with AI**).
+4. **Product settings**: set **Is Returnable?** to **No**, **Is cancel-able?** to **Yes** with **Till which status?** "Shipped", and **Is COD allowed?** to **Yes**.
+5. **Variants & pricing**: set **Stock Limit** to **Limited**, keep **Global Images** and upload the **Main Image**.
+6. In **Variant Matrix**, under **Weight / Volume**, click **500 g (g)** and **1 kg (kg)**. The bar shows **Total variants to be generated: 2**, and two chips appear under **Product Variants**: "#1 — 500 g (g)" and "#2 — 1 kg (kg)".
+
+   ![Variant Matrix with two weights selected](/img/detailed-documentation/products-add-variants.webp)
+
+7. Click chip **#1** and enter **Price** 75, **Discounted Price** 69, **Stock** 40, **Status** Available.
+8. Click chip **#2** and enter **Price** 145, **Discounted Price** 135, **Stock** 25, **Status** Available.
+9. Click **Save**.
+
+**Result:** the product appears in **Manage Products** as two rows (one per variant) with the same **Product ID**. If Manish Agarwal's seller account has **Require Product's Approval** set to Yes, it starts as **Not-Approved** and waits in [Approve Requests](#3-approve-requests-approve_requests); otherwise customers can buy it at once.
+
+:::tip Tips & common mistakes
+- **Generate All Variants** selects every value of every attribute (with 10 weights that is 10 variants). Click values one by one when you need only some.
+- **New products follow the seller's approval setting**: when you create a product, its approval comes from the seller's **Require Product's Approval** option. **Product Status** takes effect when you edit the product later.
+- "The product name has already been taken": this seller already has a product with that name. Names must be unique per seller.
+- Stock 0 with status **Available** is rejected for a Limited product; set the variant to **Sold Out** or enter stock.
+- Unticking a value on a saved product warns you first: variants that use it are deleted when you save (variants tied to past orders are kept).
+:::
 
 ---
 
-## 3. Product Approvals (`/approve_requests`)
+### 2.3 Edit and Clone Product (`/manage_products/edit/:id`, `/manage_products/clone/:id/:clone`)
 
-![Product Approvals](/img/detailed-documentation/approve-requests.webp)
+- **Edit** opens the same form with the product's data. On an existing product, deleting a variant warns that its images go too, and that deleting the last variant deletes the whole product. Variants tied to past orders are not removed; a "Some variants were kept" message lists them.
+- **Clone Product** opens the same form filled with a copy of the product. Change what you need (for example the name and seller) and click **Save** to create a new product. The original is not changed.
 
-In multi-vendor marketplaces where quality control is enforced, new products and major edits submitted by sellers land here for quality inspection before going live.
+#### Tutorial: Clone a product for another seller
+1. In **Manage Products**, click **Clone Product** on **Dishwash Liquid** (Manish Agarwal).
+2. Change **Seller** to "Sourav Das". Check the category (it must be one of Sourav Das's categories) and adjust prices or stock if needed.
+3. Click **Save**.
 
-### How It Works
-1. Review the seller's submitted title, imagery, description, and pricing.
-2. Click **Approve** to immediately publish the listing live across customer apps.
-3. Click **Reject** and provide a rejection remark (e.g., "Image resolution too low" or "Inappropriate category") so the seller can correct and re-submit.
+**Result:** Sourav Das now has his own **Dishwash Liquid** with a new Product ID; Manish Agarwal's product is unchanged. The copy's approval follows Sourav Das's **Require Product's Approval** setting.
 
 ---
 
-## 4. Product Ratings & Reviews (`/product_ratings`)
+### 2.4 View Product (`/manage_products/view/:id`)
+
+![View Product](/img/detailed-documentation/products-view.webp)
+
+#### Overview
+A read-only page opened from the **View** action, useful for checking a product before approving it. **Manage Products** (top right) takes you back to the list.
+
+#### Screen layout
+- **Product Details**: image, name, **Product ID** (`#82`), **Category** (Household Cleaning), **Seller** (Manish Agarwal), **Manufacturer** (SparkleHome Products), **Made In** and **Tax** (GST 18%).
+- **Product Description**: the formatted description, as customers see it.
+- **Product Variants** table: **Image**, **Product Name**, **Variant Id**, **Variant**, **Stock**, **Price** and **Discounted Price**.
+- **Product Status** panel: **Is Approved?**, **Status** (Active / Deactive), **Indicator** (None / Veg / Non Veg), **Return**, **Cancellation** and **Till Status** (for example Shipped).
+
+---
+
+## 3. Approve Requests (`/approve_requests`)
+
+![Approve Requests](/img/detailed-documentation/approve-requests.webp)
+
+### Overview
+Lists the products that are still **Not-Approved**, typically new products from sellers whose **Require Product's Approval** option is on. Customers do not see these products until they are approved. Open it from **Products → Approve Requests** (permission `approve_requests`); a dot next to the menu item shows that requests are waiting. When nothing is waiting, the list shows "There are no records to show".
+
+### Screen layout
+- **Search**, **Filters** (**Categories**, **Sellers**), **Columns**, **Grid view / List view** and **Refresh**.
+- Grid cards show the image, an **Available** / **Sold Out** badge, name, seller, IDs, price, measurement and stock.
+- **Availability** toggle: switches the product between Available and Sold Out (asks for confirmation; needs `product_update`).
+- **Actions**: View, Edit and Delete.
+
+### Column reference
+| Column | Meaning |
+| --- | --- |
+| **ID** / **Product ID** | Variant ID and product ID. |
+| **Seller Name** | Seller who submitted the product. |
+| **Name**, **Image**, **Price**, **Discounted Price** | What the customer will see. |
+| **Measurement** | Variant size, for example `500 ml`. |
+| **Stock** | Units in stock, or **Unlimited**. |
+| **Availability** / **Status** | Toggle and badge: Available or Sold Out. |
+| **Tax ID**, **Indicator**, **Is Approved?**, **Return**, **Cancellation**, **Till Status** | Optional; turn them on from **Columns**. |
+
+### Tutorial: Approve a seller's product
+Scenario: Manish Agarwal has submitted **Coconut Hair Oil** and it waits for approval.
+1. Open **Products → Approve Requests**. Use **Filters → Sellers** to show only Manish Agarwal's products.
+2. Click **View** and check the name, images, description, prices and tax.
+3. If something is wrong (for example a missing image), fix it with **Edit**, or ask the seller to correct it.
+4. Click **Edit**, go to **Product settings** and set **Product Status** to **Approved**.
+5. Click **Save**.
+
+**Result:** the product leaves this list, shows **Approved** in **Manage Products**, and customers can find and buy it in the app and website.
+
+:::tip Tips
+- To refuse a product, leave it Not-Approved and tell the seller what to change, or delete it (deleting removes its variants and images permanently).
+- For a trusted seller, set **Require Product's Approval** to No in the seller's profile (see [Sellers](./sellers.mdx#1-manage-sellers-sellers)); their new products are then approved automatically.
+:::
+
+---
+
+## 4. Product Requests (`/product_requests`)
+
+![Product Requests](/img/detailed-documentation/product-requests.webp)
+
+### Overview
+Customers can ask, from the customer app or website, for products the store does not sell yet. Their requests appear here (sidebar: **Customers → Product Requests**; permission `product_request_list`, plus `product_request_update` to accept or reject and `product_request_delete` to delete). A dot next to the menu item shows that requests are pending. The customer is notified when you accept or reject a request.
+
+### Screen layout
+- **Search**, a **Status** filter (**All Statuses**, **Pending**, **Accepted**, **Rejected**), **Grid view / List view** and **Refresh**.
+- Grid cards: request image, status badge (**Pending**, **Accepted**, **Rejected**), the customer's text (for example "Please add organic jaggery powder (1 kg)."), the customer's name and, for accepted requests, the linked product.
+- **Actions** on pending requests: **View** (eye), **Approve** (tick), **Reject** (cross) and **Delete** (bin). Requests that are already decided only offer View and Delete.
+- **Request Details** pop-up (View): request status, date, description, image and the linked product.
+
+### Field reference
+| Pop-up | Field | Required | What it does | Example |
+| --- | --- | --- | --- | --- |
+| **Accept Request** | **Select Product** | Yes | The existing product that answers the request. Search by name. | Organic Jaggery Powder |
+| **Reject Request** | **Admin Notes** | Yes | Reason sent with the rejection. Up to 1000 characters. | We cannot source this item in your area yet. |
+
+### Tutorial: Answer a customer's product request
+Scenario: Priya Nair asked "Please add organic jaggery powder (1 kg)."
+1. Set the status filter to **Pending** and open Priya Nair's request with **View**.
+2. If you can supply it, add the product first (**Products → Add Product**) so it can be linked.
+3. Back on **Product Requests**, click **Approve** (tick) on the request.
+4. In **Accept Request**, search **Select Product** for the new product, pick it and click **Accept Request**.
+
+   ![Accept Request pop-up](/img/detailed-documentation/product-requests-accept.webp)
+
+5. If you can't supply it, click **Reject** (cross) instead, enter **Admin Notes** and click **Reject Request**.
+
+**Result:** the card shows **Accepted** with the product name (or **Rejected**), and Priya Nair receives a notification about the decision.
+
+:::caution
+You can only accept a request with a product that already exists, so add the product before clicking **Approve**.
+:::
+
+---
+
+## 5. Product Order (`/product_order`)
+
+![Product Order](/img/detailed-documentation/product-order.webp)
+
+### Overview
+Sets the order in which the products of one category are listed in the customer app and website. Open it from **Products → Product Order** (permission `manage_product_order`). Until you pick a category, the page only shows "Select a Categories for update products order list."
+
+### Screen layout
+- **Categories** (required): the category whose products you want to sort.
+- The product list: order number, ID, image and name, with drag handles.
+- **Save Order** and **Sort by original order** (reloads the saved order and drops unsaved changes).
+
+### Tutorial: Put best-sellers first in a category
+1. Open **Products → Product Order** and choose **Vegetables** under **Categories**.
+2. Turn on **Enable drag and drop**, then drag **Potato** and **Onion** to the top of the list.
+
+   ![Product order list for Vegetables](/img/detailed-documentation/product-order-list.webp)
+
+3. Click **Save Order**.
+
+**Result:** customers browsing **Vegetables** see these two products first. Unlike categories, the product order is stored only when you click **Save Order**.
+
+---
+
+## 6. Product Ratings (`/product_ratings`)
 
 ![Product Ratings](/img/detailed-documentation/product-ratings.webp)
 
-Monitors customer feedback and star ratings across all catalog items.
+### Overview
+Shows every customer rating and review in one list (sidebar **Products → Product Ratings**; permission `product_ratings`). The **View Ratings** action on a product opens the same page (`/product_ratings/view/:id`) filtered to that product. Use it to watch quality, for example low ratings on one seller's products.
 
-### Operational Actions
-- Audit verified buyer reviews and uploaded review images.
-- Approve or unpublish abusive, defamatory, or spam reviews to safeguard platform integrity.
+### Column reference
+| Column | Meaning |
+| --- | --- |
+| **ID** | Rating ID. |
+| **Product** | Product image and name, for example Toned Milk. |
+| **User** | Avatar, name, email and mobile (for example Karan Malhotra, customer7@test.com). Deleted accounts show **Deleted user**. |
+| **Product Ratings** | 1 to 5 stars. |
+| **Reviews** | The customer's text, for example "Fresh and delivered on time." |
+| **Image** | Review photos (click to open full size); `-` when there are none. |
+| **Date** | When the rating was given. |
+
+The filters **All Categories**, **All Brands** and **All Products** narrow the list (the product list narrows to the chosen category and brand), **Search** looks in user name, email, mobile, review text and product name, and the footer shows **Total Ratings** and **Average Rating** for the filtered list. You can sort by ID, product, rating or date.
+
+### Tutorial: Check the ratings of one product
+1. In **Manage Products**, click **View Ratings** (star) on **Basmati Rice**, or pick it under **All Products** here.
+2. Sort by **Product Ratings** to see the lowest ratings first and read the reviews.
+
+**Result:** the footer shows the product's **Total Ratings** and **Average Rating**.
+
+:::note
+This page is read-only: ratings cannot be edited or hidden from here.
+:::
 
 ---
 
-## 5. Media Library (`/media`)
+## 7. Media (`/media`)
 
-![Media Library](/img/detailed-documentation/media.webp)
+![Media](/img/detailed-documentation/media.webp)
 
-A centralized cloud asset repository for product imagery, category banners, promotional icons, and brand graphics.
+### Overview
+A library of uploaded images that you can reuse across the panel (sidebar **Products → Media**; permission `manage_media`). Its most common use is preparing images for [Bulk Upload](#81-bulk-upload-bulk_upload): the Excel file refers to images by their path on the server.
 
-### Key Capabilities
-- Drag-and-drop batch upload of WebP, PNG, and JPEG files.
-- Copy permanent image URLs for instant reuse across sliders and product variants without re-uploading duplicate assets.
+### Screen layout
+- **Media Upload Form**: the "Drag and drop to upload image!" area and **Upload**.
+- **Media List**: **Search**, **Delete Selected Media**, **Select All** (grid view), **Grid view / List view** and **Refresh**. Grid cards show the image, a type badge (PNG) and the file name (for example `1794537366_roasted-makhana.png`).
+
+### Field and column reference
+| Item | What it does / limits |
+| --- | --- |
+| Upload area | JPG, PNG, GIF and WebP, up to 0.5 MB each, up to 10 files per upload. |
+| **ID**, **Image**, **Name**, **Extension**, **Type** | The file and its details. |
+| **Sub Directory** | Folder the file is stored in. |
+| **Size** | File size. |
+| **Actions** | **Copy** (copies the file path) and Delete. |
+
+### Tutorial: Upload product images for a bulk upload
+1. Drag up to 10 product images (each under 0.5 MB) into the upload area and click **Upload**.
+2. Find each image in **Media List** (search by name) and click **Copy**.
+3. Paste the copied path into the **Main Image** (or **Other Images**, **Variant Image**) column of your bulk upload sheet.
+
+**Result:** the bulk upload finds the images on the server and links them to the new products.
+
+:::warning
+Deleting media removes the file from the server and from external storage. Any place that still uses that path (product descriptions, imports, pages) loses its image.
+:::
 
 ---
 
-## 6. Bulk Operations
+## 8. Bulk Operations
 
-### 6.1 Bulk Upload (`/bulk_upload`)
+### 8.1 Bulk Upload (`/bulk_upload`)
 
 ![Bulk Upload](/img/detailed-documentation/bulk-upload.webp)
 
-Onboard hundreds or thousands of products simultaneously using CSV or Excel spreadsheets.
+#### Overview
+Creates many products at once from an Excel file (sidebar **Products → Bulk Upload**; permission `manage_product_bulk_upload`). The page has two cards: **Product Bulk Upload Form** and **Variant Combo Generator**.
 
-#### Workflow Steps
-1. Download the pre-formatted **Sample CSV Template** and review column instructions.
-2. Populate product titles, category IDs, seller IDs, prices, variant specs, and image URLs.
-3. Upload the completed spreadsheet. The background parser validates each line and imports all items with zero manual data entry.
+#### Screen layout
+- Notice: "Always download and use new sample file if you did updated admin panel version."
+- **Upload File Excel File** (supported formats: XLSX, XLS), **Download Sample File**, **Download Instructions**, **Clear** and **Upload**.
+- **Variant Combo Generator**: **Category**, the category's attribute values, **Generate All Variants**, and a **Generated Combos** table with each **Combo** and its **Attribute Value IDs** (with a copy action), plus **Copy All (one per line)**.
+
+#### Sample file columns
+| Column(s) | What to enter | Example |
+| --- | --- | --- |
+| **Product Name** | Required. Must not already exist. | Sona Masoori Rice |
+| **Seller_id**, **Category ID** | IDs from the sellers list and Manage Categories. The seller must have that category. | 3 · 7 |
+| **Indicator** | Empty, Veg or Non-veg (drop-down). | Veg |
+| **Manufacturer**, **Made in** | Text; country name or ID. | Green Harvest Foods · India |
+| **Is Returnable?**, **Max Return Days**, **Is cancel-able**, **Till which status** | Yes/No and status drop-downs. | No · 0 · Yes · Shipped |
+| **Description** | Product description. | Aged rice for daily meals |
+| **Main Image**, **Other Images** | Paths of images already on the server (copy them in **Media**), or full `https://` links. Other Images are comma-separated. Main Image may stay blank only if every variant has its own image. | `upload/images/rice.png` |
+| **Product Status (Is approved?)** | Yes or No. | Yes |
+| **Brand_id**, **tax_id**, **FSSAI Lic. No.**, **Barcode**, **Tags** | IDs and text; tags comma-separated. | 21 · 53 · — · — · rice,staples |
+| **Stock Limit Type (Limited/Unlimited)**, **Is COD allowed?**, **Total allowed quantity** | Drop-downs and a number. | Limited · Yes · 5 |
+| **SEO Meta Title**, **SEO Meta Keywords**, **Schema Markup**, **Meta Description** | SEO text. | — |
+| Variant block (3 in the sample): **Attribute Value IDs**, **Price**, **Discounted Price**, **Variant Status**, **Stock**, **Variant Image** | One block per variant. Attribute Value IDs come from the Variant Combo Generator; **Variant Status** is Available or Sold Out; **Stock** is required when the stock is Limited; **Variant Image** is optional. Add more 6-column blocks for more variants. | `5` · 75 · 69 · Available · 40 · (blank) |
+
+#### Tutorial: Bulk upload products with weight variants
+Scenario: you want to load 20 rice and pulses products, each in 500 g and 1 kg.
+1. Click **Download Sample File** and **Download Instructions**, and read the instructions.
+2. Upload the product images on the [Media](#7-media-media) page and copy their paths.
+3. In **Variant Combo Generator**, choose **Category** "Rice & Grains" and tick **500 g** and **1 kg** under **Weight / Volume** (or click **Generate All Variants** for every value). The **Generated Combos** table lists one row per combo with its **Attribute Value IDs**.
+4. Copy the ID of each combo (or click **Copy All (one per line)**) and paste them into the **Attribute Value IDs** column of variant block 1 and block 2.
+
+   ![Variant Combo Generator with generated combos](/img/detailed-documentation/bulk-upload-combos.webp)
+
+5. Fill in one row per product: name, seller ID, category ID, image paths, prices, stock and so on. Delete the example row.
+6. Drop the file into **Upload File Excel File** and click **Upload**.
+
+**Result:** when every row is valid, all products are created at once and appear in **Manage Products**. If any row has a problem, nothing is imported and a table lists each **Row** with its **Errors** (for example "Image file not found: …" or "Variant 2: Stock is empty or invalid"). Fix those rows and upload the whole file again.
+
+:::caution Common mistakes
+- **Old sample file**: after a panel update, download a fresh sample; the column order changes between versions.
+- **Image paths**: images must already be on the server (or be full `https://` links). Upload them in **Media** first.
+- **Attribute Value IDs**: an ID that doesn't exist rejects the row, and two variants of one product can't use the same combo. Always take IDs from the Variant Combo Generator.
+- **Duplicate names**: a product name that already exists rejects the row.
+:::
 
 ---
 
-### 6.2 Bulk Update (`/bulk_update`)
+### 8.2 Bulk Update (`/bulk_update`)
 
 ![Bulk Update](/img/detailed-documentation/bulk-update.webp)
 
-Export your existing catalog to a spreadsheet, quickly modify prices or stock levels in bulk, and re-import to update your entire inventory in seconds.
+#### Overview
+Updates existing products from an Excel file (sidebar **Products → Bulk Update**; permission `manage_product_bulk_upload`). Use it for price changes, stock counts and text corrections across many products.
+
+#### Screen layout
+- Instructions: "Download Product Data file as Excel." and "Change product name, price, stock related information and update."
+- **Upload File Excel File** (XLSX, XLS), **Download Product Data File**, **Clear** and **Update**.
+
+#### File columns
+| Column(s) | Meaning |
+| --- | --- |
+| **ID** | Product ID. Don't change it: it decides which product the row updates. |
+| **Product Name** … **Meta Description** | The same product columns as the bulk upload sample, filled with the current values. |
+| **Product Variant ID 1**, **Attribute Value IDs 1**, **Price 1**, **Discounted Price 1**, **Variant Status 1**, **Stock 1**, **Variant Image 1**, then 2, 3 … | One block per variant. The variant ID must belong to the product in the same row. |
+
+#### Tutorial: Raise prices and correct stock for many products
+1. Click **Download Product Data File**. The file lists every product with its variants.
+2. In Excel, change **Price 1** / **Discounted Price 1** (and the other variant blocks) and the **Stock** columns. Leave the **ID** and **Product Variant ID** columns as they are.
+3. Optionally delete the rows you didn't change, so errors are easier to read.
+4. Drop the file into **Upload File Excel File** and click **Update**.
+
+**Result:** the new prices and stock show in **Manage Products**, the apps and the website. If any row fails, nothing is changed and the failing rows are listed with their errors.
 
 ---
 
-## 7. Taxes, Brands, Addons & Attributes
+## 9. Taxes (`/taxes`)
 
-| Section | Route | Purpose |
-| :--- | :--- | :--- |
-| **Taxes** | `/taxes` | Configure regional tax slabs (e.g. 5% GST, 12% VAT) applied automatically during checkout. |
-| **Brands** | `/brands` | Maintain official manufacturer and brand catalogs (e.g. Nestlé, Apple, Nike) for brand-based filtering. |
-| **Addons** | `/addons` | Create customizable side items and extras (e.g. extra cheese, gift packaging, cutlery) for Food and specialty modules. |
-| **Attributes** | `/attributes` | Define variant attributes such as Size (S, M, L, XL), Color, or Pack Size. |
+![Taxes](/img/detailed-documentation/taxes.webp)
+
+### Overview
+The list of tax categories (for example **GST 18%**, **GST 5%**, **GST Exempt**) that you pick as **Tax Category** on a product. The sidebar link **Products → Taxes** opens the full **Tax Settings** page instead, where tax categories (with their **Code**) and the tax rules per country and state are managed; see [Tax Settings](./settings.mdx#5-tax-settings-settingstax). `/taxes` remains available as a simple list.
+
+### Column reference
+| Column | Meaning |
+| --- | --- |
+| **ID** | Tax category ID (used as `tax_id` in bulk files). |
+| **Title** | Name, for example GST 12%. |
+| **Percentage** | Rate, for example 12. |
+| **Status** | **Active** / **Deactive**. |
+| **Actions** | Edit, Delete. |
+
+### Field reference (Add / Edit Taxes)
+| Field | Required | What it does | Example |
+| --- | --- | --- | --- |
+| **Title** | Yes (default language) | Name of the tax category; one tab per language. | GST 12% |
+| **Percentage** | Yes (default language) | 1 to 100. | 12 |
+| **Status** | — | **Activate** / **Deactivate**. | Activate |
+
+### Tutorial: Attach a tax category to a product
+1. Check that the tax category exists and is **Active** in this list (for example **GST 5%**).
+2. Open the product with **Edit** in **Manage Products**.
+3. In **Basics**, choose **Tax Category** "GST 5%" and click **Save**.
+
+**Result:** the product's View page shows **Tax: GST 5%**, and orders for it are taxed by the rules set for that category in [Tax Settings](./settings.mdx#5-tax-settings-settingstax).
+
+:::caution
+- New tax categories need a **Code**, which this simple form doesn't have. Create new tax categories in **Tax Settings** (**Products → Taxes**); use this page to rename existing ones or switch them on and off.
+- A tax category that products use cannot be deleted. Delete shows a **Cannot delete** dialog with the number of products; move those products to another tax category first.
+:::
 
 ---
 
-## 8. Stock Management (`/manage_stock`)
+## 10. Brands (`/brands`)
+
+![Brands](/img/detailed-documentation/brands.webp)
+
+### Overview
+Brands that products can be linked to (sidebar **Products → Brands**; permission `brands`). They power brand filters in the apps and website and the **Top Brands** section of the [Home Builder](./promotions.mdx#1-home-builder-home_builder). Brands belong to the module selected in the header.
+
+### Screen layout
+- **Items Background Colors** card: **Global** or **Item Wise** colour behind brand images in the apps, as for categories, with **Save**.
+- **Search**, **Grid view / List view**, **Refresh** and **Add Brand**.
+- Grid cards: logo, name (for example **SparkleHome**), ID (`#21`), an **Active** / **Deactive** badge, Edit and Delete.
+
+### Field reference (Add / Edit Brand)
+| Field | Required | What it does | Example |
+| --- | --- | --- | --- |
+| **Name** | Yes (default language) | Brand name; one tab per language. | Green Harvest |
+| **Image** | Yes | Brand logo. JPG, PNG, GIF or WebP, up to 2 MB. | green-harvest.png |
+| **Background Color (Light Theme)** / **(Dark Theme)** | No | Only with **Item Wise** colours. | `#F1F8E9` |
+| **Status** | — | **Activate** / **Deactivate**. | Activate |
+
+### Tutorial: Add a brand and attach it to a product
+1. Click **Add Brand**, type **Name** "Green Harvest", upload the logo, set **Status** to **Activate** and click **Save**.
+2. Open a product with **Edit** (for example **Thick Poha**), choose **Brands** "Green Harvest" in **Basics**, and click **Save**.
+
+**Result:** the product is listed under the brand in the apps and website, and the brand can be added to a **Top Brands** home page section.
+
+:::tip
+A **Deactive** brand (like **Kisan Select** in the screenshot) is hidden from customers; edit it and choose **Activate** to show it again. Deleting a brand also deletes its image, wherever it is stored.
+:::
+
+---
+
+## 11. Attributes (`/attributes`)
+
+![Attributes](/img/detailed-documentation/attributes.webp)
+
+### Overview
+Attributes define product variants, for example **Weight / Volume** (250 g, 500 g, 1 kg …), **Flavour** (Classic, Masala, Mint) or **Colour** (Red, Green, Blue). Open them from **Products → Attributes** (permission `attributes`). A category's attributes decide what appears in the product form's **Variant Matrix** and in the bulk upload **Variant Combo Generator**. Sellers can create their own attributes for their categories.
+
+### Column reference
+| Column | Meaning |
+| --- | --- |
+| **ID** | Attribute ID. |
+| **Name** | Attribute name, with "Used in N Categories" when categories use it. |
+| **Values** | Each value with its short code in brackets, for example `500 g (g)`, or with a colour dot. |
+| **Owner** | **Global** (created by an admin) or the seller's name. |
+| **Status** | **Active** / **Deactive**. |
+| **Actions** | Edit, Delete. |
+
+### Field reference (Add / Edit Attribute)
+| Field | Required | What it does | Example |
+| --- | --- | --- | --- |
+| **Name** | Yes (default language) | Attribute name; one tab per language. | Spice Level |
+| **Type** | Yes | **Text**, **Colour** or **Image**. Applies to the whole attribute, not to single values. | Text |
+| **Values → Value** | Yes (at least one) | The option customers pick. | Mild |
+| **Short Code** / **Colour** / **Image** | Yes for every value | Text type: a short code; Colour type: a colour; Image type: an image. | mild |
+| **Add Value** | — | Adds another value row. | — |
+| **Status** | — | **Activate** / **Deactivate**. | Activate |
+
+### Tutorial: Create a "Spice Level" attribute and use it in a category
+1. Click **Add Attribute**, type **Name** "Spice Level" and keep **Type** **Text**.
+2. Add the values **Mild** (`mild`), **Medium** (`medium`) and **Hot** (`hot`), using **Add Value** for each new row.
+3. Set **Status** to **Activate** and click **Save**.
+4. Go to **Categories → Manage Categories**, **Edit** "Spices & Masala", tick **Spice Level** under **Attributes** and click **Save**.
+
+**Result:** the attribute shows "Used in 1 Category", and products in **Spices & Masala** can now have Mild / Medium / Hot variants in the **Variant Matrix**.
+
+:::note Attributes in use
+When you edit an attribute that products use, the form shows how many products and variants use it, and values in use are marked **In use** and cannot be removed. An attribute that is linked to categories or used by products cannot be deleted; Delete shows a **Cannot delete** dialog with the reason.
+:::
+
+---
+
+## 12. Addons (`/addons`)
+
+![Addons](/img/detailed-documentation/addons.webp)
+
+### Overview
+Add-on groups (for example "Extra toppings") that customers can add to a product. The page exists only in the **Food Delivery** module (sidebar **Products → Addons** after switching the module in the header; permission `addons`). Sellers create add-on groups from their own panel; admins can view and delete them here, so there is no Add button.
+
+### Column reference
+| Column | Meaning |
+| --- | --- |
+| **ID** | Group ID. |
+| **Name** | Group name, with "Used in N Products" and an **In carts or orders** flag. |
+| **Selection Type** | How customers choose from the group's options. |
+| **Options** | The options in the group. |
+| **Owner** | Seller who created it. |
+| **Status** / **Actions** | Active or Deactive; Delete. |
+
+Use **Search** and **Filter by seller** to find a group. A group that is on a product, or whose options are in a cart or an order, cannot be deleted.
+
+---
+
+## 13. Stock Management (`/manage_stock`)
 
 ![Stock Management](/img/detailed-documentation/stock-management.webp)
 
-A dedicated, real-time inventory ledger giving store managers an instant overview of inventory health.
+### Overview
+A quick way to update stock without opening the product form (sidebar **Stock Management**; permission `stock_management`). It lists the variants of products with **Limited** stock in the current module; products with unlimited stock are not shown.
 
-### Key Operations
-- Spot items with **Low Stock** warnings before they sell out.
-- Rapidly adjust stock counts inline without opening full product edit forms.
-- Filter by out-of-stock items to generate supplier replenishment purchase orders.
+### Column reference
+| Column | Meaning |
+| --- | --- |
+| **ID** | Variant ID (the same ID as in Manage Products). |
+| **Image** / **Name** | Product image and name. A product with several variants appears once per variant. |
+| **Stock** | Units in stock. |
+| **Status** | **Available** or **Sold Out**. |
+| **Actions** | Edit (pencil). |
+
+### Tutorial: Correct stock after a stock count
+Scenario: the shelf count for **Floor Cleaner** (variant 147) is 50, but the panel says 69.
+1. Type "Floor Cleaner" in **Search**.
+2. Click **Edit** on row **147**; the **Stock** cell becomes a number field.
+3. Enter 50 and click **Save** (or press Enter).
+
+**Result:** the stock is 50 in the apps and the panel. Entering 0 marks the variant **Sold Out**; entering a number above 0 makes it **Available** again.
+
+:::tip
+Stock must be a whole number from 0 to 100000. For many products at once, use [Bulk Update](#82-bulk-update-bulk_update).
+:::
 
 ---
 
 ## Real-World Catalog Use Cases
 
-- **Seasonal Catalog Refresh**: During festival or holiday sales, store managers use **Bulk Update** to mark down hundreds of SKUs and activate seasonal discounts across entire categories.
-- **Vendor Product Quality Assurance**: Large marketplaces require all seller-submitted items to go through the **Approve Requests** pipeline, ensuring every listing has professional photography and complies with regulatory labeling requirements.
-- **Fast Stock Reconciliation**: After physical warehouse inventory audits, store teams use **Stock Management** to adjust on-hand counts and prevent overselling out-of-stock variants.
+- **Seasonal price change**: download the product data from **Bulk Update**, change prices and stock in Excel, and upload the file to update the whole range at once.
+- **Seller onboarding**: a new seller's products wait in **Approve Requests**; the admin checks each one with **View** and approves it from **Edit → Product settings**.
+- **Stock count after an audit**: staff open **Stock Management**, search each item and correct the stock in place.
+- **Customer demand**: a customer asks for a product in **Product Requests**; the admin adds it to the catalog and accepts the request with that product.

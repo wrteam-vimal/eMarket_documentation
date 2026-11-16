@@ -1,0 +1,421 @@
+---
+sidebar_position: 0.5
+title: "Getting Started: Set Up Your Store Step by Step"
+description: An end-to-end tutorial for a new eMarket store owner - from the first login to a delivered test order and the go-live checklist, in the order the panel's Setup Checklist expects.
+---
+
+# Getting Started: Set Up Your Store Step by Step
+
+This tutorial takes a new store owner from the first login to a live store. It follows the order the panel itself checks on the **Setup Checklist** (`/setup_checklist`), adds the steps the checklist does not track (taxes, products, delivery boys, marketing), and ends with a real test order and a go-live check.
+
+Each step tells you **why it matters**, **where to go** (menu path and route), **the minimum to fill in**, and links to the detailed page for everything else.
+
+:::info Before you start
+- Log in with the **Super Admin** account created during installation. Some settings (for example **Demo Mode** and **Clear System Cache**) can only be changed by the Super Admin.
+- If the panel is in demo mode, only the Super Admin can save; other roles are read-only. See [Demo Mode](./intro.mdx#6-demo-mode-read-only-panels).
+- Most catalog, delivery and marketing data is kept **per module** (Grocery, Pharmacy, Ecommerce, Food Delivery). Always check the **module selector** in the header before you add data.
+:::
+
+## What you'll have at the end
+
+- A store with its name, logos, currency, time zone and address set, and the Setup Checklist at **100%**.
+- Cash on Delivery and one online gateway (in **Sandbox** mode) turned on.
+- At least one delivery city with a drawn delivery area and delivery charges, delivery time slots and (optionally) automatic delivery-boy assignment.
+- A tax category with a tax rule, a main category, an attribute, one approved seller and one product with variants.
+- One delivery boy, a published home page and a promo code.
+- Firebase push notifications, email (SMTP) and, if you use it, SMS working.
+- A test order taken from **Received** to **Delivered**, visible in the reports and credited to the seller's wallet.
+- A server that passes **System Status**, with the scheduler cron running and demo mode off.
+
+## The steps at a glance
+
+| # | Step | Main screens | Tracked by the Setup Checklist? |
+| :--- | :--- | :--- | :--- |
+| 1 | Log in and tour the panel | Dashboard, module selector, Settings hub, Modules | Module management |
+| 2 | Store basics | Store Settings (Store, Address, Currency, Date, Time & Region) | Store details, Store address & map, Currency, Date & time zone |
+| 3 | Payments | Payment Methods | Payment methods |
+| 4 | Delivery | Cities, Delivery Settings, Delivery Boy Assignment | Locations / cities, Delivery time slots (per module) |
+| 5 | Taxes | Tax Settings | No |
+| 6 | Catalog structure | Categories, Attributes | Categories, Attributes (per module) |
+| 7 | Sellers and the first product | Seller Setting, Add Seller / Seller Requests, Add Product | Seller settings |
+| 8 | Delivery boys | Add Delivery Boy / Delivery Boy Requests | No |
+| 9 | Marketing | Home Builder, Promo Code | No |
+| 10 | Sign-in and notifications | Login Setting, Firebase, SMTP, SMS, Account Settings | Login settings, Firebase (Mail is "Recommended") |
+| 11 | Test order | Customer app or website, Orders, Order Details, Reports, Seller Wallet | No |
+| 12 | Go live | System Status, scheduler cron, Demo Mode, System Registration, backups | No |
+
+:::note Why sellers come before products
+The **Add Product** form asks for the **Seller** first, and the seller's **Category IDs** decide which categories you can pick. A seller in turn needs a **city** and at least one **category**. So the working order is: city → category → seller → product. This tutorial follows that order.
+:::
+
+---
+
+## Step 1: Log in and tour the panel
+
+![Dashboard](/img/detailed-documentation/dashboard.webp)
+
+**Why it matters:** the header controls decide which module's data you are looking at, and the Settings hub is where every configuration page lives. Knowing them saves a lot of searching later.
+
+**Where:** open the panel's `/login` page and sign in. The panel opens on the **Dashboard** (`/dashboard`).
+
+**What to look at:**
+
+1. **Setup progress card** (under the welcome bar): shows "*N*% complete", the steps still missing and a **Set up now** button for the next one. **View checklist** opens the full [Setup Checklist](./intro.mdx#2-setup-checklist-setup_checklist). While setup is incomplete, a **Setup** pill in the header on other pages also opens it.
+2. **Module selector** (header): the active module's icon and name, for example **Grocery**. Picking another module switches the whole panel to it. Categories, products, orders, Home Builder and delivery settings only show the selected module's data.
+3. **Settings** (sidebar, **GENERAL** group) opens the **Settings hub** (`/system_settings`): every settings page as a card, grouped as Store, Selling, Delivery, Apps & Website, Content & Policies, Communication, Integrations and System, with a **Search settings…** box. See [Settings Hub](./settings.mdx#1-settings-hub-system_settings).
+4. **Search** in the header (<kbd>Ctrl</kbd> + <kbd>K</kbd> / <kbd>⌘</kbd> + <kbd>K</kbd>) jumps to any menu entry or setting by name.
+5. **Modules** (sidebar, `/modules`): switch off the verticals you will not use yet. The checklist's first step, **Module management**, only needs one active module. See [Modules](./intro.mdx#3-modules-modules).
+
+![Setup Checklist](/img/detailed-documentation/setup-checklist.webp)
+
+Open the **Setup Checklist** now and keep it in a second tab. It has a **General (all modules)** section and one section per active module (Categories, Attributes, Delivery time slots). Each step shows what is missing (for example "No main category") and a **Set up now** button that opens the right page. After saving a setting, click the **Refresh** button on the checklist to update it.
+
+:::tip
+The checklist's percentage counts the **General** steps plus the **current module's** steps (for example "14 / 14 done (General + Grocery)"). The chips under it show every module, so an inactive vertical you do not use yet will show as unfinished until you switch it off on **Modules**.
+:::
+
+---
+
+## Step 2: Store basics
+
+![Store Settings](/img/detailed-documentation/store-settings.webp)
+
+**Why it matters:** the store name, logo and support contacts appear in the apps, website, emails and invoices. Currency, decimals and time zone affect every price and every date in orders and reports. The checklist marks these four steps as missing until they are filled.
+
+**Where:** **Settings → Store** cards, which all open **Store Settings** (`/store_settings`) at the right section. Each section has its own **Update** button, which saves only that section.
+
+| Checklist step | Settings card / section link | Minimum fields |
+| :--- | :--- | :--- |
+| Store details | **Store Setting** (`/store_settings?section=store_setting`) | **App Name**, **Support Number**, **Support Email**, **Logo** (also add a **Dark Logo** and **Invoice Logo** if you have them) |
+| Store address & map | **Address Setting** (`/store_settings?section=address_setting`) | **Address**, **Latitude**, **Longitude**; with **Google Maps** as the **Map Provider**, also the **Place Api Key** |
+| Currency | **Currency Setting** (`/store_settings?section=currency_setting`) | **Store Currency** (symbol, e.g. `₹`), **Currency Code**, **Decimal Places** (0–6) |
+| Date & time zone | **Date, Time & Region** (`/store_settings?section=regional_setting`) | **System Timezone**, **Date Format**, **Time Format** (and **Country Code** for phone numbers) |
+
+### Tutorial: fill in the store basics
+
+1. Open **Settings** and click the **Store Setting** card.
+2. Enter **App Name** (e.g. "eMarket"), **Support Number** and **Support Email**, upload the **Logo**, and click **Update**.
+3. Click the **Address Setting** pill. Enter the shop or head-office **Address** and its **Latitude** / **Longitude**. Choose the **Map Provider**; for Google Maps paste the **Place Api Key** and **Map Api Key**. Click **Update**.
+4. Click the **Currency Setting** pill, set **Store Currency**, **Currency Code** and **Decimal Places**, then **Update**.
+5. Click the **Date, Time & Region** pill, search the time zone (for example "kolkata" or "+05:30"), pick the date and time formats and click **Update**.
+6. Back on the Setup Checklist, click **Refresh**.
+
+**Result:** the four store steps on the checklist turn green. The new name and logo show in the panel, apps and website.
+
+Details of every section: [Store Settings](./settings.mdx#2-store-settings-store_settings).
+
+:::caution
+The map provider you choose here is also the map used to draw city delivery areas in Step 4. With **Google Maps** as the provider, the checklist keeps **Store address & map** open until the **Place Api Key** is saved; if you have no Google key, choose **OpenStreetMap**.
+:::
+
+---
+
+## Step 3: Payments
+
+![Payment Methods](/img/detailed-documentation/payment-methods.webp)
+
+**Why it matters:** customers cannot check out until at least one payment method is on. The checklist step **Payment methods** is done as soon as one gateway (Cash on Delivery counts) is switched on.
+
+**Where:** **Settings → Selling → Payment Methods** (`/payment_methods`).
+
+**Minimum:** turn on **Cash on Delivery**, and set up one online gateway in **Sandbox** mode for testing.
+
+### Tutorial: turn on COD and a sandbox gateway
+
+1. Open **Payment Methods**. The counter at the top shows how many of the 10 methods are on.
+2. Click **Cash on Delivery**, switch it to **Enabled** and choose the COD mode: **Global** (every product) or **Product wise** (only products whose **Is COD allowed?** is Yes).
+3. Click the online gateway you will use (for example **Stripe**), switch it to **Enabled** and choose **Sandbox** (test payments, no real money).
+4. Enter the test credentials from the gateway's dashboard. Required fields that are still empty are listed in a **Needs setup** alert, and the gateway shows an amber dot until they are filled.
+5. Under **Webhook & callback URLs**, click **Copy** and paste the URL into the gateway's dashboard.
+6. Click **Update** in the save bar at the bottom.
+
+**Result:** COD and the gateway show a green dot with a **Test** badge, and both appear at checkout in the apps and website. Switch the gateway to **Live** with live keys before launch (Step 12).
+
+Details per gateway (fields, currencies): [Payment Methods](./settings.mdx#3-payment-methods-payment_methods). Optional extra checkout charges (for example packaging) are on [Additional Charges](./settings.mdx#4-additional-charges-additional_charges).
+
+---
+
+## Step 4: Delivery
+
+**Why it matters:** sellers and delivery boys register against a **city**, and customers can only order to an address inside a city's delivery area. Each module also needs its delivery settings saved before the checklist counts it as ready.
+
+### 4a. Add a delivery city with its area and charges
+
+![Add City](/img/detailed-documentation/cities-add.webp)
+
+**Where:** sidebar **Location → Add City** (`/cities/create`). The list is at **Location → Manage Cities** (`/cities`).
+
+**Minimum:** **City Name**, **State Name**, a drawn delivery area, a **Zone Name**, and one delivery charge method.
+
+1. **Find the city**: search for it on the map. **City Name**, **State Name**, **Latitude** and **Longitude** fill in.
+2. **Draw the delivery area**: choose polygon or circle and click around the area you deliver to.
+3. **Zone & delivery time**: enter the **Zone Name** customers see (e.g. "Ahmedabad West") and **Time to travel 1 (km)** in minutes.
+4. **Delivery charges**: pick **Fixed Delivery Charges**, **Per KM Delivery Charges** or **Range Wise Delivery Charges** and enter the amounts. Set **Minimum Amount for Free Delivery** if you offer free delivery above an order value.
+5. Click **Save**.
+
+Details: [Add / Edit City](./localization.mdx#32-add--edit-city-citiescreate).
+
+### 4b. Save the delivery settings and time slots (per module)
+
+![Delivery Settings](/img/detailed-documentation/delivery-settings.webp)
+
+**Where:** sidebar **Delivery Settings → Delivery Settings** (`/delivery_settings`), for the module selected in the header.
+
+1. Tick **Enable / Disable Time Slots** if customers should pick a delivery window.
+2. Choose the **Slot Type**: **Fixed Time Window** or **Quick Delivery** (Quick Delivery needs **One Seller Cart** on in **Settings → Seller Setting**).
+3. Set **Delivery Estimate Days** and **How many Days you want to allow?**, then click **Save**.
+4. With fixed time slots on, click **Add New Time Slot** and add at least one slot: **Title**, **From Time**, **To Time** and **Last Order Time** (24-hour format), **Status** Activate.
+
+The checklist step **Delivery time slots** is done once the settings are saved for the module and, when fixed time slots are on, at least one active slot exists. Repeat for every module you use. Details: [Delivery Settings](./delivery.mdx#5-delivery-settings-delivery_settings).
+
+### 4c. Optional: automatic delivery-boy assignment
+
+![Delivery Boy Assignment](/img/detailed-documentation/auto-assign-settings.webp)
+
+**Where:** sidebar **Delivery Settings → Delivery Boy Assignment** (`/auto-assign-settings`).
+
+Turn on **Auto-Assign Enabled** to offer new orders to nearby delivery boys automatically, set the **Response Timeout (seconds)** (at least 60) and **Max Rounds**, and click **Update**. Leave it off to assign every order by hand on the order page. Details: [Delivery Boy Assignment](./delivery.mdx#6-delivery-boy-assignment-auto-assign-settings).
+
+**Result:** the checklist shows **Locations / cities** done, and the module's **Delivery time slots** step is green.
+
+:::caution
+Auto-assign timeouts are handled by the scheduler (`auto-assign:sweep-timeouts`, every minute). Without the cron entry from Step 12, offers that time out are not passed on to the next delivery boy.
+:::
+
+---
+
+## Step 5: Taxes
+
+![Tax Settings](/img/detailed-documentation/tax-settings.webp)
+
+**Why it matters:** each product has a **Tax Category**. Tax is charged only when a **tax rule** matches that category and the customer's country/region. The Setup Checklist does not track taxes, so it is easy to forget.
+
+**Where:** sidebar **Products → Taxes**, which opens **Tax Settings** (`/settings/tax`).
+
+### Tutorial: add an 18% GST category and rule
+
+1. On the **Tax Categories** tab click **Add**. Enter a **Name** (e.g. "GST 18%", only admins see it) and a **Code** (letters, numbers and underscores, e.g. `GST_18`), set **Status** and save.
+2. Open the **Tax Rules** tab and click **Add**.
+3. Pick the **Country** (leave **State / Province / Region** empty for the whole country) and the **Tax Category** you just created.
+4. Choose the **Place of Supply** (**Any**, **Same region** or **Different region**).
+5. Click **Add Component** twice and enter "CGST" 9% and "SGST" 9%. The **Total Rate** shows 18%.
+6. Set **Status** and click **Save**.
+
+**Result:** products with the "GST 18%" category are taxed at 18% for customers in that country, and the tax shows in the Tax Report.
+
+Details: [Tax Settings](./settings.mdx#5-tax-settings-settingstax).
+
+---
+
+## Step 6: Catalog structure (categories and attributes)
+
+![Add Category](/img/detailed-documentation/categories-add.webp)
+
+**Why it matters:** every module needs at least one **active main category** and one **active attribute** before the checklist counts it as ready. Sellers are linked to categories, and a category's attributes decide which variants a product can have.
+
+**Where:** sidebar **Categories → Add Category** (`/manage_categories/create`) and **Products → Attributes** (`/attributes`). Both are per module, so check the module selector first.
+
+### Tutorial: a "Dairy & Eggs" category with a Weight attribute
+
+1. Open **Products → Attributes** and click **Add Attribute**. Enter the **Name** "Weight", choose **Type** **Text**, and add values with **Add Value** (e.g. "250 g", "500 g", "1 kg", each with a **Short Code**). Set **Status** and click **Save**.
+2. Open **Categories → Add Category**. Leave **Parent Category** on **Select Category** (this makes it a main category).
+3. Enter **Category Name** "Dairy & Eggs" (the **Slug** fills in), a **Category Subtitle**, and upload the **Image** (square, larger than 350 × 350 px and smaller than 550 × 550 px, up to 2 MB).
+4. Under **Attributes**, tick **Weight**.
+5. Click **Save**.
+
+**Result:** the module's **Categories** and **Attributes** steps turn green on the checklist after **Refresh**. Repeat for every module you use.
+
+Details: [Add / Edit Category](./catalog.mdx#12-add--edit-category-manage_categoriescreate) and [Attributes](./catalog.mdx#11-attributes-attributes). Optional: add [Brands](./catalog.mdx#10-brands-brands) for brand filters and the Top Brands home section.
+
+---
+
+## Step 7: Sellers and the first product
+
+**Why it matters:** every product belongs to a seller, and sellers earn their share of each order after the admin commission. Seller registration from the seller app or website stays closed until a **Seller Commission** is set; the checklist step **Seller settings** checks exactly that.
+
+### 7a. Set the seller commission
+
+**Where:** **Settings → Selling → Seller Setting** (`/store_settings?section=seller_setting`).
+
+Enter the **Seller Commission (%)**, decide **One Seller Cart** (customers can only order from one seller at a time; needed for Quick Delivery) and **Self Pickup Mode**, then click **Update**.
+
+### 7b. Add a seller (or approve a registration)
+
+![Add Seller](/img/detailed-documentation/sellers-add.webp)
+
+**Where:** sidebar **Sellers → Add Seller** (`/sellers/create`), or **Sellers → Seller Requests** (`/registered_sellers`) to approve a seller who registered themselves.
+
+**Minimum when adding:**
+
+1. **Seller Information**: **Name**, **Email**, **Mobile**, **Password**, **Confirm Password**.
+2. **Store Information**: **Store Name** (e.g. "Patel Fresh Mart"), **Select Module** (cannot be changed later), **Category IDs** (tick "Dairy & Eggs"), **Logo**, **Commission** (0–100%).
+3. **Store Location Information**: **Select or Search City** (the city from Step 4), then **Search Location** and drag the marker to the shop. The position is used to calculate delivery charges.
+4. Click **Save**.
+
+**To approve instead:** open **Seller Requests**, check the details and documents under **Other Info**, and click **Approve**.
+
+Details: [Add / Edit Seller](./sellers.mdx#3-add--edit-seller-sellerscreate-sellerseditid) and [Seller Requests](./sellers.mdx#4-seller-requests-registered_sellers).
+
+### 7c. Add a product with variants
+
+![Add Product](/img/detailed-documentation/products-add.webp)
+
+**Where:** sidebar **Products → Add Product** (`/manage_products/create`), or the **Add Product** button on the Dashboard.
+
+1. **Seller & category**: pick the **Seller** ("Patel Fresh Mart"), then the **Category** ("Dairy & Eggs").
+2. **Basics**: **Product Name** (e.g. "Greek Yogurt"), **Tax Category** ("GST 18%" from Step 5) and a **Description**.
+3. **Product settings**: set **Product Status** to **Approved**. For the test order in Step 11, set **Is Returnable?** to **No** (see the tip below) and **Is COD allowed?** to **Yes**.
+4. **Variants & pricing**: choose **Stock Limit**, upload the **Main Image**, select "250 g" and "500 g" under **Weight** in the **Variant Matrix**, and click **Generate All Variants**.
+5. For each variant enter the **Price** and, for limited stock, the **Stock**. **Status**: **Available**.
+6. Click **Save**.
+
+**Result:** the product appears on **Manage Products** with **Approved**, and in the customer app and website for addresses in the seller's delivery area.
+
+Details: [Add Product](./catalog.mdx#22-add-product-manage_productscreate).
+
+:::tip Seller earnings and the return window
+Delivered items are credited to the seller's wallet by the scheduler every 15 minutes, but a **returnable** product is only credited after its **Max Return Days** have passed. A non-returnable test product lets you see the credit within about 15 minutes in Step 11.
+:::
+
+---
+
+## Step 8: Delivery boys
+
+![Add Delivery Boy](/img/detailed-documentation/delivery-boys-add.webp)
+
+**Why it matters:** orders delivered by the store's own fleet need at least one active delivery boy, who uses the delivery boy app to accept and complete orders.
+
+**Where:** sidebar **Delivery Boys → Add Delivery Boy** (`/delivery_boys/create`), or **Delivery Boys → Delivery Boy Requests** (`/registered_delivery_boys`) to approve self-registered ones. Delivery boys are shared by every module.
+
+### Tutorial: add one delivery boy
+
+1. Enter **Name**, **Date Of Birth**, **Mobile**, **Email**, **Password** and **Confirm Password**.
+2. Choose the city from Step 4 in **Select or Search City**.
+3. Under **Delivery Boy Bonus Details**, choose the **Bonus Type** (**Commission** with a **Bonus Percentage (%)**, or **Fixed/Salaried**).
+4. Fill in any required **Custom Fields** (for example Driving License).
+5. Click **Save**.
+
+**Result:** the delivery boy can sign in to the delivery boy app, and appears in the **Assign Delivery Partner** list on order pages (with their number of pending orders in brackets).
+
+Details: [Add / Edit Delivery Boy](./delivery.mdx#3-add--edit-delivery-boy-delivery_boyscreate-delivery_boyseditid) and [Delivery Boy Requests](./delivery.mdx#4-delivery-boy-requests-registered_delivery_boys).
+
+---
+
+## Step 9: Marketing (home page and a promo code)
+
+### 9a. Publish a home page
+
+![Home Page Editor](/img/detailed-documentation/home-builder-editor.webp)
+
+**Why it matters:** the Home Builder decides what customers see first in the app and on the website for each module.
+
+**Where:** sidebar **Home Builder → Home Builder** (`/home_builder`).
+
+1. Open the module's **Default** home page with **Edit** (or click **Create Home Page**, choose **Module based home page**, name it and click **Create**).
+2. Click **Add** under **Sections** and add, for example, a **Banner Slider** and a **Product Slider** with **Data Source** **New Arrivals**.
+3. Select each section to set its title, layout and where a tap leads (**Redirect Type**).
+4. Check the preview on phone, tablet and web, then click **Save Draft** and **Publish**.
+
+**Result:** the status strip on the Home Builder list shows the page under **Customers currently see**. Details: [Home Builder](./promotions.mdx#1-home-builder-home_builder).
+
+### 9b. Create a promo code
+
+![Add Promo Code](/img/detailed-documentation/promo-codes-add.webp)
+
+**Where:** sidebar **Promo Code → Add Promo Code** (`/promo_code/create`).
+
+1. Enter a **Message** (e.g. "15% off this weekend") and the **Promo Code** (e.g. `WEEKEND15`).
+2. Set **Start Date** and **End Date**, **Applicable For** **All Customers**, and **User Limit Type**.
+3. Enter the **Minimum Order Amount**, choose **Discount Type** **Percentage**, the **Discount** (15) and the **Max Discount Amount**.
+4. Choose **Repeat Usage**, leave **Status** active and click **Save**.
+
+**Result:** the code shows in the app's and website's offers list (unless you chose **Hidden**) and can be applied at checkout. Details: [Add / Edit Promo Code](./promotions.mdx#31-add--edit-promo-code-promo_codecreate).
+
+---
+
+## Step 10: Sign-in and notifications
+
+**Why it matters:** customers need at least one way to sign in, and phone login needs an OTP method. Push notifications (order updates, offers) need Firebase. Emails (password reset, order mails) need SMTP. The checklist tracks **Login settings** and **Firebase**; **Mail (SMTP)** is shown as **Recommended** and is not counted in the percentage.
+
+### 10a. Login methods
+
+**Where:** **Settings → Selling → Login Setting** (`/store_settings?section=login_setting`).
+
+Turn on at least one of **Phone**, **Google**, **Apple** or **Email Login**. If phone login is on, also turn on **Firebase Authentication** or **Custom SMS Gateway OTP based**. Click **Update**. Details: [Login Setting](./settings.mdx#login-setting-and-the-demo-mode-toggle).
+
+### 10b. Firebase (push notifications and phone OTP)
+
+![Firebase Settings](/img/detailed-documentation/firebase-settings.webp)
+
+**Where:** **Settings → Communication → Firebase Settings** (`/firebase-settings`).
+
+Copy the web-app keys from your Firebase project (**apiKey**, **authDomain**, **projectId**, **storageBucket**, **messagingSenderId**, **appId**, **measurementId**), upload the **service-account `.json` file** under **Firebase Json file upload**, and click **Update**. The checklist stays open until both the keys and the file are saved. Details: [Firebase Settings](./settings.mdx#6-firebase-settings-firebase-settings).
+
+### 10c. Email (SMTP) and SMS
+
+- **SMTP**: **Settings → Communication → SMTP Mail Setting** (`/store_settings?section=smtp_mail_setting`). Fill in **From Email ID**, **SMTP Email Password**, **SMTP Host**, **SMTP Port** and **SMTP Encryption**, click **Update**, then enter your own address under *Email test* and click **Test Mail**.
+- **SMS** (optional): **Settings → Communication → SMS Settings** (`/sms-settings`). Turn on **Twilio** and enter **Twilio SID**, **Twilio Auth Token** and **Twilio Phone Number**. Details: [SMS Settings](./settings.mdx#7-sms-settings-sms-settings).
+- **Which order statuses send a mail or SMS**: profile menu (top right) → **Settings** (`/settings`), **Order Mail Settings**. Details: [Account Settings](./settings.mdx#13-account-settings-order-mail-settings-settings).
+
+### Tutorial: send yourself a test push
+
+1. Sign in to the customer app on your phone and allow notifications.
+2. In the panel open **Notifications → Send Notifications**, choose **Type** **Default**, enter a **Title** and **Message**, and click **Save**.
+
+**Result:** the notification arrives on the phone. If it cannot be delivered (for example Firebase is incomplete), the modal shows the reason as a warning. Details: [Send Notification](./communications.mdx#11-send-notification-modal-notificationscreate).
+
+---
+
+## Step 11: Place a test order and follow it to Delivered
+
+![Order Details](/img/detailed-documentation/order-details.webp)
+
+**Why it matters:** this is the end-to-end proof that catalog, delivery area, payment, notifications, delivery boy and seller earnings all work together.
+
+### Tutorial: from checkout to the seller's wallet
+
+1. **Place the order** in the customer app or on the website (the globe icon in the panel header opens the website). Use a delivery address **inside the area you drew** in Step 4, add "Greek Yogurt" to the cart, apply `WEEKEND15` if you like, pick a time slot and pay with **Cash on Delivery** (or the sandbox gateway with a test card).
+2. **Find it in the panel**: **Orders** (`/orders`) lists it with status **Received**. Click **View** to open **Order Details** (`/orders/view/:id`).
+3. **Process it**: in **Actions → Order Status** choose **Processed**, click **Update** and confirm with **Yes, Sure**. The customer is notified, and the **Order Progress** tracker moves forward.
+4. **Assign the delivery boy**: under **Delivery method** choose **Assign Delivery Partner**, pick the delivery boy from Step 8 and click **Assign** (skip this if auto-assign from Step 4c already assigned someone).
+5. **Ship and deliver**: set the status to **Shipped**, then **Out For Delivery**, then **Delivered** (the delivery boy can also do this from the delivery boy app). If **Order Delivery OTP System** is on in **Store Settings → Delivery Boy Setting**, each order gets a 6-digit delivery OTP that the customer gives to the delivery boy.
+6. **Check the reports**: open **Reports → Sales Report** (`/reports/sales`), choose **Today**, and check that the order's sales are counted.
+7. **Check the seller's wallet**: after the next scheduler run (every 15 minutes) open **Sellers → Seller Wallet Transactions** (`/seller_wallet_transactions`). A **credit** row for the order item shows the seller's earning, and **Reports → Commission Reports** shows the commission the platform kept.
+
+**Result:** the order shows **Delivered** with every step ticked, the customer received the status notifications, and the seller's wallet is credited.
+
+Details: [Order Details](./orders.mdx#2-order-details-ordersviewid), [Reports](./reports.mdx#1-reports-reportstype), [Commission Reports](./reports.mdx#4-commission-reports-commission_reports) and [Seller Wallet Transactions](./sellers.mdx#5-seller-wallet-transactions-seller_wallet_transactions).
+
+:::caution If something does not happen
+- **The product does not appear in the app**: check the product is **Approved**, the seller is approved, the category is active, and the delivery address is inside the city's drawn area.
+- **No credit in the seller wallet**: the scheduler is not running (Step 12), or the product is returnable and its **Max Return Days** have not passed yet.
+- **No push notification**: check **Firebase** on the Setup Checklist and the **Firebase** card on System Status.
+:::
+
+---
+
+## Step 12: Go-live checklist
+
+![System Status](/img/detailed-documentation/system-status.webp)
+
+**Why it matters:** a store that works on a test server can still fail on the live one: images that do not load, sellers who are never paid, or a public demo mode left on.
+
+| Check | Where / how | Done when |
+| :--- | :--- | :--- |
+| **System Status** | **Settings → System → System Status** (`/system_status`) | No **Errors**; warnings understood. Use the **Fix** links where offered. |
+| **Scheduler cron** | Server crontab: `* * * * * cd /path/to/emarket && php artisan schedule:run >> /dev/null 2>&1` | The **Scheduler** card on System Status shows a last run within the last few minutes. |
+| **Storage link** | Over SSH: `php artisan storage:link` | The **Storage link** card is OK (uploaded images load). |
+| **Debug off** | `.env`: `APP_DEBUG=false`, correct `APP_URL` | The **Environment** and **App URL** cards are OK. |
+| **Demo mode off** | **Store Settings → Login Setting → Demo Mode** (Super Admin only), or `DEMO_MODE=0` in `.env` | No **Demo mode** badge in the header. |
+| **Live payments** | **Payment Methods**: switch each gateway from **Sandbox** to **Live** with live keys | Gateways show a **Live** badge. |
+| **Purchase code** | **Settings → System → System Registration** (`/purchase_code`): enter the code and click **Validate Now** | "Purchase Code Verified Successfully". |
+| **Backups** | **Download Database** button below the sidebar menu (permission `database_backup_download`), plus your host's own backups | You have a recent database copy stored off the server. |
+| **Setup Checklist** | `/setup_checklist` | 100% for every module you sell in. |
+
+The scheduler runs the seller earnings credit, abandoned-cart reminders, popup and home page schedules, and auto-assign timeouts. See [The Scheduler Requirement](./system-maintenance.mdx#5-the-scheduler-requirement) and [System Status](./system-maintenance.mdx#1-system-status-system_status). For purchase code details see [System Registration](./settings.mdx#14-system-registration-purchase_code).
+
+:::warning Demo mode on a live store
+With demo mode on, the apps pre-fill the default login details and every admin role except the Super Admin is read-only. Always switch it off before launch. See [Demo Mode](./intro.mdx#6-demo-mode-read-only-panels).
+:::
+
+**Result:** your store is live. From here, use the [Dashboard](./intro.mdx#1-dashboard-dashboard) for the daily check and the [Order Management](./orders.mdx) guide for day-to-day fulfilment.

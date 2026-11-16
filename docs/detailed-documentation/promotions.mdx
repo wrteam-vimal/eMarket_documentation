@@ -1,117 +1,317 @@
 ---
 sidebar_position: 4
 title: Marketing & Promotions
-description: Complete guide to configuring homepage sliders, promotional offers, popup campaigns, discount coupons, and curated featured sections.
+description: Guide to the Home Builder (home pages, sections and scheduling), the popup offer and promo codes, including customer-specific and hidden codes, in the eMarket admin panel, with field references and step-by-step tutorials.
 ---
 
 # Marketing, Offers & Promotions
 
-The marketing and promotional toolset in eMarket allows platform operators to drive user engagement, increase average order values, and execute targeted seasonal campaigns across both mobile applications and the web storefront.
+These screens control what customers see on the app and website home screen and which discounts they can use at checkout:
+- **Home Builder**: design the home page of each module from sections (banner sliders, product rows, categories, brands and more), and schedule different home pages for campaigns.
+- **Manage Popup Offer**: one pop-up promotion shown when customers open the app or website.
+- **Promo Code**: discount codes customers apply at checkout, for everyone or for chosen customers.
+
+:::info Sliders, offer images and featured sections
+The old **Home Sliders** (`/home_sliders`), **Offer Images** (`/offers`) and **Featured Sections** (`/sections`) screens have been removed. Their content now lives in the Home Builder as sections: **Banner Slider** and **Grid Banner** replace sliders and offer images, and **Product Slider** / **Tabbed Products** replace featured sections. When upgrading, existing sliders, offer images and featured sections are moved into sections of the module's default home page, and older app versions keep receiving them.
+:::
+
+In demo mode only the Super Admin can save, publish or delete here; see [Demo mode](./intro.mdx#6-demo-mode-read-only-panels).
 
 ---
 
-## 1. Home Sliders (`/home_sliders`)
+## 1. Home Builder (`/home_builder`)
 
-![Home Sliders](/img/detailed-documentation/home-sliders.webp)
+![Home Builder](/img/detailed-documentation/home-builder.webp)
 
-High-impact visual carousels positioned prominently at the very top of customer mobile app feeds and homepage storefronts.
+### Overview
+Lists the home pages of the module selected in the panel header ("Home pages of **Grocery**"). Open it from **Home Builder → Home Builder**. Viewing needs `home_builder_list`; creating, editing, publishing and deleting need `home_builder_create`, `home_builder_update`, `home_builder_publish` and `home_builder_delete`. Each module has its own home pages, and exactly one of them is what customers see on the home screen of the app and website at any moment. **Page Builder**, in the same menu, builds other custom pages (see [Page Builder](./content-blogs.mdx#3-page-builder-page_builder)).
 
-### Adding a Home Slider (`/home_sliders/create`)
+### Screen layout
+- **Status strip** at the top: **Customers currently see** the home page that is live now (for example **Grocery Default Home (Copy)**), or **No home page is live right now.**, and on the right the next scheduled change (for example "Switches to "Module default home page" at 01 Dec, 06:05").
+- **Home Pages** table with **Search**, **Refresh** and **Create Home Page**.
+- **Action** icons on each row: **Edit**, **Home Page Schedule** (calendar), **Make default** (star; published, non-default pages only), **Clone** (asks for a name for the copy) and **Delete** (not for the default page).
 
-![Add Home Slider](/img/detailed-documentation/home-sliders-add.webp)
+### Column reference
+| Column | Meaning |
+| --- | --- |
+| **Name** | Click it to open the editor. The default home page has a **Default** badge; the last update time is shown below the name (for example "Updated 16 Nov, 12:25"). |
+| **Type** | **Module based** or **Category wise**. |
+| **Status** | **Published** or **Draft**, plus the scheduled publish time if one is set (with a button to cancel it). |
+| **Schedule** | Go-live and closing times, for example "Live 03 Nov, 06:05 → Closes 01 Dec, 06:05 → then Module default home page", or "Always on (default)". |
+| **State** | Whether customers see it now: **Live**, **Scheduled**, **Closed** or **Inactive**. The default page shows **Inactive** while a scheduled campaign page is live in its place. |
+| **Active** | Switch a published home page on or off. A draft must be published before it can be activated ("Publish this home page before activating it."), and the default home page is always active. |
 
-#### Step-by-Step Instructions
-1. Navigate to **Home Sliders > Add Home Slider**.
-2. Select the target **Store Module** (e.g., Grocery, Pharmacy).
-3. Choose the **Redirection Type**:
-   - **Category**: Clicking the slider takes the customer straight into a specific category product listing.
-   - **Product**: Opens the detailed product screen for a hero SKU.
-   - **External URL**: Directs customers to a brand campaign, promotional landing page, or partner site.
-4. Upload the **Slider Image** (Optimized landscape aspect ratio for mobile screens).
-5. Set the **Sort Order** and toggle **Status** to `Active`.
-6. Click **Save Slider**.
+### Tutorial: Make a campaign home page the new default
+Scenario: after Diwali you want **Grocery Default Home (Copy)** to become the permanent home page.
+1. Check that the page is **Published** (publish it from the editor if it is a draft).
+2. Click **Make default** (star) on its row and confirm.
 
----
+**Result:** the row gets the **Default** badge and is always active. The previous default page loses the badge and can now be scheduled, switched off or deleted.
 
-## 2. Offer Images (`/offers`)
-
-![Offer Images](/img/detailed-documentation/offers.webp)
-
-Promotional banners interspersed throughout customer home feeds and department pages to highlight deals, discounts, and brand spotlights.
-
-### Adding an Offer (`/offers/create`)
-
-![Add Offer](/img/detailed-documentation/offers-add.webp)
-
-#### How It Works
-- Select the destination department or product collection.
-- Upload engaging visual artwork highlighting discount percentages (e.g., "Flat 30% Off on Fresh Produce").
-- Set operational dates so promotional banners automatically expire after campaign conclusion.
+:::warning
+Deleting a home page also deletes the images uploaded for it in the builder, from this server, external storage and the Media library. Images that another page or template still uses are kept. To stop showing a page without losing it, switch **Active** off instead.
+:::
 
 ---
 
-## 3. Popup Offers (`/popup`)
+### 1.1 Create a Home Page (`/home_builder/create`)
 
-![Popup Offers](/img/detailed-documentation/popup-offer.webp)
+![Create Home Page](/img/detailed-documentation/home-builder-create.webp)
 
-Modal promotional overlays that trigger when customers launch the mobile app or visit the website homepage.
+#### Overview
+**Create Home Page** opens a short wizard in a pop-up (`/home_builder/create` opens it directly). The steps are **Home page type**, then **Category tabs** (category wise pages only), then **Name**. After **Create**, the editor opens on the new page.
 
-### Key Use Cases & Controls
-- **Welcome Discount for First-Time Users**: Offer a first-order discount code to encourage immediate sign-ups.
-- **Flash Sale Alerts**: Alert returning shoppers to limited-time weekend discounts or clearance events.
-- **Direct Action Links**: Allow customers to tap the popup to immediately apply a coupon or open the sale collection.
+#### Field reference
+| Step | Field | Required | What it does | Example |
+| --- | --- | --- | --- | --- |
+| Home page type | **Module based home page** / **Category wise home page** | Yes | Module based: one scrolling page for the whole module. Category wise: customers switch between category tabs at the top, and each tab gets its own design. | Category wise home page |
+| Category tabs | Category list (**Select All** / **Clear All**) | Yes (at least one tab) | Each ticked category becomes a tab. | Fruits, Vegetables, Dairy & Eggs |
+| Category tabs | **Add custom tab** → **Category Name** (per language) and **Category icon** | No | A tab that is not a category, for example "Offers" or "Festive". | Diwali |
+| Name | **Name your home page** | Yes | Only admins see this name. | Diwali Sale Home |
+
+The new home page starts as a **Draft**. Publish it from the editor when it is ready.
+
+#### Tutorial: Build a category wise home page for a Diwali sale
+Scenario: during Diwali you want a home page with a festive "Diwali" tab plus the Fruits, Vegetables and Dairy & Eggs tabs.
+1. On **Home Builder**, click **Create Home Page**.
+2. Choose **Category wise home page** and click **Next**.
+3. Under **Choose the category tabs**, tick **Fruits**, **Vegetables** and **Dairy & Eggs**.
+4. Click **Add custom tab**, type the **Category Name** "Diwali" and upload a **Category icon**.
+
+   ![Choosing the category tabs](/img/detailed-documentation/home-builder-wizard-tabs.webp)
+
+5. Click **Next**, type the name "Diwali Sale Home" and check the summary.
+6. Click **Create**. The editor opens on the new draft; continue with the tutorial in [1.2 Home Page Editor](#12-home-page-editor-home_buildereditid).
+
+**Result:** **Diwali Sale Home** is listed as a **Draft** of type **Category wise**. Customers don't see it until it is published and active.
+
+:::tip
+Changing the type later (gear icon **Edit setup** in the editor) starts the design from an empty canvas, so pick the type carefully.
+:::
 
 ---
 
-## 4. Promo Codes & Coupons (`/promo_code`)
+### 1.2 Home Page Editor (`/home_builder/edit/:id`)
+
+![Home Page Editor](/img/detailed-documentation/home-builder-editor.webp)
+
+#### Overview
+The editor has three columns: the **Sections** list on the left, a live preview in the middle (**Phone**, **Tablet**, **Web**), and the settings of the selected item on the right. Every home page has a **draft** and a **published** version: you design in the draft and publish it when it is ready, so customers never see half-finished work.
+
+#### Top bar
+- **Back** arrow, the home page name (editable), its **Draft** / **Published** state and a **Default** badge.
+- **Edit Draft** / **Edit Published**: work on the draft, or change the live version directly. A blue note on the left reminds you which one you are editing.
+- **Edit setup** (gear): reopens the wizard (type and category tabs). Changing the home page type starts the design from an empty canvas.
+- **Save Draft** (draft only), **Schedule** (opens the Home Page Schedule), **Schedule Publish** (calendar icon, draft only) and **Publish** (or **Publish Changes** when editing the published version).
+
+#### Category tab bar (category wise pages)
+The pills (for example **Diwali** `CUSTOM`, **Fruits**, **Vegetables** …) select the tab you are editing. **Clone category from layout** copies a tab's design from another home page, **Custom Categories** reorders the tabs, and **Add Category** adds a system category or a custom tab. **Copy layout from** copies another tab's design from this same page into the current tab (it replaces everything in that tab).
+
+#### Header Settings
+| Field | What it does | Example |
+| --- | --- | --- |
+| **Header background for** (tab) | **Color** or **Image** behind the address and search bar. With Image, upload separate images for **App**, **Tablet** and **Web**. | Color |
+| **Background color** / **Dark theme** | Header colour in the light and dark app theme. | `#FFE94B` / `#000000` |
+| **Text color** / **Dark theme** | Colour of the header text. | `#000000` / `#FFFFFF` |
+| **Category icon** | Icon of this tab in the tab bar (category wise pages). | demo_banner_8.png |
+| **Search Suggestions** | Names that rotate in the app search bar. Type a name and press Enter. Leave empty to show random product names. | Milk, Bread, Eggs, Atta |
+
+#### Section types (**Add** under **Sections**)
+| Section | What it shows | Key settings |
+| --- | --- | --- |
+| **Banner Slider** | Sliding banners. | Style: full width, peek, card, story or spotlight; auto scroll and speed; **Add Banner** with an image per **App** / **Tablet** / **Web** and a **Redirect Type**. |
+| **Grid Banner** | Banners in a grid or a horizontal scroll. | Columns and rows per device, gap, corner radius. |
+| **Category Section** | Chosen categories (filled automatically when none are picked). | Columns per device, item colours. |
+| **Product Slider** | A row of products. | **Data Source**: **Manual selection**, **All Products**, **New Arrivals**, **Discounted products**, **Top Selling**, **Best Rated**, **Recently Visited**, **By Category** or **By Brand**; optional category or brand filter; **Limit**; **Shuffle Products**. |
+| **Tabbed Products** | Menu tabs above a product row; each tab has its own data source. | Tab style and active-tab look. |
+| **Top Brands** | Chosen brands, optionally with their names. | Show name, columns. |
+| **Title Image** / **Heading / Text** | An image or a text block, with an optional link. | Redirect. |
+| **Nearby Stores** | Stores that deliver to the customer, nearest first (filled automatically). | Show distance. |
+| **Shop by Country** | Countries of origin of products the customer can order (filled automatically). | — |
+
+Every section also has a title and background, image ratios per device, spacing and corner radius, **Show on platforms**, and texts per language. Banner and image **Redirect Type** options are **No redirect**, **Product**, **Category**, **Brand**, **Page Builder**, **Product list with filters** and **URL**. Builder images can be JPG, PNG, GIF, WebP or SVG up to 10 MB.
+
+#### Tutorial: Add a banner slider and a product slider, preview and publish
+Scenario: you are on the **Diwali** tab of **Diwali Sale Home** (created above) and want a festive banner and a row of discounted products.
+1. Make sure **Edit Draft** is selected.
+2. Click **Header Settings**, set the header **Background color** to `#FFE94B` (and a dark-theme colour), and add **Search Suggestions** such as "Sweets", "Dry fruits" and "Diyas".
+3. Click **Add** under **Sections** and choose **Banner Slider**.
+
+   ![Choosing a section type](/img/detailed-documentation/home-builder-add-section.webp)
+
+4. In the settings on the right, click **Add Banner**. Upload the banner for **App**, **Tablet** and **Web**, set **Redirect Type** to **Category** and pick **Fruits**. Add a second banner the same way.
+5. Click **Add** again and choose **Product Slider**. Enter the section title "Festive Specials", set **Data Source** to **Discounted products** and **Limit** to 10.
+6. Drag the sections by their handle so the banner is on top. The section menu (⋮) offers **Clone** and **Delete**, the switch hides a section, and **Save as Template** (at the top of the section settings) stores it for reuse with **Use Template**.
+7. Check the result with **Phone**, **Tablet** and **Web** in the preview.
+8. Click **Save Draft**, then **Publish** and confirm with **Yes, Sure** ("This will make the current draft live for customers.").
+
+**Result:** the page is **Published**. If it is **Active** and has no future go-live time, customers see it on the next refresh of the app or website home screen; otherwise it waits for its schedule (see 1.3).
+
+:::caution Common mistakes
+- Changes made with **Edit Published** go live only after **Publish Changes**; they don't touch the draft.
+- Each category tab has its own sections. To reuse a design, open the empty tab and use **Copy layout from** (same page) or **Clone category from layout** (another page).
+- A banner without an image shows "Image missing" in the Sections list. Upload at least the **App** image.
+:::
+
+---
+
+### 1.3 Scheduling Home Pages
+
+![Home Page Schedule](/img/detailed-documentation/home-builder-schedule.webp)
+
+#### Overview
+Use scheduling to run a campaign home page for a fixed period, and to publish draft changes at a set time. Both need the `home_builder_publish` permission and the Laravel scheduler (`php artisan schedule:run` every minute): the `home-layout:run-schedule` command switches home pages at the scheduled times.
+
+#### Field reference
+| Pop-up | Field | Required | What it does | Example |
+| --- | --- | --- | --- | --- |
+| **Home Page Schedule** (list action, or **Schedule** in the editor) | **Go live from** | No | When this home page is shown to customers. Leave empty to go live as soon as it is published and active. | 01 Nov 2026, 06:00 |
+| | **Set closing time** + **Close at** | No | Optional end of the period; must be after the go-live time. | 15 Nov 2026, 23:59 |
+| | **Switch to this home page after closing** | No | The page that takes over. If empty, the module's default home page is shown. | Grocery Default Home |
+| **Schedule Publish** (editor, draft) | **Publish date & time** | Yes | Publishes the current draft automatically at that moment, in your local time zone. | 31 Oct 2026, 22:00 |
+
+The summary line at the bottom of the Home Page Schedule pop-up explains the result, for example "Live from immediately, with no closing time."
+
+#### Tutorial: Schedule the Diwali home page
+1. Publish **Diwali Sale Home** and switch **Active** on in the list.
+2. Click **Home Page Schedule** (calendar) on its row.
+3. Set **Go live from** to 01 Nov 2026, 06:00.
+4. Turn on **Set closing time** and set **Close at** to 15 Nov 2026, 23:59.
+5. Leave **Switch to this home page after closing** empty to fall back to the default home page, and click **Save**.
+
+**Result:** the **State** shows **Scheduled** until 1 November. From then on the status strip shows "Customers currently see **Diwali Sale Home**"; after 15 November the default home page takes over and the state becomes **Closed**.
+
+:::tip Tips
+- **Schedule Publish** publishes the draft as it was when you saved the schedule; edits made later only apply if you save again before that time. **Cancel schedule** (in the blue bar or the Status column) removes it.
+- If nothing changes at the scheduled time, check that the scheduler runs on the server.
+:::
+
+---
+
+## 2. Popup Offer (`/popup`)
+
+![Popup Offer](/img/detailed-documentation/popup-offer.webp)
+
+### Overview
+A single promotional pop-up shown to customers when they open the app or website (sidebar: **Home Builder → Manage Popup Offer**; permission `popup_offer`). Use it for one current campaign, for example "Get 20% Off Fresh Produce – use code FRESH20".
+
+### Field reference
+| Field | Required | What it does | Example |
+| --- | --- | --- | --- |
+| **Popup Offer Enabled (ON /OFF)** | Yes | Shows or hides the pop-up. | ON |
+| **Type** | Yes | What a tap on the pop-up does: **Default** (no link), **Category**, **Product** or **Popup Url**. | Category |
+| **Category** / **Products** / **Link** | Yes for that type | The category, product or URL that opens. | Fruits |
+| **Start Date** / **End Date** | No | Period of the offer; the end date can't be before the start date. | 13 Nov 2026 – 16 Dec 2026 |
+| **Image** | Yes (first time) | Square image larger than 500 × 500 px; JPG, PNG, GIF or WebP. The current image is shown below the upload area. | FRESH20 banner |
+
+### Tutorial: Promote a fresh-produce offer with a pop-up
+1. Open **Home Builder → Manage Popup Offer**.
+2. Set **Popup Offer Enabled (ON /OFF)** to **ON**.
+3. Choose **Type** **Category** and pick **Fruits** under **Category**.
+4. Set **Start Date** 13 Nov 2026 and **End Date** 16 Dec 2026.
+5. Upload the square offer image and click **Save**.
+
+**Result:** customers see the pop-up when they open the app or website during that period; tapping it opens the Fruits category. To stop it early, set it to **OFF** and click **Save**.
+
+:::tip
+If the pop-up advertises a promo code, create the code first (section 3) and use the same dates, so customers never see an offer they can't use.
+:::
+
+---
+
+## 3. Promo Codes (`/promo_code`)
 
 ![Promo Codes](/img/detailed-documentation/promo-codes.webp)
 
-Discount codes that customers enter during cart checkout to receive price deductions or cashbacks.
+### Overview
+Discount codes that customers apply at checkout in the app and website (sidebar: **Promo Code → Manage Promo Code**; permission `promo_code_list`, plus `promo_code_create`, `promo_code_update` and `promo_code_delete` for the buttons). Visible codes also appear in the customers' offers list.
 
-### Adding a Promo Code (`/promo_code/create`)
-
-![Add Promo Code](/img/detailed-documentation/promo-codes-add.webp)
-
-#### Step-by-Step Configuration
-1. **Promo Code**: Enter the promotional code text (e.g., `SUMMER20`, `WELCOME50`).
-2. **Discount Type**:
-   - **Percentage**: Deducts a percentage (e.g., 20% off cart total).
-   - **Flat Amount**: Deducts an exact monetary amount (e.g., ₹100 off).
-3. **Discount Value & Maximum Discount**:
-   - For percentage discounts, define a **Max Discount Amount** (e.g., "20% off up to ₹150") to protect margins.
-4. **Order Thresholds**:
-   - **Minimum Order Amount**: The lowest basket size required to activate the coupon (e.g., minimum ₹500).
-5. **Usage Restrictions**:
-   - **Start Date & End Date**: Validity duration.
-   - **Total Usages Allowed**: Global cap (e.g., first 1,000 customers).
-   - **Usage Limit Per Customer**: Restrict to 1 use per customer account.
-6. Click **Create Promo Code**.
+### Column reference
+| Column | Meaning |
+| --- | --- |
+| **ID** | Promo code ID. |
+| **Promo Code** | The code, for example **WEEKEND15**; hidden codes show a **Hidden** badge (**VIPSAVE25**). |
+| **Message** | Text customers see, for example "15% off every weekend". |
+| **Start Date** / **End Date** | Period the code works. |
+| **No. of Users** | How many customers can use it, or **Unlimited**. |
+| **Minimum Order Amount** | Cart value needed, for example 499. |
+| **Discount** / **Discount Type** | Value and whether it is a percentage or an amount. |
+| **Image** | Optional image for the offers list. |
+| **Status** | **Active** / **Deactive**. |
+| **Validity** | Green while the code can be used, red when it cannot. |
+| **Actions** | Edit, Delete. Deleting a code also deletes its image, unless another record still uses the file. |
 
 ---
 
-## 5. Featured Sections (`/sections`)
+### 3.1 Add / Edit Promo Code (`/promo_code/create`)
 
-![Featured Sections](/img/detailed-documentation/featured-sections.webp)
+![Add Promo Code](/img/detailed-documentation/promo-codes-add.webp)
 
-Dynamic product showcases displayed as horizontal scrolling rows or distinct blocks on the app homepage (e.g., "Best Sellers", "Weekend Deals", "Organic Essentials").
+#### Overview
+**Add Promo Code** (the button, or **Promo Code → Add Promo Code** in the sidebar) opens the form in a pop-up over the list. **Edit** opens the same form with the code's data.
 
-### Adding a Featured Section (`/sections/create`)
+#### Field reference
+| Field | Required | What it does | Example |
+| --- | --- | --- | --- |
+| **Message** | Yes (default language) | Text customers see with the code; one tab per language. **Translate Empty Fields** / **Translate & Overwrite** fill the other languages. | 20% off for our loyal customers |
+| **Promo Code** | Yes | The code customers type. | LOYAL20 |
+| **Start Date** / **End Date** | Yes | Period the code works; the end date can't be before the start date. | 01 Dec 2026 – 31 Dec 2026 |
+| **Applicable For** | Yes | **All Customers**, or **Specific Customers** (then **Customers** is required; search by name, email or mobile). | Specific Customers |
+| **Visible To Customers** | No | **Visible in offers list**, or **Hidden (customer must enter the code)**. | Visible in offers list |
+| **User Limit Type** + **No. of Users** | Yes for All Customers | **Limited** (number of customers who can use the code) or **Unlimited**. Not shown for Specific Customers. | Limited · 200 |
+| **Minimum Order Amount** | Yes | Minimum cart value. | 599 |
+| **Discount Type** | Yes | **Percentage** or **Amount**. | Percentage |
+| **Discount** | Yes | Percentage from 1 to 100, or an amount that is not greater than the minimum order amount. | 20 |
+| **Max Discount Amount** | Yes for Percentage | Cap on the discount, 1 or more. | 150 |
+| **Repeat Usage** + **No. Of Repeat Usage** | Yes | **Allowed** or **Not Allowed**; if allowed, how many times one customer can use it (0 removes the limit). | Allowed · 2 |
+| **Image** | No | Square, larger than 350 × 350 px and smaller than 550 × 550 px. | loyal20.png |
+| **Status** | — | Edit only: **Activated** / **Deactivated**. New codes start active. | Activated |
 
-![Add Section](/img/detailed-documentation/featured-sections-add.webp)
+#### Tutorial: Create a percentage code for specific customers
+Scenario: you want to reward Priya Nair and Rohan Mehta with 20% off (at most ₹150) on orders of ₹599 or more in December.
+1. Click **Add Promo Code**.
+2. Type the **Message** "20% off for our loyal customers" and the **Promo Code** "LOYAL20".
+3. Set **Start Date** 01 Dec 2026 and **End Date** 31 Dec 2026.
+4. Set **Applicable For** to **Specific Customers**. In **Customers**, type "Priya" and pick **Priya Nair**, then type "Rohan" and pick **Rohan Mehta**.
 
-#### Configuration Steps
-1. Enter the public section title (e.g., "Top Trending Grocery Items") and subtitle.
-2. Select the **Style / Layout** (Horizontal scroll carousel, 2x2 grid, or full-width banner block).
-3. Choose the product sourcing mode:
-   - **Category-Based**: Automatically displays the newest items from a designated category.
-   - **Custom Product Selection**: Hand-pick specific SKUs across any vendor to display in the section.
-4. Save the section and view the instant live preview on customer applications.
+   ![Specific Customers picker in the promo code form](/img/detailed-documentation/promo-codes-add-specific.webp)
+
+5. Keep **Visible To Customers** on **Visible in offers list**.
+6. Enter **Minimum Order Amount** 599, choose **Discount Type** **Percentage**, **Discount** 20 and **Max Discount Amount** 150.
+7. Set **Repeat Usage** to **Not Allowed**.
+8. Click **Save**.
+
+**Result:** LOYAL20 appears in the list with **Unlimited** users (the chosen customers are the audience). Only Priya Nair and Rohan Mehta see it in their offers list; anyone else who types it sees "This promo code is not available for your account."
+
+#### Tutorial: Create a hidden code
+Scenario: a code for a flyer, "FLYER10", that should not appear in the offers list.
+1. Click **Add Promo Code** and fill **Message**, **Promo Code** "FLYER10" and the dates.
+2. Keep **Applicable For** on **All Customers** and set **Visible To Customers** to **Hidden (customer must enter the code)**.
+3. Set **User Limit Type** **Limited** with **No. of Users** 100, **Minimum Order Amount** 299, **Discount Type** **Amount** and **Discount** 50.
+4. Set **Repeat Usage** to **Not Allowed** and click **Save**.
+
+**Result:** FLYER10 shows a **Hidden** badge in the list. Customers can only use it by typing it exactly; the first 100 customers get ₹50 off orders of ₹299 or more.
+
+:::caution Common mistakes
+- **Save stays disabled** with "Discount is grater than minimum order amount.": an **Amount** discount can't exceed the **Minimum Order Amount**.
+- A percentage outside 1–100 or a **Max Discount Amount** below 1 is cleared with an error message.
+- Editing a code replaces its customer list; switching it back to **All Customers** removes the list.
+:::
+
+---
+
+### 3.2 Customer-Specific and Hidden Codes
+
+- **Specific Customers** codes are shown in the offers list only to the chosen customers. Any other customer who types the code sees "This promo code is not available for your account." The check is repeated in the cart and when the order is placed.
+- For a specific-customers code, the chosen customers are the audience, so the user limit is not used. Dates, status, minimum order and repeat usage still apply.
+- Editing a code replaces its customer list. Switching it back to **All Customers** removes the list.
+- A **Hidden** code works with either audience. If a customer types a hidden code they cannot use (inactive, outside its dates, or not one of the chosen customers), they only see "Promo code not available.", so the code is not revealed.
 
 ---
 
 ## Real-World Marketing Use Cases
 
-- **Festival Mega-Sale Launch**: Marketing managers coordinate a festival campaign by deploying a hero **Home Slider**, activating a sitewide **Promo Code**, and placing high-margin festival sweets in a prominent **Featured Section**.
-- **Cart Abandonment Recovery via Popups**: Setting up a discreet exit-intent or launch **Popup Offer** that delivers a 10% coupon increases mobile app checkout conversion rates by up to 22%.
-- **Supplier Sponsored Brand Banners**: Charge FMCG manufacturers a premium fee to feature their new product releases exclusively on the top **Home Slider** for a 7-day promotional window.
+- **Festival sale**: build a "Diwali Sale Home" with a banner slider and a discounted-products row, schedule it to go live on the first day and close on the last, and let the default home page take over afterwards.
+- **Category storefront**: a grocery module uses a category wise home page so customers switch between tabs such as Fruits, Dairy and a custom "Offers" tab, each with its own sections.
+- **VIP reward**: create a hidden promo code for **Specific Customers** and send it to your best customers only.
+- **App launch offer**: turn on the popup offer with a product or category link for the length of the campaign.
